@@ -3,8 +3,11 @@
    Rellenar tras crear el proyecto Supabase y desplegar el backend en Render.
    ========================================================================== */
 
-// Backend Flask (Render) que cruza con la DMC y guarda en Supabase
-var API_URL = 'http://localhost:5000';
+// Backend Flask que cruza con la DMC y guarda en Supabase.
+// En local usa localhost; desplegado (Vercel) usa el backend en Render.
+var API_URL = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+    ? 'http://localhost:5000'
+    : 'https://laguna-los-patos.onrender.com';
 
 // Supabase del proyecto Laguna (clave PUBLISHABLE / anon — segura en frontend)
 var SUPA_URL = 'https://noqcvqatxzpqbtwdnmgk.supabase.co';
