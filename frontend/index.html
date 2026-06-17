@@ -17,6 +17,10 @@
         </header>
 
         <section class="card ficha">
+            <figure class="ficha-foto">
+                <img src="img/Imagen1.png" alt="Vertedero de salida de la Laguna Los Patos, donde se instala la regla" loading="lazy">
+                <figcaption>El vertedero de salida (S1), donde se ubica la regla de medición.</figcaption>
+            </figure>
             <p>
                 Estás frente a la <strong>regla de medición</strong> de la Laguna Los Patos.
                 Con tu lectura ayudas a construir una serie continua del nivel del agua,
@@ -34,20 +38,30 @@
             <h2>Ingresa tu medición</h2>
 
             <form id="form-lectura" novalidate>
-                <label class="field">
-                    <span class="field-label">Nivel en la regla (cm)</span>
+                <div class="field">
+                    <div class="field-label-row">
+                        <label class="field-label" for="nivel_cm">Nivel en la regla (cm)</label>
+                        <button type="button" class="help-btn" id="btn-ayuda" aria-label="¿Cómo medir el nivel?">?</button>
+                    </div>
                     <input
                         type="number" id="nivel_cm" name="nivel_cm"
                         inputmode="decimal" step="0.1" min="0" max="500"
                         placeholder="Ej: 42.5" required>
                     <small class="field-hint">Lee el número donde el agua toca la regla.</small>
-                </label>
+                </div>
 
-                <label class="field">
+                <div class="field">
                     <span class="field-label">Foto (opcional)</span>
-                    <input type="file" id="foto" name="foto" accept="image/*" capture="environment">
-                    <small class="field-hint">Una foto de la regla ayuda a validar el dato.</small>
-                </label>
+                    <input type="file" id="foto" name="foto" accept="image/*" capture="environment" hidden>
+                    <div class="foto-control">
+                        <button type="button" class="foto-btn" id="btn-foto" aria-label="Tomar o subir foto">
+                            <span class="foto-cam">📷</span>
+                        </button>
+                        <div class="foto-preview" id="foto-preview">
+                            <span class="foto-hint">Toca para tomar o subir una foto de la regla</span>
+                        </div>
+                    </div>
+                </div>
 
                 <button type="submit" id="btn-enviar" class="btn-primary">
                     Enviar medición
@@ -57,25 +71,68 @@
             <div id="status" class="status" hidden></div>
         </section>
 
+        <!-- Condiciones actuales en Isla Teja (DMC vía backend; ET la calcula Render) -->
+        <section class="card estacion" id="estacion-card">
+            <div class="estacion-head">
+                <h2>Estación Isla Teja · ahora</h2>
+                <span class="estacion-momento" id="est-momento">—</span>
+            </div>
+            <div class="estacion-grid" id="estacion-grid">
+                <div class="est-metric"><i>🌡️</i><strong id="est-temp">—</strong><span>Temp.</span></div>
+                <div class="est-metric"><i>💧</i><strong id="est-hr">—</strong><span>Humedad</span></div>
+                <div class="est-metric"><i>☀️</i><strong id="est-rad">—</strong><span>Radiación</span></div>
+                <div class="est-metric"><i>🌧️</i><strong id="est-pp">—</strong><span>PP 24h</span></div>
+                <div class="est-metric"><i>💨</i><strong id="est-viento">—</strong><span>Viento</span></div>
+                <div class="est-metric"><i>🌿</i><strong id="est-et">—</strong><span>ET</span></div>
+            </div>
+        </section>
+
+        <!-- Acceso directo a la galería de biodiversidad -->
+        <a href="galeria.html" class="btn-bio">
+            <span class="btn-bio-ico">🦆</span>
+            <span class="btn-bio-txt">Ver la biodiversidad de la laguna</span>
+            <span class="btn-bio-arrow">→</span>
+        </a>
+
         <!-- Confirmación (oculta hasta enviar) -->
         <section class="card success" id="success-card" hidden>
             <div class="success-icon">✓</div>
             <h2>¡Gracias por tu aporte!</h2>
             <p>Tu medición quedó registrada en el monitoreo de la laguna.</p>
-            <button type="button" id="btn-otra" class="btn-secondary">Ingresar otra</button>
+            <a href="galeria.html" class="btn-primary btn-primary--link">🦆 Ver biodiversidad de la laguna</a>
+            <button type="button" id="btn-otra" class="btn-secondary">Ingresar otra medición</button>
             <a href="dashboard.html" class="link-dashboard">Ver el monitoreo público →</a>
         </section>
 
         <footer class="foot">
-            <a href="dashboard.html">Dashboard público</a>
+            <a href="dashboard.html">Dashboard</a>
             <span>·</span>
-            <span>Proyecto Laguna Los Patos</span>
+            <a href="galeria.html">Biodiversidad</a>
+            <span>·</span>
+            <span>Laguna Los Patos</span>
         </footer>
     </main>
+
+    <!-- Popup: cómo medir el nivel -->
+    <div class="popup" id="popup-ayuda" hidden>
+        <div class="popup-bg" data-cerrar-ayuda></div>
+        <div class="popup-card" role="dialog" aria-modal="true">
+            <button class="popup-x" data-cerrar-ayuda aria-label="Cerrar">×</button>
+            <h3>¿Cómo medir el nivel?</h3>
+            <ol class="popup-pasos">
+                <li>Ubica la <strong>regla limnimétrica</strong> instalada en el vertedero de salida de la laguna.</li>
+                <li>Mira <strong>dónde el agua toca la regla</strong>.</li>
+                <li>Lee el <strong>número en centímetros</strong> justo en ese punto.</li>
+                <li>Escríbelo en la casilla. Si puedes, agrega una <strong>foto</strong> de la regla.</li>
+            </ol>
+            <p class="popup-nota">No necesitas anotar la hora ni nada más: el sistema lo registra automáticamente.</p>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/config.js"></script>
     <script src="js/supabase-client.js"></script>
+    <script src="js/estacion.js"></script>
     <script src="js/lectura.js"></script>
 </body>
 </html>

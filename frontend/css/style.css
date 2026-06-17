@@ -33,7 +33,13 @@ body {
 
 /* ── Hero ── */
 .hero {
-    background: linear-gradient(150deg, var(--verde) 0%, var(--verde-osc) 100%);
+    /* Foto aérea de la laguna. En la galería, hero.js la cambia por una de iNaturalist.
+       Capa 1: degradado para legibilidad · Capa 2: foto · Capa 3: respaldo verde */
+    --hero-photo: url('../img/hero.jpg');
+    background:
+        linear-gradient(150deg, rgba(27, 94, 63, .78) 0%, rgba(20, 48, 42, .86) 100%),
+        var(--hero-photo) center / cover no-repeat,
+        linear-gradient(150deg, var(--verde) 0%, var(--verde-osc) 100%);
     color: #fff;
     border-radius: 0 0 22px 22px;
     padding: 28px 20px 26px;
@@ -65,6 +71,21 @@ body {
 }
 .card h2 { font-size: 18px; margin-bottom: 12px; color: var(--verde-osc); }
 
+.ficha-foto { margin: -4px 0 14px; }
+.ficha-foto img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 12px;
+    display: block;
+}
+.ficha-foto figcaption {
+    font-size: 12px;
+    color: var(--gris);
+    margin-top: 6px;
+    text-align: center;
+    font-style: italic;
+}
 .ficha p { font-size: 15px; color: #2c4038; }
 .ficha p + p { margin-top: 10px; }
 .ficha-note { font-size: 13px !important; color: var(--gris) !important; }
@@ -126,6 +147,97 @@ input[type="file"] {
     margin-top: 6px;
 }
 
+/* Enlace con aspecto de botón primario */
+.btn-primary--link {
+    display: block;
+    box-sizing: border-box;
+    text-align: center;
+    text-decoration: none;
+    margin-bottom: 10px;
+}
+
+/* ── (?) Ayuda junto al campo ── */
+.field-label-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.field-label-row .field-label { margin-bottom: 0; }
+.help-btn {
+    width: 22px; height: 22px; flex: 0 0 auto;
+    border-radius: 50%;
+    border: none;
+    background: var(--verde);
+    color: #fff;
+    font-size: 14px; font-weight: 700; line-height: 1;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+}
+.help-btn:hover { background: var(--verde-osc); }
+
+/* ── Botón de foto estilo celular ── */
+.foto-control { display: flex; align-items: center; gap: 12px; }
+.foto-btn {
+    flex: 0 0 auto;
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    border: 2px solid var(--verde);
+    background: #fbfdfb;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .15s, transform .05s;
+}
+.foto-btn:hover { background: #eef5f0; }
+.foto-btn:active { transform: scale(.95); }
+.foto-cam { font-size: 26px; line-height: 1; }
+.foto-btn.tiene-foto { padding: 0; overflow: hidden; }
+.foto-btn.tiene-foto .foto-cam { display: none; }
+.foto-btn img { width: 100%; height: 100%; object-fit: cover; }
+.foto-preview { flex: 1; min-width: 0; }
+.foto-hint { font-size: 13px; color: var(--gris); }
+.foto-nombre { font-size: 13px; color: var(--verde-osc); font-weight: 600; word-break: break-all; }
+.foto-quitar {
+    display: inline-block; margin-top: 3px;
+    background: none; border: none; color: var(--error);
+    font-size: 12px; cursor: pointer; padding: 0; text-decoration: underline;
+}
+
+/* ── Botón directo a Biodiversidad ── */
+.btn-bio {
+    display: flex; align-items: center; gap: 12px;
+    background: #fff;
+    border: 1px solid var(--borde);
+    border-radius: 16px;
+    padding: 15px 16px;
+    margin-bottom: 14px;
+    text-decoration: none;
+    color: var(--verde-osc);
+    box-shadow: var(--sombra);
+    transition: transform .12s, box-shadow .12s;
+}
+.btn-bio:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(20,48,42,.14); }
+.btn-bio-ico { font-size: 26px; line-height: 1; }
+.btn-bio-txt { flex: 1; font-weight: 700; font-size: 15px; }
+.btn-bio-arrow { color: var(--verde); font-size: 20px; font-weight: 700; }
+
+/* ── Popup de ayuda ── */
+.popup { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 18px; }
+.popup[hidden] { display: none; }
+.popup-bg { position: absolute; inset: 0; background: rgba(10,25,20,.55); }
+.popup-card {
+    position: relative; z-index: 1;
+    background: #fff; border-radius: 18px;
+    max-width: 380px; width: 100%;
+    padding: 22px 20px 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.35);
+}
+.popup-x {
+    position: absolute; top: 10px; right: 12px;
+    width: 30px; height: 30px; border-radius: 50%;
+    border: none; background: #f0f4f1; color: var(--tinta);
+    font-size: 20px; line-height: 1; cursor: pointer;
+}
+.popup-card h3 { color: var(--verde-osc); font-size: 19px; margin-bottom: 12px; }
+.popup-pasos { margin: 0 0 12px; padding-left: 20px; }
+.popup-pasos li { font-size: 14px; color: #2c4038; margin-bottom: 8px; line-height: 1.45; }
+.popup-nota { font-size: 13px; color: var(--gris); font-style: italic; }
+
 /* ── Status ── */
 .status {
     margin-top: 14px;
@@ -159,6 +271,20 @@ input[type="file"] {
     text-decoration: none;
     font-size: 14px;
 }
+
+/* ── Estación Isla Teja (condiciones actuales) ── */
+.estacion-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.estacion-head h2 { margin: 0; }
+.estacion-momento { font-size: 12px; color: var(--gris); }
+.estacion-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.est-metric {
+    background: #f3f7f4; border-radius: 12px; padding: 12px 6px; text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.est-metric i { font-style: normal; font-size: 18px; line-height: 1; }
+.est-metric strong { font-size: 16px; color: var(--verde-osc); }
+.est-metric span { font-size: 11px; color: var(--gris); }
+@media (max-width: 380px) { .estacion-grid { grid-template-columns: repeat(2, 1fr); } }
 
 /* ── Footer ── */
 .foot {

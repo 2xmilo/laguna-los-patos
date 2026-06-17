@@ -111,8 +111,42 @@
             });
     }
 
+    /* ── Foto: botón cámara + vista previa ── */
+    var _previewUrl = null;
+
+    function limpiarPreview() {
+        if (_previewUrl) { URL.revokeObjectURL(_previewUrl); _previewUrl = null; }
+        var btn = $('btn-foto');
+        if (btn) { btn.classList.remove('tiene-foto'); btn.innerHTML = '<span class="foto-cam">📷</span>'; }
+        var pv = $('foto-preview');
+        if (pv) pv.innerHTML = '<span class="foto-hint">Toca para tomar o subir una foto de la regla</span>';
+    }
+
+    function onFotoChange() {
+        var file = ($('foto').files || [])[0];
+        if (!file) { limpiarPreview(); return; }
+        if (_previewUrl) URL.revokeObjectURL(_previewUrl);
+        _previewUrl = URL.createObjectURL(file);
+        var btn = $('btn-foto');
+        btn.classList.add('tiene-foto');
+        btn.innerHTML = '<img src="' + _previewUrl + '" alt="foto">';
+        $('foto-preview').innerHTML =
+            '<span class="foto-nombre">Foto lista ✓</span>' +
+            '<button type="button" class="foto-quitar" id="foto-quitar">Quitar foto</button>';
+    }
+
+    function quitarFoto() {
+        $('foto').value = '';
+        limpiarPreview();
+    }
+
+    /* ── Popup de ayuda ── */
+    function abrirAyuda() { var p = $('popup-ayuda'); if (p) p.hidden = false; }
+    function cerrarAyuda() { var p = $('popup-ayuda'); if (p) p.hidden = true; }
+
     function onOtra() {
         $('form-lectura').reset();
+        limpiarPreview();
         $('status').hidden = true;
         $('success-card').hidden = true;
         $('form-card').hidden = false;
@@ -123,5 +157,24 @@
         if (form) form.addEventListener('submit', onSubmit);
         var otra = $('btn-otra');
         if (otra) otra.addEventListener('click', onOtra);
+
+        // Foto estilo celular
+        var btnFoto = $('btn-foto');
+        if (btnFoto) btnFoto.addEventListener('click', function () { $('foto').click(); });
+        var inputFoto = $('foto');
+        if (inputFoto) inputFoto.addEventListener('change', onFotoChange);
+        document.addEventListener('click', function (e) {
+            if (e.target && e.target.id === 'foto-quitar') quitarFoto();
+        });
+
+        // Popup de ayuda
+        var btnAyuda = $('btn-ayuda');
+        if (btnAyuda) btnAyuda.addEventListener('click', abrirAyuda);
+        document.querySelectorAll('[data-cerrar-ayuda]').forEach(function (el) {
+            el.addEventListener('click', cerrarAyuda);
+        });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') cerrarAyuda();
+        });
     });
 })();

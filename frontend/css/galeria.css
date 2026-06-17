@@ -1,0 +1,121 @@
+/* Galería de biodiversidad · Laguna Los Patos */
+.intro-bio p { font-size: 14px; color: #2c4038; }
+
+/* Filtros (chips) */
+.filtros {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 2px 2px 10px;
+    margin-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+}
+.chip {
+    flex: 0 0 auto;
+    border: 1.5px solid var(--borde);
+    background: #fff;
+    color: var(--gris);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 7px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all .15s;
+    white-space: nowrap;
+}
+.chip--on { background: var(--verde); border-color: var(--verde); color: #fff; }
+
+.status-bio { text-align: center; color: var(--gris); font-size: 14px; padding: 18px 0; }
+
+/* Grid */
+.galeria-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+}
+.bio-card {
+    border: 1px solid var(--borde);
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    cursor: pointer;
+    padding: 0;
+    text-align: left;
+    box-shadow: var(--sombra);
+    transition: transform .12s, box-shadow .12s;
+}
+.bio-card:hover { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(20,48,42,.14); }
+.bio-foto {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background-size: cover;
+    background-position: center;
+    background-color: #e6efe9;
+}
+.bio-info { padding: 9px 11px 12px; display: flex; flex-direction: column; gap: 2px; }
+.bio-nombre { font-weight: 700; font-size: 14px; color: var(--tinta); line-height: 1.25; }
+.bio-sci { font-style: italic; font-size: 12px; color: var(--gris); }
+.bio-count { font-size: 11px; color: var(--verde); font-weight: 600; margin-top: 3px; }
+
+/* Modal */
+.modal { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; padding: 16px; }
+.modal[hidden] { display: none; }
+.modal-bg { position: absolute; inset: 0; background: rgba(10,25,20,.62); }
+.modal-card {
+    position: relative;
+    background: #fff;
+    border-radius: 18px;
+    max-width: 420px;
+    width: 100%;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    z-index: 1;
+}
+.modal-x {
+    position: absolute; top: 8px; right: 10px; z-index: 2;
+    width: 34px; height: 34px; border-radius: 50%;
+    border: none; background: rgba(255,255,255,.9); color: var(--tinta);
+    font-size: 22px; line-height: 1; cursor: pointer;
+}
+.modal-link { color: var(--verde); font-weight: 700; text-decoration: none; font-size: 14px; }
+
+/* ── Ficha técnica de especie ── */
+.ficha-especie { max-height: 88vh; overflow-y: auto; }
+.ficha-hero {
+    width: 100%; height: 240px;
+    background-size: cover; background-position: center;
+    background-color: #e6efe9;
+}
+.ficha-cuerpo { padding: 16px 18px 22px; }
+.ficha-titulo { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.ficha-titulo h3 { font-size: 21px; color: var(--verde-osc); line-height: 1.2; }
+.ficha-estado {
+    color: #fff; font-size: 11px; font-weight: 700;
+    padding: 3px 9px; border-radius: 999px; white-space: nowrap;
+}
+.ficha-sci { font-size: 13px; color: var(--gris); margin: 3px 0 12px; }
+.ficha-sci .ficha-grupo { font-style: normal; color: var(--verde); font-weight: 600; }
+
+.ficha-thumbs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 12px; }
+.ficha-thumb {
+    flex: 0 0 auto; width: 58px; height: 58px;
+    object-fit: cover; border-radius: 8px; cursor: pointer;
+    border: 2px solid transparent; transition: border-color .12s;
+}
+.ficha-thumb:hover { border-color: var(--verde); }
+
+.ficha-taxo {
+    display: flex; flex-direction: column; gap: 3px;
+    background: #f3f7f4; border-radius: 10px; padding: 10px 12px;
+    font-size: 13px; color: #2c4038; margin-bottom: 12px;
+}
+.ficha-desc { font-size: 14px; color: #2c4038; line-height: 1.55; margin-bottom: 14px; }
+.ficha-cargando { font-size: 14px; color: var(--gris); padding: 6px 0; }
+
+.ficha-stats { display: flex; gap: 12px; margin-bottom: 16px; }
+.ficha-stats div {
+    flex: 1; background: #f3f7f4; border-radius: 10px;
+    padding: 10px; text-align: center;
+}
+.ficha-stats strong { display: block; font-size: 18px; color: var(--verde-osc); }
+.ficha-stats span { font-size: 11px; color: var(--gris); }

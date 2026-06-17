@@ -13,6 +13,7 @@ El ciudadano NUNCA ve caudal ni balance: solo ingresa el nivel.
 
 import os
 import json
+import time
 import logging
 from datetime import datetime, timezone
 from urllib.error import HTTPError, URLError
@@ -26,6 +27,23 @@ import dmc
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
 logger = logging.getLogger(__name__)
 
+
+def _cargar_env(ruta='.env'):
+    """Carga un .env local (KEY=VALUE) si existe. En Render no hay .env:
+    las variables vienen del panel, así que esto no interfiere en producción."""
+    if not os.path.exists(ruta):
+        return
+    with open(ruta, encoding='utf-8') as f:
+        for linea in f:
+            linea = linea.strip()
+            if not linea or linea.startswith('#') or '=' not in linea:
+                continue
+            clave, valor = linea.split('=', 1)
+            os.environ.setdefault(clave.strip(), valor.strip())
+
+
+_cargar_env()
+
 # ── Configuración (variables de entorno en Render) ───────────────────────────
 ESTACION_ISLA_TEJA = os.environ.get('ESTACION_ISLA_TEJA', '').strip()
 SUPABASE_URL = os.environ.get('SUPABASE_URL', '').rstrip('/')
@@ -35,6 +53,10 @@ LAGUNA_LAT = float(os.environ.get('LAGUNA_LAT', '-39.8098'))
 LAGUNA_LON = float(os.environ.get('LAGUNA_LON', '-73.2560'))
 NIVEL_MIN_CM = float(os.environ.get('NIVEL_MIN_CM', '0'))
 NIVEL_MAX_CM = float(os.environ.get('NIVEL_MAX_CM', '500'))
+
+# Caché en memoria del último registro de Isla Teja (la DMC actualiza ~15 min)
+ESTACION_CACHE_SECONDS = int(os.environ.get('ESTACION_CACHE_SECONDS', '600'))
+_estacion_cache = {'ts': 0, 'data': None}
 
 app = Flask(__name__)
 ALLOWED_ORIGINS = [
@@ -82,6 +104,51 @@ def health():
         'estacion_configurada': bool(ESTACION_ISLA_TEJA),
         'supabase_configurado': bool(SUPABASE_URL and SUPABASE_SERVICE_KEY),
     })
+
+
+@app.route('/api/estacion/actual', methods=['GET', 'OPTIONS'])
+def estacion_actual():
+    """Último registro de Isla Teja + ET. Público y cacheado (~10 min) para
+    no golpear la DMC en cada visita. No escribe en Supabase."""
+    if request.method == 'OPTIONS':
+        return '', 200
+
+    if not ESTACION_ISLA_TEJA:
+        return jsonify({'ok': False, 'error': 'Estación no configurada'}), 500
+
+    now = time.time()
+    if _estacion_cache['data'] and (now - _estacion_cache['ts'] < ESTACION_CACHE_SECONDS):
+        return jsonify(_estacion_cache['data'])
+
+    try:
+        estacion, obs = dmc.get_latest_observation(ESTACION_ISLA_TEJA)
+        if not obs:
+            return jsonify({'ok': False, 'error': 'Sin datos recientes'}), 200
+        et = dmc.et_priestley_taylor(
+            obs.get('temperatura_c'), obs.get('radiacion_global_w_m2'), interval_min=60)
+        data = {
+            'ok': True,
+            'estacion': estacion.get('nombreEstacion'),
+            'codigo': estacion.get('codigoNacional') or ESTACION_ISLA_TEJA,
+            'momento_local': dmc._to_chile_local(obs.get('momento')),
+            'temperatura_c': obs.get('temperatura_c'),
+            'humedad_relativa_pct': obs.get('humedad_relativa_pct'),
+            'radiacion_global_w_m2': obs.get('radiacion_global_w_m2'),
+            'presion_hpa': obs.get('presion_estacion_hpa'),
+            'precipitacion_24h_mm': obs.get('precipitacion_24h_mm'),
+            'viento_kt': obs.get('viento_kt'),
+            'viento_dir_grados': obs.get('viento_dir_grados'),
+            'et_priestley_mm_h': et,
+        }
+        _estacion_cache['ts'] = now
+        _estacion_cache['data'] = data
+        return jsonify(data)
+    except Exception as e:
+        logger.warning(f'estacion actual error: {e}')
+        # si hay caché viejo, devolverlo antes que fallar
+        if _estacion_cache['data']:
+            return jsonify(_estacion_cache['data'])
+        return jsonify({'ok': False, 'error': 'No se pudo consultar la DMC'}), 502
 
 
 @app.route('/api/dmc/cercanas', methods=['GET', 'OPTIONS'])

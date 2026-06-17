@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laguna Los Patos · Biodiversidad</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/galeria.css">
+</head>
+<body>
+    <main class="wrap wrap--wide">
+        <header class="hero">
+            <div class="hero-badge">Isla Teja · Valdivia</div>
+            <h1>Especies de la Laguna</h1>
+            <p class="hero-sub">Galería en vivo desde iNaturalist</p>
+        </header>
+
+        <section class="card intro-bio">
+            <p>
+                Estas son especies registradas por la comunidad en los alrededores de la
+                Laguna Los Patos. Los datos vienen en tiempo real de
+                <strong>iNaturalist</strong>: cada foto es una observación real de la zona.
+            </p>
+        </section>
+
+        <!-- Filtros por grupo -->
+        <nav class="filtros" id="filtros" aria-label="Filtrar por grupo">
+            <button class="chip chip--on" data-taxon="">Todas</button>
+            <button class="chip" data-taxon="Animalia,Aves,Mammalia,Amphibia,Reptilia,Actinopterygii,Mollusca,Arachnida,Insecta">Fauna</button>
+            <button class="chip" data-taxon="Plantae">Flora</button>
+            <button class="chip" data-taxon="Aves">Aves</button>
+            <button class="chip" data-taxon="Mammalia">Mamíferos</button>
+            <button class="chip" data-taxon="Amphibia">Anfibios</button>
+            <button class="chip" data-taxon="Reptilia">Reptiles</button>
+            <button class="chip" data-taxon="Actinopterygii">Peces</button>
+            <button class="chip" data-taxon="Insecta">Insectos</button>
+            <button class="chip" data-taxon="Fungi">Hongos</button>
+        </nav>
+
+        <div id="status-bio" class="status-bio">Cargando especies…</div>
+
+        <section class="galeria-grid" id="galeria"></section>
+
+        <footer class="foot">
+            <a href="index.html">← Ingresar una medición</a>
+            <span>·</span>
+            <a href="dashboard.html">Dashboard</a>
+        </footer>
+    </main>
+
+    <!-- Modal: ficha técnica de especie (se arma con la API de iNaturalist) -->
+    <div class="modal" id="modal" hidden>
+        <div class="modal-bg" data-close></div>
+        <div class="modal-card" role="dialog" aria-modal="true">
+            <button class="modal-x" data-close aria-label="Cerrar">×</button>
+            <div id="ficha" class="ficha-especie"></div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/zona.js"></script>
+    <script src="js/hero.js"></script>
+    <script src="js/galeria.js"></script>
+</body>
+</html>

@@ -21,6 +21,22 @@
             <div class="stat"><span class="stat-num" id="stat-et">—</span><span class="stat-lbl">ET última (mm/h)</span></div>
         </section>
 
+        <!-- Condiciones actuales en Isla Teja (DMC, vía backend cacheado) -->
+        <section class="card estacion" id="estacion-card">
+            <div class="estacion-head">
+                <h2>Estación Isla Teja · ahora</h2>
+                <span class="estacion-momento" id="est-momento">—</span>
+            </div>
+            <div class="estacion-grid" id="estacion-grid">
+                <div class="est-metric"><i>🌡️</i><strong id="est-temp">—</strong><span>Temp.</span></div>
+                <div class="est-metric"><i>💧</i><strong id="est-hr">—</strong><span>Humedad</span></div>
+                <div class="est-metric"><i>☀️</i><strong id="est-rad">—</strong><span>Radiación</span></div>
+                <div class="est-metric"><i>🌧️</i><strong id="est-pp">—</strong><span>PP 24h</span></div>
+                <div class="est-metric"><i>💨</i><strong id="est-viento">—</strong><span>Viento</span></div>
+                <div class="est-metric"><i>🌿</i><strong id="est-et">—</strong><span>ET</span></div>
+            </div>
+        </section>
+
         <section class="card">
             <h2>Nivel del agua en el tiempo</h2>
             <canvas id="chart-nivel" height="220"></canvas>
@@ -42,7 +58,7 @@
         <footer class="foot">
             <a href="index.html">← Ingresar una medición</a>
             <span>·</span>
-            <span>Proyecto Laguna Los Patos</span>
+            <a href="galeria.html">Biodiversidad</a>
         </footer>
     </main>
 
@@ -50,6 +66,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
     <script src="js/config.js"></script>
     <script src="js/supabase-client.js"></script>
+    <script src="js/estacion.js"></script>
     <script src="js/dashboard.js"></script>
 </body>
 </html>
