@@ -45,7 +45,10 @@ def _cargar_env(ruta='.env'):
 _cargar_env()
 
 # ── Configuración (variables de entorno en Render) ───────────────────────────
-ESTACION_ISLA_TEJA = os.environ.get('ESTACION_ISLA_TEJA', '').strip()
+# Código DMC de la estación Isla Teja. NO es secreto, así que vive en el código
+# (versionado). Para agregar/cambiar estaciones, editar aquí. Igual se puede
+# sobreescribir con la variable de entorno ESTACION_ISLA_TEJA si hiciera falta.
+ESTACION_ISLA_TEJA = os.environ.get('ESTACION_ISLA_TEJA', '390015').strip()
 SUPABASE_URL = os.environ.get('SUPABASE_URL', '').rstrip('/')
 SUPABASE_SERVICE_KEY = os.environ.get('SUPABASE_SERVICE_KEY', '')
 
