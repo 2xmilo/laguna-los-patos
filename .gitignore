@@ -1,0 +1,18 @@
+# Secretos — NUNCA subir
+backend/.env
+*.env
+!*.env.example
+
+# Python
+__pycache__/
+*.pyc
+*.log
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores
+.vscode/
+.idea/

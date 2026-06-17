@@ -1,0 +1,28 @@
+/* Dashboard público · Laguna Los Patos */
+.wrap--wide { max-width: 720px; }
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+}
+.stat {
+    background: #fff;
+    border: 1px solid var(--borde);
+    border-radius: 14px;
+    padding: 14px 8px;
+    text-align: center;
+    box-shadow: var(--sombra);
+}
+.stat-num { display: block; font-size: 24px; font-weight: 700; color: var(--verde-osc); }
+.stat-lbl { display: block; font-size: 12px; color: var(--gris); margin-top: 2px; }
+
+.empty { text-align: center; color: var(--gris); padding: 24px 0; }
+
+.tabla-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { padding: 9px 8px; text-align: left; border-bottom: 1px solid var(--borde); white-space: nowrap; }
+th { color: var(--gris); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .3px; }
+td:nth-child(2) { font-weight: 700; color: var(--verde-osc); }
+tbody tr:last-child td { border-bottom: none; }

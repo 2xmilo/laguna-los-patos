@@ -1,0 +1,171 @@
+/* ==========================================================================
+   Monitoreo Ciudadano · Laguna Los Patos — mobile first
+   ========================================================================== */
+:root {
+    --verde: #2e7d52;
+    --verde-osc: #1b5e3f;
+    --agua: #2b8caa;
+    --tinta: #14302a;
+    --gris: #5f6f6a;
+    --bg: #f3f7f4;
+    --card: #ffffff;
+    --borde: #e2ebe5;
+    --error: #c0392b;
+    --ok: #2e7d52;
+    --sombra: 0 4px 18px rgba(20, 48, 42, 0.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--tinta);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+.wrap {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0 16px 40px;
+}
+
+/* ── Hero ── */
+.hero {
+    background: linear-gradient(150deg, var(--verde) 0%, var(--verde-osc) 100%);
+    color: #fff;
+    border-radius: 0 0 22px 22px;
+    padding: 28px 20px 26px;
+    margin: 0 -16px 18px;
+    text-align: center;
+    box-shadow: var(--sombra);
+}
+.hero-badge {
+    display: inline-block;
+    font-size: 12px;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+    background: rgba(255,255,255,.18);
+    padding: 4px 12px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+}
+.hero h1 { font-size: 28px; font-weight: 700; }
+.hero-sub { opacity: .9; font-size: 15px; margin-top: 2px; }
+
+/* ── Cards ── */
+.card {
+    background: var(--card);
+    border: 1px solid var(--borde);
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 14px;
+    box-shadow: var(--sombra);
+}
+.card h2 { font-size: 18px; margin-bottom: 12px; color: var(--verde-osc); }
+
+.ficha p { font-size: 15px; color: #2c4038; }
+.ficha p + p { margin-top: 10px; }
+.ficha-note { font-size: 13px !important; color: var(--gris) !important; }
+
+/* ── Form ── */
+.field { display: block; margin-bottom: 16px; }
+.field-label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+.field-hint { display: block; font-size: 12px; color: var(--gris); margin-top: 5px; }
+
+input[type="number"] {
+    width: 100%;
+    font-size: 22px;
+    font-weight: 600;
+    text-align: center;
+    padding: 14px;
+    border: 2px solid var(--borde);
+    border-radius: 12px;
+    background: #fbfdfb;
+    color: var(--tinta);
+    transition: border-color .15s;
+}
+input[type="number"]:focus { outline: none; border-color: var(--verde); }
+
+input[type="file"] {
+    width: 100%;
+    font-size: 14px;
+    padding: 10px;
+    border: 1px dashed var(--borde);
+    border-radius: 12px;
+    background: #fbfdfb;
+}
+
+.btn-primary {
+    width: 100%;
+    background: var(--verde);
+    color: #fff;
+    font-size: 17px;
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    padding: 15px;
+    cursor: pointer;
+    transition: background .15s, transform .05s;
+}
+.btn-primary:hover { background: var(--verde-osc); }
+.btn-primary:active { transform: scale(.99); }
+.btn-primary:disabled { opacity: .6; cursor: not-allowed; }
+
+.btn-secondary {
+    width: 100%;
+    background: #fff;
+    color: var(--verde-osc);
+    font-size: 15px;
+    font-weight: 600;
+    border: 2px solid var(--verde);
+    border-radius: 12px;
+    padding: 12px;
+    cursor: pointer;
+    margin-top: 6px;
+}
+
+/* ── Status ── */
+.status {
+    margin-top: 14px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    text-align: center;
+}
+.status--loading { background: #eef5f0; color: var(--verde-osc); }
+.status--error   { background: #fdecea; color: var(--error); }
+.status--ok      { background: #eaf6ee; color: var(--ok); }
+
+/* ── Éxito ── */
+.success { text-align: center; }
+.success-icon {
+    width: 56px; height: 56px;
+    margin: 0 auto 10px;
+    background: var(--verde);
+    color: #fff;
+    border-radius: 50%;
+    font-size: 30px;
+    display: flex; align-items: center; justify-content: center;
+}
+.success h2 { color: var(--verde-osc); }
+.success p { color: var(--gris); margin: 6px 0 14px; }
+.link-dashboard {
+    display: inline-block;
+    margin-top: 12px;
+    color: var(--verde);
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+/* ── Footer ── */
+.foot {
+    text-align: center;
+    font-size: 13px;
+    color: var(--gris);
+    margin-top: 18px;
+}
+.foot a { color: var(--verde); text-decoration: none; font-weight: 600; }
+.foot span { margin: 0 6px; }

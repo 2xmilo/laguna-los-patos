@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laguna Los Patos · Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+    <main class="wrap wrap--wide">
+        <header class="hero">
+            <div class="hero-badge">Isla Teja · Valdivia</div>
+            <h1>Laguna Los Patos</h1>
+            <p class="hero-sub">Monitoreo ciudadano · serie de nivel</p>
+        </header>
+
+        <section class="stats" id="stats">
+            <div class="stat"><span class="stat-num" id="stat-total">—</span><span class="stat-lbl">Lecturas</span></div>
+            <div class="stat"><span class="stat-num" id="stat-ultimo">—</span><span class="stat-lbl">Último nivel (cm)</span></div>
+            <div class="stat"><span class="stat-num" id="stat-et">—</span><span class="stat-lbl">ET última (mm/h)</span></div>
+        </section>
+
+        <section class="card">
+            <h2>Nivel del agua en el tiempo</h2>
+            <canvas id="chart-nivel" height="220"></canvas>
+            <p id="chart-empty" class="empty" hidden>Aún no hay lecturas registradas.</p>
+        </section>
+
+        <section class="card">
+            <h2>Últimas mediciones</h2>
+            <div class="tabla-wrap">
+                <table id="tabla">
+                    <thead>
+                        <tr><th>Fecha</th><th>Nivel (cm)</th><th>T (°C)</th><th>PP 24h</th><th>ET (mm/h)</th></tr>
+                    </thead>
+                    <tbody id="tabla-body"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <footer class="foot">
+            <a href="index.html">← Ingresar una medición</a>
+            <span>·</span>
+            <span>Proyecto Laguna Los Patos</span>
+        </footer>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+    <script src="js/config.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
