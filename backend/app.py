@@ -66,7 +66,7 @@ ALLOWED_ORIGINS = [
     o.strip()
     for o in os.environ.get(
         'ALLOWED_ORIGINS',
-        'http://localhost:5500,http://127.0.0.1:5500,null'
+        'https://laguna-los-patos.vercel.app,http://localhost:5500,http://127.0.0.1:5500,null'
     ).split(',')
     if o.strip()
 ]
