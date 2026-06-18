@@ -53,21 +53,29 @@
         });
     }
 
-    function enviarLectura(nivel, fotoUrl) {
-        return fetch(API_URL.replace(/\/$/, '') + '/api/lectura', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                nivel_cm: nivel,
-                foto_url: fotoUrl,
-                id_anonimo: getAnonId()
-            })
-        }).then(function (r) {
-            return r.json().then(function (data) {
-                if (!r.ok) throw new Error(data.error || 'Error al registrar');
-                return data;
+    // Guarda la lectura DIRECTO en Supabase (instantáneo, no depende de Render)
+    function guardarLectura(nivel, fotoUrl) {
+        if (!_sb) return Promise.reject(new Error('No hay conexión con la base de datos.'));
+        return _sb.from('lecturas_nivel')
+            .insert({ nivel_cm: nivel, foto_url: fotoUrl, id_anonimo: getAnonId() })
+            .select('id')
+            .then(function (res) {
+                if (res.error) throw new Error(res.error.message);
+                return res.data && res.data[0] && res.data[0].id;
             });
-        });
+    }
+
+    // Cruce con Isla Teja + ET: lo hace el backend EN SEGUNDO PLANO (no esperamos).
+    function enriquecer(id) {
+        if (!id) return;
+        try {
+            fetch(API_URL.replace(/\/$/, '') + '/api/enriquecer', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ lectura_id: id }),
+                keepalive: true   // sigue aunque la persona cierre la página
+            }).catch(function () {});
+        } catch (e) {}
     }
 
     function mostrarExito() {
@@ -97,10 +105,11 @@
 
         subirFoto(file)
             .then(function (fotoUrl) {
-                return enviarLectura(nivel, fotoUrl);
+                return guardarLectura(nivel, fotoUrl);
             })
-            .then(function () {
-                mostrarExito();
+            .then(function (id) {
+                mostrarExito();      // ¡instantáneo! ya quedó guardado
+                enriquecer(id);      // el meteo se completa en segundo plano
             })
             .catch(function (err) {
                 console.error('[Laguna]', err);

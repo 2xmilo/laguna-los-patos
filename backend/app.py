@@ -94,6 +94,47 @@ def supabase_insert(table, row):
     return data[0] if isinstance(data, list) and data else data
 
 
+def supabase_update(table, match, row):
+    """PATCH de una fila. match: filtro PostgREST, ej. 'id=eq.<uuid>'."""
+    if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
+        raise RuntimeError('Supabase no configurado')
+    req = Request(
+        f'{SUPABASE_URL}/rest/v1/{table}?{match}',
+        data=json.dumps(row).encode('utf-8'),
+        headers={
+            'apikey': SUPABASE_SERVICE_KEY,
+            'Authorization': f'Bearer {SUPABASE_SERVICE_KEY}',
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal',
+        },
+        method='PATCH',
+    )
+    with urlopen(req, timeout=20):
+        pass
+
+
+def _construir_meteo(estacion, obs, lectura_id):
+    """Arma la fila de datos_meteorologicos cruzando con la observación DMC."""
+    et = dmc.et_priestley_taylor(
+        obs.get('temperatura_c'), obs.get('radiacion_global_w_m2'), interval_min=60)
+    return {
+        'lectura_id': lectura_id,
+        'estacion_codigo': estacion.get('codigoNacional') or ESTACION_ISLA_TEJA,
+        'estacion_nombre': estacion.get('nombreEstacion'),
+        'momento_utc': obs.get('momento'),
+        'momento_local': dmc._to_chile_local(obs.get('momento')),
+        'temperatura_c': obs.get('temperatura_c'),
+        'humedad_relativa_pct': obs.get('humedad_relativa_pct'),
+        'radiacion_global_w_m2': obs.get('radiacion_global_w_m2'),
+        'presion_hpa': obs.get('presion_estacion_hpa'),
+        'precipitacion_minuto_mm': obs.get('precipitacion_minuto_mm'),
+        'precipitacion_24h_mm': obs.get('precipitacion_24h_mm'),
+        'viento_kt': obs.get('viento_kt'),
+        'viento_dir_grados': obs.get('viento_dir_grados'),
+        'et_priestley_mm_h': et,
+    }
+
+
 # ── Endpoints ────────────────────────────────────────────────────────────────
 @app.route('/')
 def root():
@@ -107,6 +148,34 @@ def health():
         'estacion_configurada': bool(ESTACION_ISLA_TEJA),
         'supabase_configurado': bool(SUPABASE_URL and SUPABASE_SERVICE_KEY),
     })
+
+
+@app.route('/api/enriquecer', methods=['POST', 'OPTIONS'])
+def enriquecer():
+    """Cruza una lectura ya guardada con Isla Teja (DMC) y calcula la ET.
+    Lo llama el frontend en segundo plano: el guardado del nivel fue instantáneo
+    (directo a Supabase) y esto completa el meteo después, sin que el usuario espere."""
+    if request.method == 'OPTIONS':
+        return '', 200
+
+    body = request.get_json(silent=True) or {}
+    lectura_id = str(body.get('lectura_id', '')).strip()
+    if not lectura_id:
+        return jsonify({'ok': False, 'error': 'lectura_id requerido'}), 400
+    if not ESTACION_ISLA_TEJA:
+        return jsonify({'ok': False, 'error': 'Estación no configurada'}), 200
+
+    try:
+        estacion, obs = dmc.get_latest_observation(ESTACION_ISLA_TEJA)
+        if not obs:
+            return jsonify({'ok': False, 'error': 'Sin datos DMC'}), 200
+        meteo = _construir_meteo(estacion, obs, lectura_id)
+        supabase_insert('datos_meteorologicos', meteo)
+        supabase_update('lecturas_nivel', f'id=eq.{lectura_id}', {'meteo_ok': True})
+        return jsonify({'ok': True})
+    except Exception as e:
+        logger.warning(f'enriquecer error: {e}')
+        return jsonify({'ok': False, 'error': str(e)}), 200
 
 
 @app.route('/api/estacion/actual', methods=['GET', 'OPTIONS'])
