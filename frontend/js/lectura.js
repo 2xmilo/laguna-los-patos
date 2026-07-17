@@ -78,9 +78,28 @@
         } catch (e) {}
     }
 
-    function mostrarExito() {
+    function mostrarExito(conFoto) {
         $('form-card').hidden = true;
         $('success-card').hidden = false;
+
+        // Puntos de la Plataforma de Humedales: SOLO si la medición trae foto
+        // de la regla (verificación). Sin foto, el dato vale pero no da puntos.
+        var prev = document.getElementById('puntos-box');
+        if (prev) prev.remove();
+        var box = document.createElement('div');
+        box.id = 'puntos-box';
+        if (conFoto && typeof PLATAFORMA_URL !== 'undefined') {
+            box.innerHTML =
+                '<a class="btn-primary btn-primary--link" style="margin-top:10px;" href="' +
+                PLATAFORMA_URL + '/humedal.html?id=laguna-los-patos&nivel_verificado=1">' +
+                '🎟️ Medición verificada con foto: reclamar puntos</a>';
+        } else {
+            box.innerHTML =
+                '<p style="font-size:13px;color:#6b7a75;margin-top:10px;">' +
+                'Dato recibido. Para sumar puntos de la Plataforma de Humedales, ' +
+                'adjuntá una foto de la regla como verificación. 📷</p>';
+        }
+        $('success-card').appendChild(box);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -105,11 +124,13 @@
 
         subirFoto(file)
             .then(function (fotoUrl) {
-                return guardarLectura(nivel, fotoUrl);
+                return guardarLectura(nivel, fotoUrl).then(function (id) {
+                    return { id: id, conFoto: !!fotoUrl };
+                });
             })
-            .then(function (id) {
-                mostrarExito();      // ¡instantáneo! ya quedó guardado
-                enriquecer(id);      // el meteo se completa en segundo plano
+            .then(function (r) {
+                mostrarExito(r.conFoto); // ¡instantáneo! ya quedó guardado
+                enriquecer(r.id);        // el meteo se completa en segundo plano
             })
             .catch(function (err) {
                 console.error('[Laguna]', err);

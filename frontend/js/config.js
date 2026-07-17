@@ -16,6 +16,11 @@ var SUPA_ANON_KEY = 'sb_publishable_Ktgx7rFsqDjXvxiDie0XYQ_LxOgYFY8';
 // Bucket de Storage para las fotos de respaldo
 var FOTOS_BUCKET = 'lecturas-fotos';
 
+// Plataforma de Humedales (para reclamar puntos por medición verificada con foto)
+var PLATAFORMA_URL = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+    ? 'http://localhost:8000'
+    : 'https://plataforma-humedales.vercel.app'; // ← editar tras desplegar la plataforma
+
 // Ubicación de la laguna (para la galería de biodiversidad iNaturalist)
 var LAGUNA_LAT = -39.8098;
 var LAGUNA_LON = -73.2560;
