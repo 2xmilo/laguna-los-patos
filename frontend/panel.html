@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0E3B36">
+<title>Panel municipal · Humedales de Valdivia</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="ph-header">
+  <div class="ph-logo">🏛️</div>
+  <div>
+    <h1>Panel municipal</h1>
+    <p class="sub">Denuncias y ciencia ciudadana · Isla Teja</p>
+  </div>
+</header>
+
+<!-- Puerta de acceso (demo) -->
+<div id="gate" class="panel-gate">
+  <div class="ph-card">
+    <h2>Acceso restringido</h2>
+    <p>Panel para el equipo municipal de medio ambiente.</p>
+    <form id="form-gate" class="ph-form">
+      <label>Clave de acceso</label>
+      <input type="text" id="g-clave" placeholder="Clave del equipo" autocomplete="off">
+      <button type="submit" class="ph-btn ph-btn--prof">Entrar</button>
+    </form>
+    <p id="g-error" class="ph-msg ph-msg--err hidden">Clave incorrecta.</p>
+    <p style="font-size:12px;">Maqueta: la clave es <code>valdivia</code>. En la versión final será login de administrador con Supabase Auth y roles.</p>
+  </div>
+</div>
+
+<!-- Dashboard -->
+<div id="dash" class="panel-wrap hidden">
+  <div class="panel-stats">
+    <div class="panel-stat"><div class="num" id="st-denuncias">0</div><div class="lbl">Denuncias recibidas</div></div>
+    <div class="panel-stat panel-stat--alerta"><div class="num" id="st-pendientes">0</div><div class="lbl">Pendientes</div></div>
+    <div class="panel-stat"><div class="num" id="st-avist">0</div><div class="lbl">Avistamientos validados</div></div>
+    <div class="panel-stat"><div class="num" id="st-especies">0</div><div class="lbl">Especies distintas</div></div>
+  </div>
+
+  <div id="panel-mapa"></div>
+
+  <div class="panel-filtros" id="filtros">
+    <button class="ph-tipo sel" data-f="todo">Todo</button>
+    <button class="ph-tipo" data-f="denuncia">⚠️ Denuncias</button>
+    <button class="ph-tipo" data-f="avistamiento">📷 Avistamientos</button>
+    <button class="ph-tipo" data-f="pendiente">Solo pendientes</button>
+  </div>
+
+  <div id="lista"></div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="js/config.js"></script>
+<script>
+(function () {
+  /* ---- Datos de ejemplo (en producción: tablas ph_denuncias / ph_avistamientos de Supabase) ---- */
+  var DATOS = [
+    { t: 'denuncia', tipo: 'basura', titulo: 'Microbasural en la ribera norte', desc: 'Bolsas y escombros acumulados junto al sendero.', humedal: 'Laguna de los Patos', pos: [-39.8095, -73.2569], estado: 'pendiente', fecha: '2026-07-04' },
+    { t: 'denuncia', tipo: 'relleno', titulo: 'Posible relleno con áridos', desc: 'Camión descargando material en el borde del humedal.', humedal: 'Humedal La Cancha', pos: [-39.8115, -73.2610], estado: 'proceso', fecha: '2026-07-02' },
+    { t: 'denuncia', tipo: 'vegetacion', titulo: 'Corte de vegetación ribereña', desc: 'Totora cortada en sector sur, aprox. 20 metros.', humedal: 'Humedal Santa Inés', pos: [-39.8129, -73.2554], estado: 'pendiente', fecha: '2026-07-01' },
+    { t: 'denuncia', tipo: 'basura', titulo: 'Basura doméstica en el acceso', desc: 'Restos junto a la rotonda, lado oriente.', humedal: 'Humedal La Rotonda', pos: [-39.8096, -73.2575], estado: 'resuelta', fecha: '2026-06-27' },
+    { t: 'denuncia', tipo: 'actividad', titulo: 'Perros sueltos persiguiendo aves', desc: 'Dos perros sin correa en zona de nidificación.', humedal: 'Laguna de los Patos', pos: [-39.8102, -73.2558], estado: 'resuelta', fecha: '2026-06-25' },
+    { t: 'avistamiento', especie: 'Cygnus melancoryphus', titulo: 'Cisne de cuello negro (pareja con crías)', desc: 'IA: 97% de confianza · iNaturalist', humedal: 'Laguna de los Patos', pos: [-39.8099, -73.2564], estado: 'validado', fecha: '2026-07-05' },
+    { t: 'avistamiento', especie: 'Vanellus chilensis', titulo: 'Queltehue', desc: 'IA: 93% de confianza · iNaturalist', humedal: 'Humedal Los Pelúes', pos: [-39.8094, -73.2637], estado: 'validado', fecha: '2026-07-03' },
+    { t: 'avistamiento', especie: 'Ardea alba', titulo: 'Garza grande', desc: 'IA: 95% de confianza · iNaturalist', humedal: 'Humedal Santa Inés', pos: [-39.8131, -73.2551], estado: 'validado', fecha: '2026-07-01' },
+    { t: 'avistamiento', especie: 'Cygnus melancoryphus', titulo: 'Cisne de cuello negro', desc: 'IA: 91% de confianza · iNaturalist', humedal: 'Laguna de los Patos', pos: [-39.8101, -73.2560], estado: 'validado', fecha: '2026-06-29' },
+    { t: 'avistamiento', especie: 'Phleocryptes melanops', titulo: 'Trabajador (nido en totoral)', desc: 'IA: 88% de confianza · iNaturalist', humedal: 'Laguna de los Patos', pos: [-39.8097, -73.2566], estado: 'validado', fecha: '2026-06-28' }
+  ];
+  var TIPO_ICO = { basura: '🗑️', vegetacion: '🌿', relleno: '🚧', actividad: '🚫', otro: '❓' };
+  var ESTADO_TXT = { pendiente: 'Pendiente', proceso: 'En proceso', resuelta: 'Resuelta', validado: 'Validado' };
+
+  /* ---- Puerta demo ---- */
+  document.getElementById('form-gate').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (document.getElementById('g-clave').value.trim().toLowerCase() === 'valdivia') {
+      sessionStorage.setItem('ph_panel', '1'); abrir();
+    } else {
+      document.getElementById('g-error').classList.remove('hidden');
+    }
+  });
+  if (sessionStorage.getItem('ph_panel')) abrir();
+
+  function abrir() {
+    document.getElementById('gate').classList.add('hidden');
+    document.getElementById('dash').classList.remove('hidden');
+    iniciar();
+  }
+
+  var mapa = null;
+  function iniciar() {
+    /* Stats */
+    var den = DATOS.filter(function (d) { return d.t === 'denuncia'; });
+    var avi = DATOS.filter(function (d) { return d.t === 'avistamiento'; });
+    document.getElementById('st-denuncias').textContent = den.length;
+    document.getElementById('st-pendientes').textContent = den.filter(function (d) { return d.estado === 'pendiente'; }).length;
+    document.getElementById('st-avist').textContent = avi.length;
+    document.getElementById('st-especies').textContent = new Set(avi.map(function (a) { return a.especie; })).size;
+
+    /* Mapa */
+    if (!mapa) {
+      mapa = L.map('panel-mapa').setView(MAPA_CENTRO, 15);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(mapa);
+      DATOS.forEach(function (d) {
+        var esDen = d.t === 'denuncia';
+        L.circleMarker(d.pos, {
+          radius: 8, weight: 2, color: '#fff',
+          fillColor: esDen ? (d.estado === 'resuelta' ? '#6FA893' : '#C98A2D') : '#2E6E8E',
+          fillOpacity: .95
+        }).addTo(mapa).bindPopup('<strong>' + d.titulo + '</strong><br>' + d.humedal + ' · ' + ESTADO_TXT[d.estado]);
+      });
+      setTimeout(function () { mapa.invalidateSize(); }, 200);
+    }
+
+    pintarLista('todo');
+  }
+
+  /* Lista + filtros */
+  function pintarLista(filtro) {
+    var lista = document.getElementById('lista');
+    var datos = DATOS.filter(function (d) {
+      if (filtro === 'todo') return true;
+      if (filtro === 'pendiente') return d.estado === 'pendiente';
+      return d.t === filtro;
+    }).sort(function (a, b) { return b.fecha.localeCompare(a.fecha); });
+
+    lista.innerHTML = datos.map(function (d) {
+      var ico = d.t === 'denuncia' ? (TIPO_ICO[d.tipo] || '⚠️') : '📷';
+      var cls = d.estado === 'validado' ? 'resuelta' : d.estado;
+      return '<div class="panel-item">' +
+        '<span class="ico">' + ico + '</span>' +
+        '<div class="cuerpo"><h3>' + d.titulo + '</h3><p>' + d.desc + '</p>' +
+        '<div class="meta">' + d.humedal + ' · ' + new Date(d.fecha + 'T12:00:00').toLocaleDateString('es-CL') +
+        (d.t === 'denuncia' ? ' · denuncia anónima' : '') + '</div></div>' +
+        '<span class="panel-estado panel-estado--' + cls + '">' + ESTADO_TXT[d.estado] + '</span>' +
+        '</div>';
+    }).join('') || '<div class="ph-card"><p>No hay registros con este filtro.</p></div>';
+  }
+
+  document.querySelectorAll('#filtros .ph-tipo').forEach(function (b) {
+    b.addEventListener('click', function () {
+      document.querySelectorAll('#filtros .ph-tipo').forEach(function (x) { x.classList.remove('sel'); });
+      b.classList.add('sel');
+      pintarLista(b.dataset.f);
+    });
+  });
+})();
+</script>
+<footer class="ph-foot">Maqueta con datos de ejemplo. En producción se alimenta de las denuncias y avistamientos reales (Supabase).</footer>
+</body>
+</html>

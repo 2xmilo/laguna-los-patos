@@ -1,0 +1,139 @@
+{
+  "humedales": [
+    {
+      "id": "laguna-los-patos",
+      "nombre": "Laguna de los Patos",
+      "centro": [-39.80996, -73.2562],
+      "descripcion": "Laguna urbana de Isla Teja, corazón del piloto. Aquí funciona además el monitoreo ciudadano de nivel de agua, que cruza cada lectura con la estación meteorológica Isla Teja (DMC) para construir el balance hídrico.",
+      "piloto": true,
+      "monitoreo_nivel": true,
+      "estaciones": ["espejo-de-agua", "totoral", "ribera", "bosque-riberenio"]
+    },
+    {
+      "id": "santa-ines",
+      "nombre": "Humedal Santa Inés",
+      "centro": [-39.81302, -73.25527],
+      "descripcion": "Humedal de la red de Isla Teja, refugio de aves acuáticas y vegetación palustre. Ahora con tour 360° propio.",
+      "piloto": false,
+      "monitoreo_nivel": false,
+      "estaciones": ["si-mirador", "si-totoral", "si-borde"]
+    },
+    {
+      "id": "humedal-cancha",
+      "nombre": "Humedal La Cancha",
+      "centro": [-39.81171, -73.26137],
+      "descripcion": "Humedal urbano de Isla Teja, parte de la red hídrica que conecta la laguna con el río Cruces.",
+      "piloto": false,
+      "monitoreo_nivel": false,
+      "estaciones": []
+    },
+    {
+      "id": "los-pelues",
+      "nombre": "Humedal Los Pelúes",
+      "centro": [-39.80948, -73.26357],
+      "descripcion": "Humedal de la red de Isla Teja, zona de totorales y hábitat de anfibios.",
+      "piloto": false,
+      "monitoreo_nivel": false,
+      "estaciones": []
+    },
+    {
+      "id": "buda",
+      "nombre": "Humedal El Buda",
+      "centro": [-39.80828, -73.26274],
+      "descripcion": "Humedal de la red de Isla Teja.",
+      "piloto": false,
+      "monitoreo_nivel": false,
+      "estaciones": []
+    },
+    {
+      "id": "hualve",
+      "nombre": "Hualve",
+      "centro": [-39.80309, -73.26121],
+      "descripcion": "Hualve o bosque pantanoso: la forma más antigua de humedal valdiviano, dominado por temu y pitra.",
+      "piloto": false,
+      "monitoreo_nivel": false,
+      "estaciones": []
+    },
+    {
+      "id": "humedal-rotonda",
+      "nombre": "Humedal La Rotonda",
+      "centro": [-39.80956, -73.25765],
+      "descripcion": "Humedal urbano junto a la rotonda de Isla Teja, vecino inmediato de la Laguna de los Patos.",
+      "piloto": false,
+      "monitoreo_nivel": false,
+      "estaciones": []
+    }
+  ],
+  "estaciones": {
+    "espejo-de-agua": {
+      "nombre": "Espejo de agua",
+      "tema": "La pasarela sobre el agua abierta y los luchecillos. Donde nadan los cisnes.",
+      "accion": "avistar",
+      "accion_texto": "Identificar aves acuáticas",
+      "pano": "panos/espejo-de-agua.jpg",
+      "centro": [-39.8100333, -73.2558783],
+      "norte": 0,
+      "real": true
+    },
+    "totoral": {
+      "nombre": "Totoral / juncal",
+      "tema": "La sala cuna del humedal: refugio y reproducción, donde anidan y se esconden las aves.",
+      "accion": "avistar",
+      "accion_texto": "Reto de descubrimiento: encontrar el nido escondido",
+      "pano": "panos/totoral.jpg",
+      "centro": [-39.8096, -73.2566],
+      "norte": 0,
+      "real": false
+    },
+    "ribera": {
+      "nombre": "Ribera",
+      "tema": "La laguna vista desde lo alto: la ciudad que la rodea y la aprieta.",
+      "accion": "reportar",
+      "accion_texto": "Reportar daños o basura",
+      "pano": "panos/ribera.jpg",
+      "centro": [-39.8100617, -73.2561323],
+      "norte": 0,
+      "real": true
+    },
+    "bosque-riberenio": {
+      "nombre": "Bosque ribereño",
+      "tema": "El dosel, lo antiguo y lo nocturno. Territorio del Monito del Monte.",
+      "accion": "descubrir",
+      "accion_texto": "Escuchar las historias profundas del avatar",
+      "pano": "panos/bosque-riberenio.jpg",
+      "centro": [-39.8103, -73.2567],
+      "norte": 0,
+      "real": false
+    },
+    "si-mirador": {
+      "nombre": "Mirador del totoral",
+      "tema": "El humedal Santa Inés desde la altura: un vecino vivo rodeado de ciudad.",
+      "accion": "avistar",
+      "accion_texto": "Identificar aves del totoral",
+      "pano": "panos/si-mirador.jpg",
+      "centro": [-39.8111451, -73.2557371],
+      "norte": -10.4,
+      "real": true
+    },
+    "si-totoral": {
+      "nombre": "Corazón del totoral",
+      "tema": "El mar de junquillos: dorado y dormido en invierno, lleno de vida escondida.",
+      "accion": "avistar",
+      "accion_texto": "Reto: encontrar señales de vida entre los juncos",
+      "pano": "panos/si-totoral.jpg",
+      "centro": [-39.8113396, -73.2557455],
+      "norte": 0,
+      "real": true
+    },
+    "si-borde": {
+      "nombre": "El borde urbano",
+      "tema": "Donde el humedal toca la calle: el canal, los autos y la primera línea de pérdida.",
+      "accion": "reportar",
+      "accion_texto": "Reportar daños en el borde",
+      "pano": "panos/si-borde.jpg",
+      "centro": [-39.8107648, -73.2560007],
+      "norte": -26.4,
+      "real": true
+    }
+  }
+}

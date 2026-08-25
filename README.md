@@ -1,104 +1,97 @@
-# Monitoreo Ciudadano · Laguna Los Patos
+# RedHumedal · Red Digital de Humedales de Isla Teja
 
-Mini-aplicación web (QR) para que la comunidad registre el **nivel** de la
-Laguna Los Patos. Cada lectura se cruza automáticamente con la estación
-**Isla Teja (DMC)** y se calcula la **evapotranspiración (Priestley-Taylor)**.
-Todo se guarda en Supabase para construir la serie temporal y, más adelante,
-el balance hídrico.
+Plataforma web (sin instalación) que conecta a la comunidad con la **red de
+humedales de Isla Teja, Valdivia**. Se accede desde la web o por un QR físico en
+cada punto de observación.
 
-> Proyecto **independiente** de Evergreen. Solo reutiliza la *lógica* de acceso
-> a la DMC (copiada en `backend/dmc.py`). No modifica `demo-evergreen` ni
-> `precipitacion-backend`.
+> **Idea rectora:** una *red* de humedales donde **cada humedal puede tener sus
+> propias herramientas**, que se agregan con el tiempo a medida que crecen la red
+> y los usuarios. La primera herramienta es el **monitoreo de nivel** de la
+> Laguna de los Patos.
 
-## Arquitectura
+Nombre visible del sitio: *Humedales de Valdivia · Red de Isla Teja*.
+`RedHumedal` es el nombre interno del proyecto/repositorio.
 
-```
-[ QR ] → frontend (Vercel, estático)
-            │  1. sube foto opcional → Supabase Storage
-            │  2. POST /api/lectura { nivel_cm }
-            ▼
-        backend Flask (Render)
-            │  3. cruza con Isla Teja (DMC) en ese momento
-            │  4. calcula ET (Priestley-Taylor)
-            │  5. inserta lectura + meteo (service_role)
-            ▼
-        Supabase (DB + Storage)  ← dashboard.html lee directo (anon)
-```
-
-El ciudadano **solo ingresa el nivel**. Nunca ve caudal ni balance.
-
-## Estructura
+## Arquitectura de carpetas
 
 ```
-monitoreo-ciudadano/
-├─ frontend/            # estático → Vercel
-│  ├─ index.html        # ficha + formulario del QR
-│  ├─ dashboard.html    # serie de nivel pública
-│  ├─ css/
-│  └─ js/  (config.js ← editar API_URL tras desplegar el backend)
-├─ backend/             # Flask → Render
-│  ├─ app.py            # endpoints
-│  ├─ dmc.py            # funciones DMC + ET (copiadas de Evergreen)
-│  └─ .env.example
-└─ supabase/
-   └─ schema.sql        # ya aplicado al proyecto laguna-los-patos
+RedHumedal/
+├─ frontend/                       # ← estático → Vercel (raíz del deploy)
+│  ├─ index.html                   # mapa de la red (Leaflet + OSM)
+│  ├─ humedal.html                 # hub de CUALQUIER humedal (?id=…)
+│  ├─ tour.html                    # tour 360° (Pannellum)
+│  ├─ avistar.html                 # avistamiento con IA (iNaturalist)
+│  ├─ reportar.html                # denuncia anónima
+│  ├─ observar.html                # reconocer especies
+│  ├─ cupones.html · cuenta.html · docente.html · panel.html
+│  ├─ css/  js/  data/  panos/
+│  └─ herramientas/                # 🔑 herramientas POR humedal (extensible)
+│     └─ laguna-los-patos/
+│        └─ monitoreo-nivel/       # monitoreo ciudadano de nivel + dashboard
+│
+├─ backend/                        # servicio de la plataforma (Flask → Render)
+│                                  #   /api/avistamiento · /api/denuncia
+├─ backend-laguna-nivel/           # servicio del monitoreo (Flask → Render)
+│                                  #   /api/lectura · cruce DMC · ET
+├─ supabase/
+│  ├─ schema-plataforma.sql        # tablas ph_avistamientos, ph_denuncias
+│  └─ schema-laguna-nivel.sql      # tablas lecturas_nivel, datos_meteorologicos
+└─ docs/                           # KMZ y fotos-fuente (no se publican)
 ```
 
-## Estado actual
+### Cómo agregar una herramienta nueva a un humedal
 
-- ✅ Supabase `laguna-los-patos` creado (`noqcvqatxzpqbtwdnmgk`), esquema y RLS aplicados, bucket `lecturas-fotos` listo.
-- ✅ Frontend conectado a Supabase (URL + publishable key en `frontend/js/config.js`).
-- ⏳ Backend pendiente de desplegar en Render (código listo).
-- ⏳ Falta confirmar el **código de la estación Isla Teja** (ver más abajo).
+Creá `frontend/herramientas/<humedal-id>/<herramienta>/` con su propio
+`index.html` (y su css/js). Enlazala desde `humedal.html` para ese `<humedal-id>`.
+No hace falta tocar el resto de la app. Ese es el patrón para crecer.
 
-## Despliegue del backend (Render)
+## Dónde se edita cada cosa
 
-1. Subir `backend/` a un repo Git nuevo (separado de Evergreen).
-2. En Render → New → Web Service, apuntar a ese repo. Build: `pip install -r requirements.txt`. Start: usa el `Procfile`.
-3. Cargar variables de entorno (ver `backend/.env.example`):
-   - `DMC_USER`, `DMC_TOKEN` → **las mismas credenciales DMC de Evergreen**.
-   - `ESTACION_ISLA_TEJA` → código de la estación (paso siguiente).
-   - `SUPABASE_URL` = `https://noqcvqatxzpqbtwdnmgk.supabase.co`
-   - `SUPABASE_SERVICE_KEY` → **service_role** del proyecto laguna (Supabase → Project Settings → API). ⚠️ Solo en el backend, nunca en el frontend.
-   - `ALLOWED_ORIGINS` → el dominio Vercel del frontend.
-4. Copiar la URL pública de Render en `frontend/js/config.js` (`API_URL`).
+| Querés cambiar… | Editá… |
+|---|---|
+| El mapa / listado de humedales | `frontend/data/humedales.json` + `frontend/index.html` |
+| Las historias del avatar-guía | `frontend/js/avatar.js` |
+| Puntos, cupones, insignias | `frontend/js/puntos.js` |
+| El hub de un humedal | `frontend/humedal.html` |
+| El tour 360° / estaciones | `frontend/tour.html` + `frontend/panos/` |
+| El monitoreo de nivel de la laguna | `frontend/herramientas/laguna-los-patos/monitoreo-nivel/` |
+| Estilos globales de la plataforma | `frontend/css/style.css` |
 
-### Confirmar el código de la estación Isla Teja
+## Cómo se conecta todo
 
-Con `DMC_USER`/`DMC_TOKEN` ya cargados, abrir:
+- **Mismo deploy, una sola URL.** La plataforma es la raíz; el monitoreo de nivel
+  vive en `/herramientas/laguna-los-patos/monitoreo-nivel/` y se enlaza desde el
+  hub de la laguna (`MONITOREO_LAGUNA_URL` en `frontend/js/config.js`).
+- **Mismo Supabase** (`noqcvqatxzpqbtwdnmgk`). Tablas `ph_*` para la plataforma y
+  `lecturas_nivel` / `datos_meteorologicos` para el monitoreo (no chocan).
+- **Modo demo:** sin backends, los formularios simulan la respuesta
+  (`PH_MODO_DEMO_FALLBACK`) para mostrar el flujo completo.
 
-```
-https://TU-BACKEND.onrender.com/api/dmc/cercanas
-```
+## Despliegue
 
-Devuelve las estaciones EMA ordenadas por cercanía a la laguna. Tomar el
-`codigoNacional` de Isla Teja y ponerlo en `ESTACION_ISLA_TEJA`.
+- **Frontend (Vercel):** ya conectado al repo; *Root Directory* = `frontend/`.
+  Cada `push` a `main` redeploya `laguna-los-patos.vercel.app`.
+- **Backends (Render):** un Web Service por carpeta (`backend/` y
+  `backend-laguna-nivel/`). Build `pip install -r requirements.txt`, start por
+  `Procfile`. Variables en cada `.env.example`. La `SUPABASE_SERVICE_KEY`
+  (service_role) va **solo** en los backends, nunca en el frontend.
 
-## Despliegue del frontend (Vercel)
+## Estado y pendientes
 
-- Importar la carpeta `frontend/` como proyecto estático. Sin build.
-- Generar el QR apuntando a la URL de `index.html`.
+- ✅ Migración a arquitectura RedHumedal (plataforma + monitoreo anidado).
+- ⏳ **Supabase sin tablas:** aplicar `supabase/schema-*.sql` para que se guarden
+  avistamientos, denuncias y lecturas de verdad (hoy solo funciona en modo demo).
+- ⏳ **Backends sin desplegar** en Render (el código está listo).
+- ⏳ **Panoramas 360° son placeholders** — reemplazar por capturas del dron.
+- ⏳ Mejoras de contenido y UX (historias del avatar, especies, experiencia).
 
 ## Prueba local
 
 ```bash
-cd backend
-cp .env.example .env   # completar credenciales
-pip install -r requirements.txt
-python app.py          # http://localhost:5000
+# Frontend (raíz = frontend/)
+cd frontend && python -m http.server 5500      # http://localhost:5500
+
+# Backends (opcional; sin ellos corre en modo demo)
+cd backend && cp .env.example .env && pip install -r requirements.txt && python app.py
+cd backend-laguna-nivel && cp .env.example .env && pip install -r requirements.txt && python app.py
 ```
-
-Servir el frontend (ej. Live Server en :5500) y enviar una lectura.
-
-## Modelo de datos
-
-| Tabla | Rol |
-|-------|-----|
-| `lecturas_nivel` | nivel ciudadano (id, creado_en, nivel_cm, foto_url, id_anonimo) |
-| `datos_meteorologicos` | cruce Isla Teja + ET, 1:1 con la lectura |
-
-## Próximos pasos (fuera de este MVP)
-
-- Curvas nivel–volumen y nivel–caudal (tras la calibración con data logger).
-- Vista de balance hídrico (ΔS, P, ET, Qsalida).
-- Módulos: galería iNaturalist/GBIF, gamificación, reporte ciudadano.

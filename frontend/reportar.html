@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0E3B36">
+<title>Reportar · Humedales de Valdivia</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-tab="humedal">
+<header class="ph-header">
+  <a class="back" id="back" href="#">‹</a>
+  <div><h1>Reportar un daño</h1><p class="sub">Denuncia anónima</p></div>
+</header>
+
+<div class="ph-wrap">
+  <div class="ph-card">
+    <p>Defender el humedal es defender un lugar que ya es tuyo. <strong>Tu denuncia es anónima:</strong> no registramos tu identidad; solo la ubicación del humedal y tu foto, sin datos que permitan identificarte.</p>
+
+    <!-- Guardián: nunca documenta un daño solo. Reemplaza al formulario completo. -->
+    <div id="menor" class="hidden">
+      <div class="obs-foto" style="font-size:54px;">🫱🏽‍🫲🏼</div>
+      <p style="text-align:center;font-size:16px;color:var(--bosque);font-weight:600;">¿Viste basura o algo raro en el humedal?</p>
+      <p style="text-align:center;"><strong>Avísale a tu adulto.</strong> Él puede hacer el reporte desde su teléfono. Nunca te acerques solo a documentar un daño: tu misión es avisar.</p>
+    </div>
+
+    <form id="form" class="ph-form">
+      <label>¿Qué viste?</label>
+      <div class="ph-tipos" id="tipos">
+        <button type="button" class="ph-tipo sel" data-v="basura">🗑️ Basura</button>
+        <button type="button" class="ph-tipo" data-v="vegetacion">🌿 Daño a vegetación</button>
+        <button type="button" class="ph-tipo" data-v="relleno">🚧 Relleno / construcción</button>
+        <button type="button" class="ph-tipo" data-v="actividad">🚫 Actividad ilegal</button>
+        <button type="button" class="ph-tipo" data-v="otro">❓ Otro</button>
+      </div>
+
+      <label>Descripción (opcional)</label>
+      <textarea id="desc" rows="3" placeholder="Contanos brevemente qué viste…"></textarea>
+
+      <label>Foto (opcional)</label>
+      <label class="ph-foto-zona" id="foto-zona">
+        <span class="ico">📷</span>
+        <span id="foto-texto">Tocá para sacar una foto</span>
+        <small>Se guarda sin metadatos que te identifiquen</small>
+        <input type="file" id="foto" accept="image/*" capture="environment">
+      </label>
+
+      <div id="geo" class="ph-geo ph-geo--wait">📍 Obteniendo ubicación del humedal…</div>
+      <button type="submit" class="ph-btn ph-btn--dorado" id="enviar" disabled>Enviar denuncia anónima</button>
+    </form>
+    <div id="msg"></div>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/geo.js"></script>
+<script src="js/avatar.js"></script>
+<script src="js/puntos.js"></script>
+<script>
+(async function () {
+  var id = new URLSearchParams(location.search).get('id') || 'laguna-los-patos';
+  document.getElementById('back').href = 'humedal.html?id=' + id;
+  var feature = await phFeatureDe(id);
+  var pos = null, enviar = document.getElementById('enviar'), geoBox = document.getElementById('geo');
+  var tipo = 'basura';
+
+  // Reto Cuidar declinado por edad
+  if (PH_PERFIL === 'guardian') {
+    // Guardián: solo el aviso al adulto; nada de formulario ni fotos
+    document.getElementById('menor').classList.remove('hidden');
+    document.getElementById('form').classList.add('hidden');
+    document.querySelector('.ph-card > p').classList.add('hidden');
+    phDecir(phHistoria('reporte'));
+    return;
+  }
+  if (PH_PERFIL === 'explorador') {
+    // Explorador: lenguaje de misión
+    document.querySelector('.ph-header h1').textContent = 'Misión: defender el humedal';
+    document.querySelector('.ph-card > p').innerHTML =
+      'Este lugar ya es tuyo, y las misiones de cuidado lo protegen. <strong>Tu reporte es anónimo:</strong> registramos el daño y la ubicación, nunca tu identidad.';
+    document.getElementById('enviar').textContent = 'Completar la misión';
+  }
+
+  // Chips de tipo
+  document.querySelectorAll('.ph-tipo').forEach(function (b) {
+    b.addEventListener('click', function () {
+      document.querySelectorAll('.ph-tipo').forEach(function (x) { x.classList.remove('sel'); });
+      b.classList.add('sel'); tipo = b.dataset.v;
+    });
+  });
+
+  // Vista previa de foto
+  document.getElementById('foto').addEventListener('change', function () {
+    var f = this.files[0];
+    var zona = document.getElementById('foto-zona');
+    if (!f) return;
+    zona.classList.add('ok');
+    zona.querySelector('.ico').textContent = '✓';
+    document.getElementById('foto-texto').textContent = 'Foto lista — tocá para cambiarla';
+    var prev = zona.querySelector('img'); if (prev) prev.remove();
+    var img = document.createElement('img');
+    img.src = URL.createObjectURL(f);
+    zona.appendChild(img);
+  });
+
+  navigator.geolocation && navigator.geolocation.getCurrentPosition(function (p) {
+    pos = { lat: p.coords.latitude, lon: p.coords.longitude };
+    var dentro = phEnHumedal(pos.lon, pos.lat, feature);
+    geoBox.className = 'ph-geo ph-geo--ok';
+    geoBox.textContent = dentro ? '✓ Ubicación dentro del humedal registrada.' : '✓ Ubicación registrada (cerca del humedal).';
+    enviar.disabled = false;
+  }, function () {
+    geoBox.className = 'ph-geo ph-geo--no';
+    geoBox.textContent = 'Sin GPS: se usará el centro del humedal.';
+    enviar.disabled = false;
+  });
+
+  document.getElementById('form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var msg = document.getElementById('msg');
+    enviar.disabled = true; msg.className = 'ph-msg'; msg.textContent = 'Enviando…';
+    var fd = new FormData();
+    fd.append('humedal_id', id); fd.append('tipo', tipo);
+    fd.append('descripcion', document.getElementById('desc').value);
+    if (pos) { fd.append('lat', pos.lat); fd.append('lon', pos.lon); }
+    var ff = document.getElementById('foto').files[0]; if (ff) fd.append('foto', ff);
+    try {
+      var r = await fetch(PH_API_URL + '/api/denuncia', { method: 'POST', body: fd });
+      if (!r.ok) throw new Error('backend');
+      var g1 = phSumarPuntos('denuncia');
+      msg.className = 'ph-msg ph-msg--ok';
+      msg.innerHTML = '✓ Denuncia enviada al panel municipal de forma anónima.<br>🎟️ +' + g1 + ' puntos · <a href="cupones.html?id=' + id + '">ver cupones</a>';
+      phDecir(phHistoria('reporte'));
+    } catch (err) {
+      if (PH_MODO_DEMO_FALLBACK) {
+        var g2 = phSumarPuntos('denuncia');
+        msg.className = 'ph-msg ph-msg--ok';
+        msg.innerHTML = '✓ <em>(demo)</em> Denuncia registrada anónimamente.<br>🎟️ +' + g2 + ' puntos · <a href="cupones.html?id=' + id + '">ver cupones</a>';
+        phDecir(phHistoria('reporte'));
+      } else {
+        msg.className = 'ph-msg ph-msg--err'; msg.textContent = 'No pudimos enviar la denuncia. Intentá de nuevo.';
+        enviar.disabled = false;
+      }
+    }
+  });
+})();
+</script>
+<footer class="ph-foot">La foto se guarda sin metadatos EXIF. Solo se conserva la coordenada del humedal.</footer>
+</body>
+</html>

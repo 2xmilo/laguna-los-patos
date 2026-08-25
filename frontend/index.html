@@ -1,138 +1,187 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laguna Los Patos · Monitoreo Ciudadano</title>
-    <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#F6F1E7">
+<title>Humedales de Valdivia · Red de Isla Teja</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-    <main class="wrap">
+<body data-tab="mapa">
 
-        <!-- Encabezado / ficha -->
-        <header class="hero">
-            <div class="hero-badge">Isla Teja · Valdivia</div>
-            <h1>Laguna Los Patos</h1>
-            <p class="hero-sub">Monitoreo ciudadano del humedal</p>
-        </header>
+<!-- Mapa a pantalla completa -->
+<div id="mapa" class="mapa-full"></div>
 
-        <section class="card ficha">
-            <figure class="ficha-foto">
-                <img src="img/Imagen1.png" alt="Vertedero de salida de la Laguna Los Patos, donde se instala la regla" loading="lazy">
-                <figcaption>El vertedero de salida (S1), donde se ubica la regla de medición.</figcaption>
-            </figure>
-            <p>
-                Estás frente a la <strong>regla de medición</strong> de la Laguna Los Patos.
-                Con tu lectura ayudas a construir una serie continua del nivel del agua,
-                que la Universidad Austral y el Comité de Humedales usan para entender
-                cómo cambia el humedal en el tiempo.
-            </p>
-            <p class="ficha-note">
-                Solo necesitas leer el número en la regla. La fecha, la hora y los datos
-                meteorológicos se registran automáticamente. El registro es anónimo.
-            </p>
-        </section>
+<!-- Píldora superior (marca) -->
+<div class="mapa-pill">
+  <span class="logo">🦢</span>
+  <span><strong>Humedales de Valdivia</strong><small>Red de Isla Teja</small></span>
+</div>
 
-        <!-- Formulario de medición -->
-        <section class="card" id="form-card">
-            <h2>Ingresa tu medición</h2>
+<!-- Controles flotantes -->
+<div class="mapa-stack">
+  <button id="btn-gps" aria-label="Humedal más cercano">📍</button>
+  <button id="btn-ayuda" aria-label="Ayuda">?</button>
+</div>
 
-            <form id="form-lectura" novalidate>
-                <div class="field">
-                    <div class="field-label-row">
-                        <label class="field-label" for="nivel_cm">Nivel en la regla (cm)</label>
-                        <button type="button" class="help-btn" id="btn-ayuda" aria-label="¿Cómo medir el nivel?">?</button>
-                    </div>
-                    <input
-                        type="number" id="nivel_cm" name="nivel_cm"
-                        inputmode="decimal" step="0.1" min="0" max="500"
-                        placeholder="Ej: 42.5" required>
-                    <small class="field-hint">Lee el número donde el agua toca la regla.</small>
-                </div>
+<!-- Sheet persistente: carrusel (peek) o detalle (al seleccionar) -->
+<div class="mapa-sheet" id="sheet">
+  <div class="asa"></div>
 
-                <div class="field">
-                    <span class="field-label">Foto (opcional)</span>
-                    <input type="file" id="foto" name="foto" accept="image/*" capture="environment" hidden>
-                    <div class="foto-control">
-                        <button type="button" class="foto-btn" id="btn-foto" aria-label="Tomar o subir foto">
-                            <span class="foto-cam">📷</span>
-                        </button>
-                        <div class="foto-preview" id="foto-preview">
-                            <span class="foto-hint">Toca para tomar o subir una foto de la regla</span>
-                        </div>
-                    </div>
-                </div>
+  <div id="modo-lista">
+    <h3 id="s-titulo">7 humedales para visitar 🌿</h3>
+    <div class="mapa-carrusel" id="carrusel"></div>
+  </div>
 
-                <button type="submit" id="btn-enviar" class="btn-primary">
-                    Enviar medición
-                </button>
-            </form>
-
-            <div id="status" class="status" hidden></div>
-        </section>
-
-        <!-- Condiciones actuales en Isla Teja (DMC vía backend; ET la calcula Render) -->
-        <section class="card estacion" id="estacion-card">
-            <div class="estacion-head">
-                <h2>Estación Isla Teja · ahora</h2>
-                <span class="estacion-momento" id="est-momento">—</span>
-            </div>
-            <div class="estacion-grid" id="estacion-grid">
-                <div class="est-metric"><i>🌡️</i><strong id="est-temp">—</strong><span>Temp.</span></div>
-                <div class="est-metric"><i>💧</i><strong id="est-hr">—</strong><span>Humedad</span></div>
-                <div class="est-metric"><i>☀️</i><strong id="est-rad">—</strong><span>Radiación</span></div>
-                <div class="est-metric"><i>🌧️</i><strong id="est-pp">—</strong><span>PP 24h</span></div>
-                <div class="est-metric"><i>💨</i><strong id="est-viento">—</strong><span>Viento</span></div>
-                <div class="est-metric"><i>🌿</i><strong id="est-et">—</strong><span>ET</span></div>
-            </div>
-        </section>
-
-        <!-- Acceso directo a la galería de biodiversidad -->
-        <a href="galeria.html" class="btn-bio">
-            <span class="btn-bio-ico">🦆</span>
-            <span class="btn-bio-txt">Ver la biodiversidad de la laguna</span>
-            <span class="btn-bio-arrow">→</span>
-        </a>
-
-        <!-- Confirmación (oculta hasta enviar) -->
-        <section class="card success" id="success-card" hidden>
-            <div class="success-icon">✓</div>
-            <h2>¡Gracias por tu aporte!</h2>
-            <p>Tu medición quedó registrada en el monitoreo de la laguna.</p>
-            <a href="galeria.html" class="btn-primary btn-primary--link">🦆 Ver biodiversidad de la laguna</a>
-            <button type="button" id="btn-otra" class="btn-secondary">Ingresar otra medición</button>
-            <a href="dashboard.html" class="link-dashboard">Ver el monitoreo público →</a>
-        </section>
-
-        <footer class="foot">
-            <a href="dashboard.html">Dashboard</a>
-            <span>·</span>
-            <a href="galeria.html">Biodiversidad</a>
-            <span>·</span>
-            <span>Laguna Los Patos</span>
-        </footer>
-    </main>
-
-    <!-- Popup: cómo medir el nivel -->
-    <div class="popup" id="popup-ayuda" hidden>
-        <div class="popup-bg" data-cerrar-ayuda></div>
-        <div class="popup-card" role="dialog" aria-modal="true">
-            <button class="popup-x" data-cerrar-ayuda aria-label="Cerrar">×</button>
-            <h3>¿Cómo medir el nivel?</h3>
-            <ol class="popup-pasos">
-                <li>Ubica la <strong>regla limnimétrica</strong> instalada en el vertedero de salida de la laguna.</li>
-                <li>Mira <strong>dónde el agua toca la regla</strong>.</li>
-                <li>Lee el <strong>número en centímetros</strong> justo en ese punto.</li>
-                <li>Escríbelo en la casilla. Si puedes, agrega una <strong>foto</strong> de la regla.</li>
-            </ol>
-            <p class="popup-nota">No necesitas anotar la hora ni nada más: el sistema lo registra automáticamente.</p>
-        </div>
+  <div id="modo-detalle" class="mapa-detalle hidden">
+    <div id="d-chips"></div>
+    <h2 id="d-nombre"></h2>
+    <p class="dist" id="d-dist"></p>
+    <p class="desc" id="d-desc"></p>
+    <div class="botones">
+      <a id="d-ruta" class="ph-btn ph-btn--ghost" target="_blank" rel="noopener" style="margin-top:0;">🧭 Ir</a>
+      <a id="d-entrar" class="ph-btn ph-btn--prof" style="margin-top:0;">Entrar al humedal</a>
     </div>
+  </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/config.js"></script>
-    <script src="js/supabase-client.js"></script>
-    <script src="js/estacion.js"></script>
-    <script src="js/lectura.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="js/config.js"></script>
+<script src="js/nav.js"></script>
+<script>
+(async function () {
+  var map = L.map('mapa', { zoomControl: false, attributionControl: false }).setView(MAPA_CENTRO, MAPA_ZOOM);
+  L.control.attribution({ position: 'topleft', prefix: false }).addAttribution('© OpenStreetMap').addTo(map);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+
+  var meta = await (await fetch('data/humedales.json')).json();
+  var geo = await (await fetch('data/humedales.geojson')).json();
+  var byId = {}; meta.humedales.forEach(function (h) { byId[h.id] = h; });
+
+  var miPos = null;
+  navigator.geolocation && navigator.geolocation.getCurrentPosition(function (p) {
+    miPos = { lat: p.coords.latitude, lon: p.coords.longitude };
+    if (selActual) pintarDetalle(selActual);
+  }, function () {}, { maximumAge: 60000 });
+
+  function distM(a, b) {
+    var R = 6371e3, f1 = a[0]*Math.PI/180, f2 = b[0]*Math.PI/180;
+    var df = (b[0]-a[0])*Math.PI/180, dl = (b[1]-a[1])*Math.PI/180;
+    var x = Math.sin(df/2)*Math.sin(df/2) + Math.cos(f1)*Math.cos(f2)*Math.sin(dl/2)*Math.sin(dl/2);
+    return R * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1-x));
+  }
+  function distTexto(m) { return m < 1000 ? Math.round(m) + ' m' : (m/1000).toFixed(1) + ' km'; }
+
+  /* ---- Polígonos suaves + pins numerados ---- */
+  L.geoJSON(geo, {
+    style: function (f) {
+      var h = byId[f.properties.id] || {};
+      return { color: h.piloto ? '#C98A2D' : '#2C7A6E', weight: 1.5,
+               fillColor: h.piloto ? '#C98A2D' : '#2C7A6E', fillOpacity: .18 };
+    },
+    onEachFeature: function (f, layer) {
+      layer.on('click', function (e) { L.DomEvent.stopPropagation(e); seleccionar(byId[f.properties.id]); });
+    }
+  }).addTo(map);
+
+  var pins = {};
+  meta.humedales.forEach(function (h, i) {
+    var icon = L.divIcon({
+      className: '', iconSize: h.piloto ? [40, 40] : [34, 34], iconAnchor: h.piloto ? [20, 20] : [17, 17],
+      html: '<div class="pin-humedal' + (h.piloto ? ' piloto' : '') + '" id="pin-' + h.id + '">' +
+            (h.piloto ? '🦢' : (i + 1)) + '</div>'
+    });
+    pins[h.id] = L.marker(h.centro, { icon: icon }).addTo(map)
+      .on('click', function () { seleccionar(h); });
+  });
+
+  /* ---- Carrusel (estado peek) ---- */
+  document.getElementById('s-titulo').textContent = meta.humedales.length + ' humedales para visitar 🌿';
+  var carrusel = document.getElementById('carrusel');
+  carrusel.innerHTML = meta.humedales.map(function (h, i) {
+    return '<div class="mini-humedal' + (h.piloto ? ' piloto' : '') + '" data-h="' + h.id + '">' +
+           '<span class="n">' + (h.piloto ? '🦢' : (i + 1)) + '</span>' +
+           '<strong>' + h.nombre + '</strong>' +
+           '<small>' + (h.piloto ? 'Humedal piloto · tour 360°' : 'Red Isla Teja') + '</small></div>';
+  }).join('');
+  carrusel.querySelectorAll('.mini-humedal').forEach(function (c) {
+    c.addEventListener('click', function () { seleccionar(byId[c.dataset.h]); });
+  });
+
+  /* ---- Selección: pin + zoom + detalle en el sheet ---- */
+  var selActual = null;
+  function seleccionar(h) {
+    if (!h) return;
+    selActual = h;
+    Object.keys(pins).forEach(function (k) {
+      var el = document.getElementById('pin-' + k);
+      if (el) el.classList.toggle('sel', k === h.id);
+    });
+    map.flyTo(h.centro, 16, { duration: .6 });
+    pintarDetalle(h);
+    document.getElementById('modo-lista').classList.add('hidden');
+    document.getElementById('modo-detalle').classList.remove('hidden');
+  }
+  function pintarDetalle(h) {
+    var chips = '';
+    if (h.piloto) chips += '<span class="ph-chip ph-chip--piloto">Piloto</span>';
+    if (h.monitoreo_nivel) chips += '<span class="ph-chip ph-chip--nivel">Monitoreo de nivel</span>';
+    document.getElementById('d-chips').innerHTML = chips;
+    document.getElementById('d-nombre').textContent = h.nombre;
+    document.getElementById('d-desc').textContent = h.descripcion;
+    var destino = h.centro[0] + ',' + h.centro[1];
+    var ruta = document.getElementById('d-ruta');
+    if (miPos) {
+      var d = distM([miPos.lat, miPos.lon], h.centro);
+      document.getElementById('d-dist').textContent = 'A ' + distTexto(d) + ' de tu ubicación';
+      ruta.href = 'https://www.google.com/maps/dir/?api=1&origin=' + miPos.lat + ',' + miPos.lon +
+                  '&destination=' + destino + '&travelmode=' + (d > 2500 ? 'driving' : 'walking');
+    } else {
+      document.getElementById('d-dist').textContent = 'Isla Teja · Valdivia';
+      ruta.href = 'https://www.google.com/maps/dir/?api=1&destination=' + destino + '&travelmode=walking';
+    }
+    document.getElementById('d-entrar').href = 'humedal.html?id=' + h.id;
+  }
+
+  // Tocar el mapa vuelve a la lista
+  map.on('click', function () {
+    selActual = null;
+    Object.keys(pins).forEach(function (k) {
+      var el = document.getElementById('pin-' + k);
+      if (el) el.classList.remove('sel');
+    });
+    document.getElementById('modo-detalle').classList.add('hidden');
+    document.getElementById('modo-lista').classList.remove('hidden');
+  });
+
+  /* ---- Botones flotantes ---- */
+  document.getElementById('btn-gps').addEventListener('click', function () {
+    if (!navigator.geolocation) { alert('Tu dispositivo no permite geolocalización.'); return; }
+    navigator.geolocation.getCurrentPosition(function (pos) {
+      miPos = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+      var best = null, bd = 1e18;
+      meta.humedales.forEach(function (h) {
+        var d = distM([miPos.lat, miPos.lon], h.centro);
+        if (d < bd) { bd = d; best = h; }
+      });
+      L.circleMarker([miPos.lat, miPos.lon], {
+        radius: 7, color: '#fff', weight: 2.5, fillColor: '#2E6E8E', fillOpacity: 1
+      }).addTo(map).bindTooltip('Estás aquí');
+      if (best) seleccionar(best);
+    }, function () { alert('No pudimos obtener tu ubicación.'); });
+  });
+
+  document.getElementById('btn-ayuda').addEventListener('click', function () {
+    alert('Tocá un humedal en el mapa (o una tarjeta de abajo) para ver cómo llegar y entrar.\n\n📍 te lleva al humedal más cercano.\n\nDentro de cada humedal te espera un habitante que te guía: tour 360°, avistamientos, reportes y cupones.');
+  });
+
+  // Ajustar el mapa a la red al inicio
+  try {
+    var b = L.latLngBounds(meta.humedales.map(function (h) { return h.centro; }));
+    map.fitBounds(b.pad(0.25));
+  } catch (e) {}
+})();
+</script>
 </body>
 </html>

@@ -1,27 +1,26 @@
 /* ==========================================================================
-   CONFIG · Monitoreo Ciudadano Laguna Los Patos
-   Rellenar tras crear el proyecto Supabase y desplegar el backend en Render.
+   CONFIG · Plataforma Digital de Humedales Urbanos — Piloto Isla Teja
+   Comparte el proyecto Supabase con monitoreo-ciudadano (tablas ph_*).
    ========================================================================== */
 
-// Backend Flask que cruza con la DMC y guarda en Supabase.
-// En local usa localhost; desplegado (Vercel) usa el backend en Render.
-var API_URL = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-    ? 'http://localhost:5000'
-    : 'https://laguna-los-patos.onrender.com';
+// Backend Flask de la plataforma (IA de especies + denuncias).
+// Desplegar aparte del backend de la laguna. Editar la URL tras el deploy.
+var PH_API_URL = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+    ? 'http://localhost:5001'
+    : 'https://plataforma-humedales.onrender.com'; // ← editar tras desplegar
 
-// Supabase del proyecto Laguna (clave PUBLISHABLE / anon — segura en frontend)
-var SUPA_URL = 'https://noqcvqatxzpqbtwdnmgk.supabase.co';
-var SUPA_ANON_KEY = 'sb_publishable_Ktgx7rFsqDjXvxiDie0XYQ_LxOgYFY8';
+// Supabase compartido (misma clave publishable del proyecto laguna)
+var PH_SUPA_URL = 'https://noqcvqatxzpqbtwdnmgk.supabase.co';
+var PH_SUPA_ANON_KEY = 'sb_publishable_Ktgx7rFsqDjXvxiDie0XYQ_LxOgYFY8';
 
-// Bucket de Storage para las fotos de respaldo
-var FOTOS_BUCKET = 'lecturas-fotos';
+// Herramienta de monitoreo de nivel de la Laguna de los Patos: ahora vive
+// ANIDADA dentro de este mismo deploy (misma URL). Ruta interna relativa.
+var MONITOREO_LAGUNA_URL = 'herramientas/laguna-los-patos/monitoreo-nivel/';
 
-// Plataforma de Humedales (para reclamar puntos por medición verificada con foto)
-var PLATAFORMA_URL = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-    ? 'http://localhost:8000'
-    : 'https://plataforma-humedales.vercel.app'; // ← editar tras desplegar la plataforma
+// Centro del mapa (Isla Teja, Valdivia)
+var MAPA_CENTRO = [-39.8095, -73.2595];
+var MAPA_ZOOM = 15;
 
-// Ubicación de la laguna (para la galería de biodiversidad iNaturalist)
-var LAGUNA_LAT = -39.8098;
-var LAGUNA_LON = -73.2560;
-var INAT_RADIUS_KM = 5;   // radio de búsqueda de especies alrededor de la laguna
+// Modo demo: si el backend no responde, los formularios simulan la respuesta
+// para poder mostrar el flujo completo sin infraestructura desplegada.
+var PH_MODO_DEMO_FALLBACK = true;

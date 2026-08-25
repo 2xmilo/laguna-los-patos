@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0E3B36">
+<title>Humedal · Humedales de Valdivia</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-tab="humedal">
+<header class="ph-header">
+  <a class="back" href="index.html">‹</a>
+  <div>
+    <h1 id="h-nombre">Humedal</h1>
+    <p class="sub">Isla Teja · Valdivia</p>
+  </div>
+</header>
+
+<div class="ph-wrap">
+  <!-- Paso 1: perfil etario (una vez por sesión) -->
+  <div id="perfil-gate" class="ph-card hidden">
+    <h2>¿Quién visita el humedal?</h2>
+    <p>Sus habitantes te hablan distinto según tu edad. No pedimos nombre ni datos.</p>
+    <div class="ph-perfiles">
+      <button class="ph-perfil-btn" data-p="guardian"><span class="pico">🐣</span><span><strong>Guardián · menor de 13</strong>Historias simples, juego y álbum. Siempre con un adulto.</span></button>
+      <button class="ph-perfil-btn" data-p="explorador"><span class="pico">🔭</span><span><strong>Explorador · 13 a 17</strong>Datos más fuertes y registro juvenil.</span></button>
+      <button class="ph-perfil-btn" data-p="guardabosques"><span class="pico">🌲</span><span><strong>Guardabosques · 18+</strong>Contexto ecológico completo y ciencia ciudadana.</span></button>
+    </div>
+  </div>
+
+  <!-- Paso 2: elegir compañero (una vez, queda guardado) -->
+  <div id="comp-gate" class="ph-card hidden">
+    <h2>Elegí a tu compañero</h2>
+    <p>Un habitante del humedal te abre las puertas de su casa y te acompaña en cada visita. Los cuatro existen de verdad en los humedales de Valdivia.</p>
+    <div class="ph-companeros" id="comp-lista"></div>
+  </div>
+
+  <div id="hub" class="hidden">
+    <!-- Hero con identidad -->
+    <div class="ph-hero">
+      <div id="h-chips"></div>
+      <h2 id="h-titulo"></h2>
+      <p id="h-desc"></p>
+    </div>
+
+    <!-- Confianza ganada en el humedal -->
+    <a id="banner-puntos" class="ph-puntos-banner" href="#">
+      <span class="ico">🎟️</span>
+      <span><strong id="b-nivel">Visitante</strong> · <strong id="b-puntos">0</strong> puntos<br><small style="color:var(--tinta-suave);" id="b-sub">La confianza se gana en terreno</small></span>
+      <span class="flecha">›</span>
+    </a>
+
+    <div id="bloque-nivel" class="ph-card hidden">
+      <h2>💧 Monitoreo de nivel</h2>
+      <p>Esta laguna tiene además el monitoreo ciudadano de nivel de agua: registrá el nivel y se cruza con la estación Isla Teja (DMC). <strong>Con foto de la regla, la medición se verifica y suma +15 puntos</strong> (una vez al día).</p>
+      <a id="link-nivel" class="ph-btn ph-btn--azul" href="#">Registrar nivel de la laguna →</a>
+    </div>
+
+    <div class="ph-card">
+      <h2>¿Cómo aportás hoy?</h2>
+      <div class="ph-acciones">
+        <a id="a-tour" class="ph-accion" href="#"><span class="ico">🌐</span>Tour 360°<span class="nota">Sus habitantes te pasean</span></a>
+        <a id="a-avistar" class="ph-accion" href="#"><span class="ico">📷</span>Avistar<span class="nota">Sumá al álbum común</span></a>
+        <a id="a-reportar" class="ph-accion" href="#"><span class="ico">⚠️</span>Reportar<span class="nota">Defendé este lugar</span></a>
+        <a id="a-siguiente" class="ph-accion" href="index.html"><span class="ico">🗺️</span>Otro humedal<span class="nota">Visitá al vecindario</span></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/avatar.js"></script>
+<script src="js/puntos.js"></script>
+<script>
+(async function () {
+  var id = new URLSearchParams(location.search).get('id') || 'laguna-los-patos';
+  var meta = await (await fetch('data/humedales.json')).json();
+  var h = meta.humedales.find(function (x) { return x.id === id; }) || meta.humedales[0];
+  localStorage.setItem('ph_ultimo_humedal', h.id); // para las pestañas
+
+  document.getElementById('h-nombre').textContent = h.nombre;
+  document.getElementById('h-titulo').textContent = h.nombre;
+  document.getElementById('h-desc').textContent = h.descripcion;
+  var chips = '';
+  if (h.piloto) chips += '<span class="ph-chip ph-chip--piloto">Piloto</span>';
+  if (h.monitoreo_nivel) chips += '<span class="ph-chip ph-chip--nivel">Monitoreo de nivel</span>';
+  document.getElementById('h-chips').innerHTML = chips;
+
+  // Enlaces de acción
+  document.getElementById('a-tour').href = h.estaciones.length ? ('tour.html?id=' + id) : '#';
+  if (!h.estaciones.length) {
+    var t = document.getElementById('a-tour');
+    t.style.opacity = .5; t.title = 'Tour disponible en el humedal piloto';
+    t.addEventListener('click', function (e) { e.preventDefault(); phDecir('El tour 360° está disponible por ahora en la Laguna de los Patos, el humedal piloto.'); });
+  }
+  // Reto Observar declinado por edad: el Guardián reconoce (matching), no sube fotos
+  function ajustarPorPerfil() {
+    var av = document.getElementById('a-avistar');
+    if (PH_PERFIL === 'guardian') {
+      av.href = 'observar.html?id=' + id;
+      av.innerHTML = '<span class="ico">🔍</span>Reconocer<span class="nota">Jugá y llená tu álbum</span>';
+    } else {
+      av.href = 'avistar.html?id=' + id;
+    }
+  }
+  ajustarPorPerfil();
+  document.getElementById('a-reportar').href = 'reportar.html?id=' + id;
+
+  // Banner de confianza
+  document.getElementById('banner-puntos').href = 'cupones.html?id=' + id;
+  document.getElementById('b-puntos').textContent = phPuntos();
+  var niv = phNivel();
+  document.getElementById('b-nivel').textContent = niv.nombre;
+  if (niv.siguiente) document.getElementById('b-sub').textContent = 'Te faltan ' + niv.faltan + ' pts para ser ' + niv.siguiente;
+
+  // Bloque de nivel solo en la laguna
+  if (h.monitoreo_nivel) {
+    document.getElementById('bloque-nivel').classList.remove('hidden');
+    document.getElementById('link-nivel').href = MONITOREO_LAGUNA_URL;
+  }
+
+  // Puntos por medición de nivel VERIFICADA CON FOTO (vuelve del monitoreo).
+  // Tope: una vez al día. La validación fuerte será server-side con Supabase.
+  if (new URLSearchParams(location.search).get('nivel_verificado') === '1') {
+    history.replaceState(null, '', 'humedal.html?id=' + id); // limpia la URL (no re-otorga al recargar)
+    var hoy = new Date().toISOString().slice(0, 10);
+    if (localStorage.getItem('ph_nivel_dia') !== hoy) {
+      localStorage.setItem('ph_nivel_dia', hoy);
+      var gN = phSumarPuntos('nivel');
+      setTimeout(function () {
+        phDecir('Tu medición de nivel llegó verificada con foto: +' + gN + ' puntos 🎟️. El agua de la laguna también te lo agradece.');
+      }, 800);
+    } else {
+      setTimeout(function () {
+        phDecir('Tu medición quedó registrada. Los puntos por nivel se ganan una vez al día: mañana podés volver a medir.');
+      }, 800);
+    }
+  }
+
+  // Gate en dos pasos: edad → compañero
+  function abrirHub() {
+    document.getElementById('perfil-gate').classList.add('hidden');
+    document.getElementById('comp-gate').classList.add('hidden');
+    document.getElementById('hub').classList.remove('hidden');
+    ajustarPorPerfil();
+    // Modo escuela: sin cupones (aprendizaje y datos, no recompensas)
+    if (!phCuponesActivos()) document.getElementById('banner-puntos').classList.add('hidden');
+    phDecir(phHistoria('bienvenida'));
+  }
+  function pasoCompanero() {
+    document.getElementById('perfil-gate').classList.add('hidden');
+    if (PH_COMPANERO) { abrirHub(); return; }
+    var lista = document.getElementById('comp-lista');
+    lista.innerHTML = Object.keys(PH_PERSONAJES).map(function (k) {
+      var p = PH_PERSONAJES[k];
+      return '<button class="ph-comp-btn" data-a="' + k + '">' +
+             '<span class="comp-svg">' + p.svg + '</span>' +
+             '<strong>' + p.nombre + '</strong><small>' + p.lema + '</small></button>';
+    }).join('');
+    lista.querySelectorAll('.ph-comp-btn').forEach(function (b) {
+      b.addEventListener('click', function () { phSetCompanero(b.dataset.a); abrirHub(); });
+    });
+    document.getElementById('comp-gate').classList.remove('hidden');
+  }
+  if (PH_PERFIL) { pasoCompanero(); }
+  else {
+    document.getElementById('perfil-gate').classList.remove('hidden');
+    document.querySelectorAll('.ph-perfil-btn').forEach(function (b) {
+      b.addEventListener('click', function () { phSetPerfil(b.dataset.p); pasoCompanero(); });
+    });
+  }
+})();
+</script>
+<footer class="ph-foot">Plataforma Digital de Humedales Urbanos · Valdivia · 2026</footer>
+</body>
+</html>

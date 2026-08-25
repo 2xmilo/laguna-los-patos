@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0E3B36">
+<title>Panel docente · Humedales de Valdivia</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-tab="perfil">
+<header class="ph-header">
+  <a class="back" href="cuenta.html">‹</a>
+  <div><h1>Salida grupal</h1><p class="sub">Un celular guía a todo el grupo</p></div>
+</header>
+
+<div class="ph-wrap">
+  <div class="doc-fases">
+    <span class="doc-fase" id="f-plan">1 · Armar</span>
+    <span class="doc-fase" id="f-campo">2 · Recorrer</span>
+    <span class="doc-fase" id="f-cierre">3 · Resumen</span>
+  </div>
+
+  <!-- ============ PASO 1: ARMAR EL RECORRIDO ============ -->
+  <div id="plan" class="hidden">
+    <div class="ph-card">
+      <h2>¿Cómo funciona?</h2>
+      <p>Simple: <strong>vos llevás el celular, el grupo vive el humedal.</strong> Elegís qué estaciones visitar, en cada una tocás un botón y el animal anfitrión le cuenta su historia al grupo, y anotás lo que los equipos encuentren. Al final, un resumen para conversar de vuelta.</p>
+      <p>Pensado para profesoras con su curso, pero sirve para cualquier grupo: familia, scouts, visitas guiadas.</p>
+    </div>
+    <div class="ph-card">
+      <h2>Recorridos listos</h2>
+      <p>Armados según el currículum de Ciencias Naturales (o el tuyo propio, abajo).</p>
+      <div class="ph-perfiles">
+        <button class="ph-perfil-btn" data-t="3b"><span class="pico">💧</span><span><strong>3° básico · Agua y aves</strong>Espejo de agua + totoral. OA: ciclos de vida y hábitat.</span></button>
+        <button class="ph-perfil-btn" data-t="6b"><span class="pico">🌳</span><span><strong>6° básico · El bosque y las especies antiguas</strong>Totoral + ribera + bosque. OA: ecosistemas y acción humana.</span></button>
+      </div>
+    </div>
+
+    <div class="ph-card">
+      <h2>Tu recorrido</h2>
+      <p>Tocá las estaciones en el orden en que las visitarán. Cada una trae su reto.</p>
+      <div id="plan-estaciones"></div>
+      <button class="ph-btn ph-btn--prof" id="btn-iniciar" disabled>Iniciar salida →</button>
+      <a class="ph-btn ph-btn--ghost" href="tour.html?id=laguna-los-patos">🖥️ Excursión virtual desde el aula (proyector)</a>
+    </div>
+  </div>
+
+  <!-- ============ FASE 2: EN TERRENO ============ -->
+  <div id="campo" class="hidden">
+    <div class="campo-est">
+      <div class="paso" id="c-paso">Estación 1 de 2</div>
+      <h2 id="c-nombre"></h2>
+      <p id="c-tema"></p>
+    </div>
+
+    <button class="campo-btn" id="btn-historia">🦢 Contar la historia al curso</button>
+    <div class="ph-card">
+      <h2 id="c-reto">Reto</h2>
+      <p style="font-weight:600;color:var(--bosque);">¿Qué equipo encontró algo? Tocá el equipo y anotá.</p>
+      <div class="campo-equipos" id="equipos"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;">
+        <button class="campo-btn campo-btn--claro" id="btn-hallazgo" style="margin:0;font-size:15px;">📷 Registrar hallazgo</button>
+        <button class="campo-btn campo-btn--dorado" id="btn-reporte" style="margin:0;font-size:15px;">⚠️ Anotar daño</button>
+      </div>
+      <p id="c-contador" style="text-align:center;font-size:13px;"></p>
+    </div>
+
+    <button class="campo-btn campo-btn--claro" id="btn-siguiente">Siguiente estación →</button>
+  </div>
+
+  <!-- ============ FASE 3: CIERRE ============ -->
+  <div id="cierre" class="hidden">
+    <div class="ph-card">
+      <h2>Resumen de la salida</h2>
+      <p>Para cerrar la actividad en la sala: esto fue lo que el curso le aportó al humedal.</p>
+      <div class="doc-resumen-num">
+        <div class="panel-stat"><div class="num" id="r-hallazgos">0</div><div class="lbl">Hallazgos</div></div>
+        <div class="panel-stat"><div class="num" id="r-especies">0</div><div class="lbl">Estaciones visitadas</div></div>
+        <div class="panel-stat panel-stat--alerta"><div class="num" id="r-reportes">0</div><div class="lbl">Daños anotados</div></div>
+      </div>
+      <div id="r-equipos"></div>
+      <p style="font-size:13px;">Los registros quedan disponibles para el panel municipal: cada salida es una campaña de datos para la red de humedales.</p>
+    </div>
+    <button class="ph-btn ph-btn--prof" id="btn-nueva">Planificar otra salida</button>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/avatar.js"></script>
+<script>
+(async function () {
+  var meta = await (await fetch('data/humedales.json')).json();
+  var h = meta.humedales.find(function (x) { return x.id === 'laguna-los-patos'; });
+  var RETO_TXT = { avistar: '🔍 Observar', reportar: '🛡️ Cuidar', descubrir: '✨ Descubrir' };
+  var EQUIPOS = ['Equipo Ranita 🐸', 'Equipo Cisne 🦢', 'Equipo Garza 🕊️', 'Equipo Monito 🐭'];
+  var PLANTILLAS = { '3b': ['espejo-de-agua', 'totoral'], '6b': ['totoral', 'ribera', 'bosque-riberenio'] };
+
+  function salida() { return JSON.parse(localStorage.getItem('ph_salida') || 'null'); }
+  function guardar(s) { localStorage.setItem('ph_salida', JSON.stringify(s)); }
+
+  var seleccion = [];
+
+  function fase(f) {
+    ['plan', 'campo', 'cierre'].forEach(function (x) {
+      document.getElementById(x).classList.toggle('hidden', x !== f);
+      document.getElementById('f-' + x).classList.toggle('act', x === f);
+    });
+  }
+
+  /* ---------- FASE 1: planificar ---------- */
+  function pintarPlan() {
+    document.getElementById('plan-estaciones').innerHTML = h.estaciones.map(function (slug) {
+      var est = meta.estaciones[slug];
+      var idx = seleccion.indexOf(slug);
+      return '<div class="doc-est' + (idx >= 0 ? ' sel' : '') + '" data-s="' + slug + '">' +
+             '<span class="orden">' + (idx >= 0 ? idx + 1 : '·') + '</span>' +
+             '<span class="info"><strong>' + est.nombre + '</strong>' +
+             '<small>' + RETO_TXT[est.accion] + ' — ' + est.accion_texto + '</small></span></div>';
+    }).join('');
+    document.getElementById('btn-iniciar').disabled = !seleccion.length;
+    document.querySelectorAll('.doc-est').forEach(function (d) {
+      d.addEventListener('click', function () {
+        var s = d.dataset.s, i = seleccion.indexOf(s);
+        if (i >= 0) seleccion.splice(i, 1); else seleccion.push(s);
+        pintarPlan();
+      });
+    });
+  }
+  document.querySelectorAll('[data-t]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      seleccion = PLANTILLAS[b.dataset.t].slice();
+      pintarPlan();
+      phDecir('Recorrido cargado: ' + seleccion.length + ' estaciones. Revisalo y tocá «Iniciar salida» cuando el curso esté listo.');
+    });
+  });
+  document.getElementById('btn-iniciar').addEventListener('click', function () {
+    guardar({ estaciones: seleccion, actual: 0, hallazgos: [], reportes: 0 });
+    irCampo();
+  });
+
+  /* ---------- FASE 2: en terreno ---------- */
+  var equipoSel = null;
+  function irCampo() {
+    fase('campo');
+    var s = salida(), slug = s.estaciones[s.actual], est = meta.estaciones[slug];
+    document.getElementById('c-paso').textContent = 'Estación ' + (s.actual + 1) + ' de ' + s.estaciones.length;
+    document.getElementById('c-nombre').textContent = est.nombre;
+    document.getElementById('c-tema').textContent = est.tema;
+    document.getElementById('c-reto').textContent = 'Reto: ' + RETO_TXT[est.accion].replace(/^\S+ /, '') + ' — ' + est.accion_texto;
+    document.getElementById('btn-siguiente').textContent =
+      s.actual + 1 < s.estaciones.length ? 'Siguiente estación →' : 'Terminar salida ✓';
+    equipoSel = null;
+    document.getElementById('equipos').innerHTML = EQUIPOS.map(function (e, i) {
+      return '<button class="campo-equipo" data-i="' + i + '">' + e + '</button>';
+    }).join('');
+    document.querySelectorAll('.campo-equipo').forEach(function (b) {
+      b.addEventListener('click', function () {
+        document.querySelectorAll('.campo-equipo').forEach(function (x) { x.classList.remove('sel'); });
+        b.classList.add('sel'); equipoSel = +b.dataset.i;
+      });
+    });
+    contador();
+  }
+  function contador() {
+    var s = salida();
+    document.getElementById('c-contador').textContent =
+      s.hallazgos.length + ' hallazgos · ' + s.reportes + ' daños anotados en esta salida';
+  }
+  document.getElementById('btn-historia').addEventListener('click', function () {
+    var s = salida(), slug = s.estaciones[s.actual];
+    phDecir(phHistoria('estaciones', slug), { quien: PH_PERSONAJE_ESTACION[slug] || 'cisne' });
+  });
+  document.getElementById('btn-hallazgo').addEventListener('click', function () {
+    if (equipoSel === null) { phDecir('Primero tocá el equipo que encontró algo.'); return; }
+    var s = salida();
+    s.hallazgos.push({ equipo: equipoSel, estacion: s.estaciones[s.actual] });
+    guardar(s); contador();
+    phDecir('¡Anotado para el ' + EQUIPOS[equipoSel] + '! El hallazgo queda georreferenciado en la estación.');
+  });
+  document.getElementById('btn-reporte').addEventListener('click', function () {
+    var s = salida(); s.reportes++; guardar(s); contador();
+    phDecir('Daño anotado. Al cerrar la salida se envía al panel municipal, sin datos de los niños.');
+  });
+  document.getElementById('btn-siguiente').addEventListener('click', function () {
+    var s = salida();
+    if (s.actual + 1 < s.estaciones.length) { s.actual++; guardar(s); irCampo(); }
+    else irCierre();
+  });
+
+  /* ---------- FASE 3: cierre ---------- */
+  function irCierre() {
+    fase('cierre');
+    var s = salida();
+    document.getElementById('r-hallazgos').textContent = s.hallazgos.length;
+    document.getElementById('r-especies').textContent = s.estaciones.length;
+    document.getElementById('r-reportes').textContent = s.reportes;
+    var porEquipo = {};
+    s.hallazgos.forEach(function (x) { porEquipo[x.equipo] = (porEquipo[x.equipo] || 0) + 1; });
+    document.getElementById('r-equipos').innerHTML = Object.keys(porEquipo).sort(function (a, b) {
+      return porEquipo[b] - porEquipo[a];
+    }).map(function (k) {
+      return '<p style="display:flex;justify-content:space-between;margin:6px 0;"><span>' +
+             EQUIPOS[k] + '</span><strong>' + porEquipo[k] + ' hallazgos</strong></p>';
+    }).join('') || '<p>Sin hallazgos registrados esta vez.</p>';
+    phDecir('¡Qué buena salida! Llévense esto a la sala: lo que el curso vio hoy ya es parte de la memoria del humedal.');
+  }
+  document.getElementById('btn-nueva').addEventListener('click', function () {
+    localStorage.removeItem('ph_salida'); seleccion = []; pintarPlan(); fase('plan');
+  });
+
+  /* ---------- arranque: retomar si hay salida activa ---------- */
+  var s = salida();
+  if (s && s.actual < s.estaciones.length) { irCampo(); }
+  else { pintarPlan(); fase('plan'); }
+})();
+</script>
+<footer class="ph-foot">El celular es de quien guía; la experiencia es de todos. Sin cuentas ni datos de menores.</footer>
+</body>
+</html>

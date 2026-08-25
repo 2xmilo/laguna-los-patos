@@ -1,297 +1,841 @@
 /* ==========================================================================
-   Monitoreo Ciudadano · Laguna Los Patos — mobile first
+   Humedales de Valdivia · Sistema visual "Naturaleza inmersiva"
+   Mobile-first. Tipografía: Fraunces (display) + Inter (texto).
    ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap');
+
 :root {
-    --verde: #2e7d52;
-    --verde-osc: #1b5e3f;
-    --agua: #2b8caa;
-    --tinta: #14302a;
-    --gris: #5f6f6a;
-    --bg: #f3f7f4;
-    --card: #ffffff;
-    --borde: #e2ebe5;
-    --error: #c0392b;
-    --ok: #2e7d52;
-    --sombra: 0 4px 18px rgba(20, 48, 42, 0.08);
+  /* Paleta bosque valdiviano */
+  --bosque: #0E3B36;          /* verde profundo, casi noche */
+  --bosque-2: #14524B;
+  --verde: #2C7A6E;
+  --musgo: #6FA893;
+  --bruma: #DCEEE8;           /* verde agua muy claro */
+  --agua: #2E6E8E;
+  --dorado: #C98A2D;
+  --dorado-suave: #F3E3C8;
+  --arena: #F6F1E7;           /* crema cálido (referencia UI kit) */
+  --arena-2: #EDE6D8;
+  --tinta: #1C2B28;
+  --tinta-suave: #56645F;
+  --linea: rgba(14,59,54,.12);
+  --blanco: #FFFFFF;
+  --ok-bg: #E4F3E9; --ok-tx: #1D6B43;
+  --err-bg: #FAE9E7; --err-tx: #A03A31;
+  --warn-bg: #F9F1DF; --warn-tx: #8A5A12;
+  --sombra: 0 2px 8px rgba(14,59,54,.08), 0 12px 32px rgba(14,59,54,.10);
+  --sombra-suave: 0 1px 4px rgba(14,59,54,.08);
+  --radio: 18px;
+  --radio-s: 12px;
+  --safe-b: env(safe-area-inset-bottom, 0px);
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background: var(--bg);
-    color: var(--tinta);
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--tinta);
+  background: var(--arena);
+  background-image: radial-gradient(1200px 500px at 50% -180px, #EAF3EE 0%, var(--arena) 60%);
+  min-height: 100vh;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+a { color: var(--verde); }
+h1, h2, h3 { font-family: 'Fraunces', Georgia, serif; letter-spacing: -.01em; }
+
+/* ==========================================================================
+   Cabecera
+   ========================================================================== */
+.ph-header {
+  background: linear-gradient(150deg, #175E52 0%, #2E7D6B 70%, #35836F 100%);
+  color: #fff;
+  padding: 16px 18px 34px; /* espacio extra: la hoja blanca se monta encima */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.ph-header h1 { font-size: 19px; margin: 0; font-weight: 600; line-height: 1.2; }
+.ph-header .sub {
+  font-size: 11.5px; color: var(--musgo); margin: 2px 0 0;
+  text-transform: uppercase; letter-spacing: .14em; font-weight: 600;
+}
+.ph-header .back {
+  flex: 0 0 auto;
+  color: #fff; text-decoration: none; font-size: 20px; line-height: 1;
+  background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.18);
+  border-radius: 12px; width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+}
+.ph-header .back:active { background: rgba(255,255,255,.26); }
+
+/* Marca: cisne en círculo */
+.ph-logo {
+  flex: 0 0 auto; width: 42px; height: 42px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #2C7A6E, #14524B 70%);
+  border: 1.5px solid rgba(255,255,255,.35);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  box-shadow: inset 0 -4px 8px rgba(0,0,0,.18);
 }
 
-.wrap {
-    max-width: 480px;
-    margin: 0 auto;
-    padding: 0 16px 40px;
+/* Hoja continua: una sola superficie blanca, sin cajas */
+.ph-wrap {
+  max-width: 680px; margin: -20px auto 0;
+  background: var(--blanco);
+  border-radius: 24px 24px 0 0;
+  padding: 24px 20px calc(28px + var(--safe-b));
+  min-height: 60vh;
+  position: relative; z-index: 10;
 }
 
-/* ── Hero ── */
-.hero {
-    /* Foto aérea de la laguna. En la galería, hero.js la cambia por una de iNaturalist.
-       Capa 1: degradado para legibilidad · Capa 2: foto · Capa 3: respaldo verde */
-    --hero-photo: url('../img/hero.jpg');
-    background:
-        linear-gradient(150deg, rgba(27, 94, 63, .78) 0%, rgba(20, 48, 42, .86) 100%),
-        var(--hero-photo) center / cover no-repeat,
-        linear-gradient(150deg, var(--verde) 0%, var(--verde-osc) 100%);
-    color: #fff;
-    border-radius: 0 0 22px 22px;
-    padding: 28px 20px 26px;
-    margin: 0 -16px 18px;
-    text-align: center;
-    box-shadow: var(--sombra);
-}
-.hero-badge {
-    display: inline-block;
-    font-size: 12px;
-    letter-spacing: .4px;
-    text-transform: uppercase;
-    background: rgba(255,255,255,.18);
-    padding: 4px 12px;
-    border-radius: 999px;
-    margin-bottom: 10px;
-}
-.hero h1 { font-size: 28px; font-weight: 700; }
-.hero-sub { opacity: .9; font-size: 15px; margin-top: 2px; }
+/* ==========================================================================
+   Mapa (portada)
+   ========================================================================== */
+.ph-mapa-page { position: fixed; inset: 0; display: flex; flex-direction: column; }
+.ph-mapa-page .ph-header { position: relative; }
+#mapa { flex: 1; width: 100%; z-index: 1; }
+.leaflet-container { background: #D8E8E3; font-family: 'Inter', system-ui, sans-serif; }
 
-/* ── Cards ── */
-.card {
-    background: var(--card);
-    border: 1px solid var(--borde);
-    border-radius: 16px;
-    padding: 18px;
-    margin-bottom: 14px;
-    box-shadow: var(--sombra);
+/* Píldora flotante de ayuda sobre el mapa */
+.ph-hint {
+  position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+  z-index: 420; pointer-events: none;
+  background: rgba(14,59,54,.88); color: #fff; backdrop-filter: blur(6px);
+  font-size: 12.5px; font-weight: 500; padding: 8px 16px; border-radius: 999px;
+  box-shadow: var(--sombra); white-space: nowrap;
+  transition: opacity .4s;
 }
-.card h2 { font-size: 18px; margin-bottom: 12px; color: var(--verde-osc); }
+.ph-hint.off { opacity: 0; }
 
-.ficha-foto { margin: -4px 0 14px; }
-.ficha-foto img {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-    border-radius: 12px;
-    display: block;
+/* Botón flotante "más cercano" */
+.ph-fab {
+  position: absolute; right: 14px; bottom: calc(18px + var(--safe-b));
+  z-index: 420;
+  display: flex; align-items: center; gap: 8px;
+  background: var(--bosque); color: #fff; border: none; cursor: pointer;
+  font-family: 'Inter', system-ui, sans-serif; font-size: 14px; font-weight: 600;
+  padding: 13px 18px; border-radius: 999px;
+  box-shadow: 0 6px 20px rgba(14,59,54,.35);
 }
-.ficha-foto figcaption {
-    font-size: 12px;
-    color: var(--gris);
-    margin-top: 6px;
-    text-align: center;
-    font-style: italic;
-}
-.ficha p { font-size: 15px; color: #2c4038; }
-.ficha p + p { margin-top: 10px; }
-.ficha-note { font-size: 13px !important; color: var(--gris) !important; }
+.ph-fab:active { transform: scale(.97); }
 
-/* ── Form ── */
-.field { display: block; margin-bottom: 16px; }
-.field-label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 6px; }
-.field-hint { display: block; font-size: 12px; color: var(--gris); margin-top: 5px; }
+/* ---- Bottom sheet del humedal seleccionado ---- */
+.ph-sheet-velo {
+  position: absolute; inset: 0; z-index: 440;
+  background: rgba(12,32,29,.35);
+  opacity: 0; pointer-events: none; transition: opacity .25s;
+}
+.ph-sheet-velo.on { opacity: 1; pointer-events: auto; }
+.ph-sheet {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 450;
+  background: var(--arena);
+  border-radius: 22px 22px 0 0;
+  box-shadow: 0 -8px 40px rgba(14,59,54,.30);
+  padding: 8px 18px calc(18px + var(--safe-b));
+  transform: translateY(105%); transition: transform .3s cubic-bezier(.32,.72,.28,1);
+  max-height: 72vh; overflow-y: auto;
+}
+.ph-sheet.on { transform: translateY(0); }
+.ph-sheet__asa {
+  width: 42px; height: 4.5px; border-radius: 999px;
+  background: var(--linea); margin: 6px auto 12px;
+}
+.ph-sheet h2 { margin: 0 0 2px; font-size: 21px; color: var(--bosque); }
+.ph-sheet__dist { font-size: 13px; color: var(--tinta-suave); margin: 0 0 8px; font-weight: 500; }
+.ph-sheet p.desc { margin: 8px 0 14px; font-size: 14px; color: var(--tinta-suave); line-height: 1.55; }
+.ph-sheet__botones { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-input[type="number"] {
-    width: 100%;
-    font-size: 22px;
-    font-weight: 600;
-    text-align: center;
-    padding: 14px;
-    border: 2px solid var(--borde);
-    border-radius: 12px;
-    background: #fbfdfb;
-    color: var(--tinta);
-    transition: border-color .15s;
+/* ==========================================================================
+   Chips
+   ========================================================================== */
+.ph-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  padding: 4px 11px; border-radius: 999px; margin: 0 6px 6px 0;
 }
-input[type="number"]:focus { outline: none; border-color: var(--verde); }
+.ph-chip--piloto { background: var(--dorado-suave); color: #7A5514; border: 1px solid #E3C795; }
+.ph-chip--nivel { background: #DFEBF2; color: #245A77; border: 1px solid #B9D2E0; }
 
-input[type="file"] {
-    width: 100%;
-    font-size: 14px;
-    padding: 10px;
-    border: 1px dashed var(--borde);
-    border-radius: 12px;
-    background: #fbfdfb;
+/* ==========================================================================
+   Tarjetas
+   ========================================================================== */
+/* Sección plana: nada de cajas — aire y divisores finos */
+.ph-card {
+  background: transparent; border: none; box-shadow: none;
+  border-radius: 0; padding: 4px 0 20px; margin-bottom: 16px;
 }
+.ph-card + .ph-card, .hidden + .ph-card { border-top: 1px solid var(--linea); padding-top: 20px; }
+.ph-card h2 { margin: 0 0 6px; font-size: 18px; color: var(--bosque); font-weight: 600; }
+.ph-card p { margin: 6px 0; font-size: 14.5px; color: var(--tinta-suave); line-height: 1.55; }
 
-.btn-primary {
-    width: 100%;
-    background: var(--verde);
-    color: #fff;
-    font-size: 17px;
-    font-weight: 700;
-    border: none;
-    border-radius: 12px;
-    padding: 15px;
-    cursor: pointer;
-    transition: background .15s, transform .05s;
+/* Hero del humedal: se funde con la cabecera (bloque de color a sangre) */
+.ph-hero {
+  border-radius: 0 0 26px 26px; overflow: hidden;
+  margin: -24px -20px 20px;
+  background:
+    linear-gradient(180deg, rgba(14,59,54,.0) 30%, rgba(14,59,54,.65) 100%),
+    linear-gradient(150deg, #1B5E54 0%, #0E3B36 60%, #0A2C28 100%);
+  color: #fff; padding: 26px 20px 18px; position: relative;
+  box-shadow: var(--sombra);
 }
-.btn-primary:hover { background: var(--verde-osc); }
-.btn-primary:active { transform: scale(.99); }
-.btn-primary:disabled { opacity: .6; cursor: not-allowed; }
+.ph-hero::before {
+  content: '';
+  position: absolute; inset: 0; opacity: .5; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='340' height='140' viewBox='0 0 340 140'%3E%3Cg fill='none' stroke='%236FA893' stroke-opacity='.28' stroke-width='1.4' stroke-linecap='round'%3E%3Cpath d='M18 128c8-30 4-58 -6-84'/%3E%3Cpath d='M34 130c12-26 14-60 6-92'/%3E%3Cpath d='M52 132c10-20 16-52 12-80'/%3E%3Cpath d='M300 130c-8-24-6-52 4-78'/%3E%3Cpath d='M318 132c-10-22-12-54-4-86'/%3E%3Cpath d='M332 128c-6-18-8-44-2-70'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: bottom center; background-size: cover;
+}
+.ph-hero > * { position: relative; }
+.ph-hero .ph-chip--piloto { background: rgba(201,138,45,.92); color: #fff; border-color: transparent; }
+.ph-hero .ph-chip--nivel { background: rgba(46,110,142,.92); color: #fff; border-color: transparent; }
+.ph-hero h2 { font-size: 26px; margin: 8px 0 6px; font-weight: 600; line-height: 1.15; }
+.ph-hero p { font-size: 14px; color: #D9EAE3; line-height: 1.55; margin: 0; }
 
-.btn-secondary {
-    width: 100%;
-    background: #fff;
-    color: var(--verde-osc);
-    font-size: 15px;
-    font-weight: 600;
-    border: 2px solid var(--verde);
-    border-radius: 12px;
-    padding: 12px;
-    cursor: pointer;
-    margin-top: 6px;
+/* ==========================================================================
+   Botones
+   ========================================================================== */
+.ph-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; text-align: center; text-decoration: none;
+  padding: 15px 16px; border-radius: 14px; border: none; cursor: pointer;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 15px; font-weight: 600; margin-top: 10px; color: #fff;
+  background: var(--verde);
+  box-shadow: 0 2px 6px rgba(44,122,110,.28);
+  transition: transform .08s, filter .15s;
 }
+.ph-btn--azul { background: var(--agua); box-shadow: 0 2px 6px rgba(46,110,142,.28); }
+.ph-btn--dorado { background: var(--dorado); box-shadow: 0 2px 6px rgba(201,138,45,.30); }
+.ph-btn--prof { background: var(--bosque); box-shadow: 0 2px 6px rgba(14,59,54,.30); }
+.ph-btn--ghost {
+  background: var(--blanco); color: var(--bosque);
+  border: 1.5px solid var(--verde); box-shadow: none;
+}
+.ph-btn:disabled { opacity: .45; cursor: not-allowed; }
+.ph-btn:active { transform: scale(.98); filter: brightness(.95); }
 
-/* Enlace con aspecto de botón primario */
-.btn-primary--link {
-    display: block;
-    box-sizing: border-box;
-    text-align: center;
-    text-decoration: none;
-    margin-bottom: 10px;
+/* ==========================================================================
+   Grid de acciones del hub
+   ========================================================================== */
+.ph-acciones { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+.ph-accion {
+  position: relative; overflow: hidden;
+  background: #F2F8F5; border: none; border-radius: 18px;
+  padding: 18px 12px 15px; text-align: center; text-decoration: none; color: var(--tinta);
+  box-shadow: none; font-weight: 600; font-size: 13.5px;
+  transition: transform .08s;
 }
+.ph-accion:nth-child(2) { background: #EEF5F8; }
+.ph-accion:nth-child(3) { background: #FAF3E6; }
+.ph-accion:nth-child(4) { background: #F1F5EE; }
+.ph-accion .ico {
+  font-size: 26px; display: flex; align-items: center; justify-content: center;
+  width: 54px; height: 54px; margin: 0 auto 8px; border-radius: 50%;
+  background: rgba(255,255,255,.85);
+}
+.ph-accion:active { transform: scale(.97); }
+.ph-accion .nota { display: block; font-weight: 500; font-size: 11.5px; color: var(--tinta-suave); margin-top: 2px; }
 
-/* ── (?) Ayuda junto al campo ── */
-.field-label-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-.field-label-row .field-label { margin-bottom: 0; }
-.help-btn {
-    width: 22px; height: 22px; flex: 0 0 auto;
-    border-radius: 50%;
-    border: none;
-    background: var(--verde);
-    color: #fff;
-    font-size: 14px; font-weight: 700; line-height: 1;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
+/* ==========================================================================
+   Selector de perfil etario
+   ========================================================================== */
+.ph-perfiles { display: grid; gap: 10px; margin-top: 12px; }
+.ph-perfil-btn {
+  display: flex; align-items: center; gap: 14px;
+  text-align: left; padding: 14px 16px; border-radius: 16px; cursor: pointer;
+  border: none; background: #F5F3EC;
+  font-family: 'Inter', system-ui, sans-serif; font-size: 13px; color: var(--tinta-suave);
+  transition: background .15s, transform .08s, box-shadow .15s;
 }
-.help-btn:hover { background: var(--verde-osc); }
+.ph-perfil-btn .pico {
+  flex: 0 0 auto; width: 46px; height: 46px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-size: 24px;
+  background: var(--bruma);
+}
+.ph-perfil-btn strong {
+  display: block; color: var(--bosque); font-size: 15px; margin-bottom: 1px;
+  font-family: 'Fraunces', Georgia, serif; font-weight: 600;
+}
+.ph-perfil-btn:active { transform: scale(.98); }
+.ph-perfil-btn.sel { background: #E4F1EB; box-shadow: inset 0 0 0 2px var(--verde); }
 
-/* ── Botón de foto estilo celular ── */
-.foto-control { display: flex; align-items: center; gap: 12px; }
-.foto-btn {
-    flex: 0 0 auto;
-    width: 60px; height: 60px;
-    border-radius: 50%;
-    border: 2px solid var(--verde);
-    background: #fbfdfb;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: background .15s, transform .05s;
-}
-.foto-btn:hover { background: #eef5f0; }
-.foto-btn:active { transform: scale(.95); }
-.foto-cam { font-size: 26px; line-height: 1; }
-.foto-btn.tiene-foto { padding: 0; overflow: hidden; }
-.foto-btn.tiene-foto .foto-cam { display: none; }
-.foto-btn img { width: 100%; height: 100%; object-fit: cover; }
-.foto-preview { flex: 1; min-width: 0; }
-.foto-hint { font-size: 13px; color: var(--gris); }
-.foto-nombre { font-size: 13px; color: var(--verde-osc); font-weight: 600; word-break: break-all; }
-.foto-quitar {
-    display: inline-block; margin-top: 3px;
-    background: none; border: none; color: var(--error);
-    font-size: 12px; cursor: pointer; padding: 0; text-decoration: underline;
-}
+/* ==========================================================================
+   Tour 360° · Visor inmersivo (pantalla completa, UI flotante)
+   ========================================================================== */
+.tour-body { background: #0A2C28; overflow: hidden; }
+#panorama { position: fixed; inset: 0; z-index: 1; background: #0A2C28; }
 
-/* ── Botón directo a Biodiversidad ── */
-.btn-bio {
-    display: flex; align-items: center; gap: 12px;
-    background: #fff;
-    border: 1px solid var(--borde);
-    border-radius: 16px;
-    padding: 15px 16px;
-    margin-bottom: 14px;
-    text-decoration: none;
-    color: var(--verde-osc);
-    box-shadow: var(--sombra);
-    transition: transform .12s, box-shadow .12s;
+.tour-btn {
+  position: fixed; z-index: 40; width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid rgba(255,255,255,.25); border-radius: 50%;
+  background: rgba(10,44,40,.55); backdrop-filter: blur(8px);
+  color: #fff; font-size: 20px; text-decoration: none; cursor: pointer;
+  line-height: 1;
 }
-.btn-bio:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(20,48,42,.14); }
-.btn-bio-ico { font-size: 26px; line-height: 1; }
-.btn-bio-txt { flex: 1; font-weight: 700; font-size: 15px; }
-.btn-bio-arrow { color: var(--verde); font-size: 20px; font-weight: 700; }
+.tour-btn:active { transform: scale(.94); }
+.tour-volver { top: calc(14px + env(safe-area-inset-top, 0px)); left: 14px; }
+.tour-full { top: calc(14px + env(safe-area-inset-top, 0px)); right: 14px; font-size: 17px; }
 
-/* ── Popup de ayuda ── */
-.popup { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 18px; }
-.popup[hidden] { display: none; }
-.popup-bg { position: absolute; inset: 0; background: rgba(10,25,20,.55); }
-.popup-card {
-    position: relative; z-index: 1;
-    background: #fff; border-radius: 18px;
-    max-width: 380px; width: 100%;
-    padding: 22px 20px 20px;
-    box-shadow: 0 20px 60px rgba(0,0,0,.35);
+.tour-titulo {
+  position: fixed; z-index: 30; top: calc(14px + env(safe-area-inset-top, 0px));
+  left: 66px; right: 66px; text-align: center;
+  background: rgba(10,44,40,.55); backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,.18); border-radius: 16px;
+  padding: 8px 14px; color: #fff;
 }
-.popup-x {
-    position: absolute; top: 10px; right: 12px;
-    width: 30px; height: 30px; border-radius: 50%;
-    border: none; background: #f0f4f1; color: var(--tinta);
-    font-size: 20px; line-height: 1; cursor: pointer;
-}
-.popup-card h3 { color: var(--verde-osc); font-size: 19px; margin-bottom: 12px; }
-.popup-pasos { margin: 0 0 12px; padding-left: 20px; }
-.popup-pasos li { font-size: 14px; color: #2c4038; margin-bottom: 8px; line-height: 1.45; }
-.popup-nota { font-size: 13px; color: var(--gris); font-style: italic; }
-
-/* ── Status ── */
-.status {
-    margin-top: 14px;
-    padding: 11px 14px;
-    border-radius: 10px;
-    font-size: 14px;
-    text-align: center;
-}
-.status--loading { background: #eef5f0; color: var(--verde-osc); }
-.status--error   { background: #fdecea; color: var(--error); }
-.status--ok      { background: #eaf6ee; color: var(--ok); }
-
-/* ── Éxito ── */
-.success { text-align: center; }
-.success-icon {
-    width: 56px; height: 56px;
-    margin: 0 auto 10px;
-    background: var(--verde);
-    color: #fff;
-    border-radius: 50%;
-    font-size: 30px;
-    display: flex; align-items: center; justify-content: center;
-}
-.success h2 { color: var(--verde-osc); }
-.success p { color: var(--gris); margin: 6px 0 14px; }
-.link-dashboard {
-    display: inline-block;
-    margin-top: 12px;
-    color: var(--verde);
-    font-weight: 600;
-    text-decoration: none;
-    font-size: 14px;
+.tour-titulo h1 { margin: 0; font-size: 16px; font-weight: 600; }
+.tour-titulo p {
+  margin: 1px 0 0; font-size: 11px; color: var(--bruma);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
-/* ── Estación Isla Teja (condiciones actuales) ── */
-.estacion-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
-.estacion-head h2 { margin: 0; }
-.estacion-momento { font-size: 12px; color: var(--gris); }
-.estacion-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.est-metric {
-    background: #f3f7f4; border-radius: 12px; padding: 12px 6px; text-align: center;
-    display: flex; flex-direction: column; align-items: center; gap: 2px;
+.tour-hint {
+  position: fixed; z-index: 30; left: 50%; transform: translateX(-50%);
+  top: calc(78px + env(safe-area-inset-top, 0px));
+  background: rgba(10,44,40,.7); color: #fff; backdrop-filter: blur(6px);
+  font-size: 12px; font-weight: 500; padding: 7px 15px; border-radius: 999px;
+  white-space: nowrap; pointer-events: none; transition: opacity .5s;
 }
-.est-metric i { font-style: normal; font-size: 18px; line-height: 1; }
-.est-metric strong { font-size: 16px; color: var(--verde-osc); }
-.est-metric span { font-size: 11px; color: var(--gris); }
-@media (max-width: 380px) { .estacion-grid { grid-template-columns: repeat(2, 1fr); } }
+.tour-hint.off { opacity: 0; }
 
-/* ── Footer ── */
-.foot {
-    text-align: center;
-    font-size: 13px;
-    color: var(--gris);
-    margin-top: 18px;
+.tour-abajo {
+  position: fixed; z-index: 30; left: 0; right: 0;
+  bottom: calc(0px + env(safe-area-inset-bottom, 0px));
+  padding: 10px 12px 14px;
+  background: linear-gradient(180deg, rgba(10,44,40,0) 0%, rgba(10,44,40,.75) 60%);
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
 }
-.foot a { color: var(--verde); text-decoration: none; font-weight: 600; }
-.foot span { margin: 0 6px; }
+.tour-accion {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--dorado); color: #fff; text-decoration: none;
+  font-size: 13.5px; font-weight: 600; padding: 10px 20px; border-radius: 999px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.35);
+}
+.tour-accion:active { transform: scale(.97); }
+
+.tour-estaciones {
+  display: flex; gap: 14px; overflow-x: auto; max-width: 100%;
+  padding: 4px 8px; scrollbar-width: none;
+}
+.tour-estaciones::-webkit-scrollbar { display: none; }
+.tour-est {
+  flex: 0 0 auto; background: none; border: none; cursor: pointer; padding: 0;
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+.tour-est__foto {
+  width: 62px; height: 62px; border-radius: 50%;
+  background-size: cover; background-position: center;
+  border: 2.5px solid rgba(255,255,255,.55);
+  box-shadow: 0 4px 12px rgba(0,0,0,.4);
+  transition: border-color .15s, transform .15s;
+}
+.tour-est__nombre {
+  font-size: 11px; font-weight: 600; color: #fff;
+  text-shadow: 0 1px 4px rgba(0,0,0,.6); max-width: 76px; text-align: center;
+  line-height: 1.2;
+}
+.tour-est.act .tour-est__foto {
+  border-color: var(--dorado); transform: scale(1.12);
+  box-shadow: 0 0 0 3px rgba(201,138,45,.35), 0 4px 14px rgba(0,0,0,.4);
+}
+.tour-est:active .tour-est__foto { transform: scale(1.05); }
+
+/* El avatar no debe tapar las estaciones en el tour */
+.tour-body .ph-avatar { bottom: calc(128px + env(safe-area-inset-bottom, 0px)); }
+
+@media (min-width: 700px) {
+  .tour-est__foto { width: 76px; height: 76px; }
+  .tour-titulo { left: 50%; right: auto; transform: translateX(-50%); min-width: 340px; }
+}
+
+/* ==========================================================================
+   Formularios (avistar / reportar)
+   ========================================================================== */
+.ph-form label {
+  display: block; font-size: 12px; font-weight: 700; margin: 16px 0 6px;
+  color: var(--bosque); text-transform: uppercase; letter-spacing: .08em;
+}
+.ph-form input[type=text], .ph-form textarea, .ph-form select {
+  width: 100%; padding: 13px 14px; border: none;
+  border-radius: 14px; font-size: 15px; font-family: inherit;
+  background: #F5F3EC; color: var(--tinta);
+}
+.ph-form textarea:focus, .ph-form select:focus, .ph-form input:focus {
+  outline: none; border-color: var(--verde); box-shadow: 0 0 0 3px rgba(44,122,110,.15);
+}
+
+/* Zona de foto grande y tocable (reemplaza al input file crudo) */
+.ph-foto-zona {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  border: 2px dashed rgba(44,122,110,.45); border-radius: var(--radio);
+  background: #F2F8F5; color: var(--verde);
+  padding: 26px 16px; text-align: center; cursor: pointer;
+  font-weight: 600; font-size: 14px;
+  transition: background .15s, border-color .15s;
+}
+.ph-foto-zona .ico { font-size: 34px; }
+.ph-foto-zona small { font-weight: 500; color: var(--tinta-suave); font-size: 12px; }
+.ph-foto-zona.ok { border-style: solid; border-color: var(--verde); background: #E9F5EF; }
+.ph-foto-zona img { max-width: 100%; max-height: 180px; border-radius: 10px; }
+.ph-foto-zona input[type=file] { display: none; }
+
+/* Chips de tipo de denuncia */
+.ph-tipos { display: flex; flex-wrap: wrap; gap: 8px; }
+.ph-tipo {
+  padding: 9px 15px; border-radius: 999px; cursor: pointer;
+  border: none; background: #F5F3EC;
+  font-family: 'Inter', system-ui, sans-serif; font-size: 13.5px; font-weight: 600;
+  color: var(--tinta-suave);
+  transition: background .15s, color .15s;
+}
+.ph-tipo.sel { background: var(--dorado); color: #fff; }
+
+/* Estado de geolocalización */
+.ph-geo {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 500; padding: 11px 14px;
+  border-radius: var(--radio-s); margin-top: 14px;
+}
+.ph-geo--ok { background: var(--ok-bg); color: var(--ok-tx); }
+.ph-geo--no { background: var(--err-bg); color: var(--err-tx); }
+.ph-geo--wait { background: var(--warn-bg); color: var(--warn-tx); }
+
+.ph-msg { margin-top: 14px; padding: 13px 15px; border-radius: var(--radio-s); font-size: 14px; }
+.ph-msg--ok { background: var(--ok-bg); color: var(--ok-tx); }
+.ph-msg--err { background: var(--err-bg); color: var(--err-tx); }
+
+/* ==========================================================================
+   Avatar flotante (Cisne)
+   ========================================================================== */
+.ph-avatar { position: fixed; right: 14px; bottom: calc(16px + var(--safe-b)); z-index: 900; text-align: right; }
+.ph-avatar__cara {
+  width: 64px; height: 64px; border-radius: 50%; padding: 4px;
+  border: 2.5px solid rgba(255,255,255,.9);
+  background: radial-gradient(circle at 35% 30%, #2C7A6E, #0E3B36 75%);
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(14,59,54,.38);
+  transition: transform .1s;
+  animation: av-flotar 3.2s ease-in-out infinite;
+}
+.ph-avatar__cara:active { transform: scale(.94); }
+.ph-avatar__cara svg { width: 100%; height: 100%; display: block; }
+
+/* --- Vida del personaje --- */
+@keyframes av-flotar { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes av-parpadeo { 0%, 91%, 100% { transform: scaleY(1); } 94%, 97% { transform: scaleY(.08); } }
+@keyframes av-cuello { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(-3deg); } }
+@keyframes av-cola { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(8deg); } }
+@keyframes av-pico { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(9deg); } }
+@keyframes av-boca { 0%,100% { transform: scaleY(1); } 50% { transform: scaleY(2.2); } }
+.ph-avatar__cara .av-ojo { animation: av-parpadeo 4.4s infinite; transform-origin: center; transform-box: fill-box; }
+.ph-avatar__cara .av-cabeza { animation: av-cuello 5s ease-in-out infinite; transform-origin: 70% 90%; transform-box: fill-box; }
+.ph-avatar__cara .av-cola { animation: av-cola 3.5s ease-in-out infinite; transform-origin: left center; transform-box: fill-box; }
+.ph-avatar__cara.hablando .av-pico-inf { animation: av-pico .18s ease-in-out infinite; transform-origin: right center; transform-box: fill-box; }
+.ph-avatar__cara.hablando .av-boca { animation: av-boca .2s ease-in-out infinite; transform-origin: center top; transform-box: fill-box; }
+@keyframes av-saco { 0%,100% { transform: scale(1); } 50% { transform: scale(1.4); } }
+.ph-avatar__cara.hablando .av-saco { animation: av-saco .3s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+
+/* --- Selector de compañero (los 4 habitantes) --- */
+.ph-companeros { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+.ph-comp-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 14px 10px 12px; border-radius: 18px; cursor: pointer;
+  border: none; background: #F5F3EC;
+  font-family: 'Inter', system-ui, sans-serif; text-align: center;
+  transition: background .15s, transform .08s, box-shadow .15s;
+}
+.ph-comp-btn .comp-svg {
+  width: 64px; height: 64px; border-radius: 50%; padding: 5px;
+  background: radial-gradient(circle at 35% 30%, #2C7A6E, #0E3B36 75%);
+}
+.ph-comp-btn .comp-svg svg { width: 100%; height: 100%; display: block; }
+.ph-comp-btn strong { color: var(--bosque); font-size: 13.5px; font-family: 'Fraunces', Georgia, serif; }
+.ph-comp-btn small { font-size: 11px; color: var(--tinta-suave); line-height: 1.35; }
+.ph-comp-btn:active { transform: scale(.97); }
+.ph-comp-btn.sel { background: #E4F1EB; box-shadow: inset 0 0 0 2px var(--verde); }
+
+.ph-avatar__globo strong { margin-bottom: 3px; }
+.ph-avatar__globo {
+  max-width: min(78vw, 320px); background: var(--blanco); border-radius: 16px;
+  border-bottom-right-radius: 4px;
+  padding: 13px 15px;
+  box-shadow: var(--sombra); font-size: 13.5px; line-height: 1.5; text-align: left;
+  margin-bottom: 10px; border: 1px solid var(--linea); color: var(--tinta);
+}
+.ph-avatar__globo strong {
+  display: block; color: var(--verde);
+  font-size: 11px; text-transform: uppercase; letter-spacing: .1em; font-weight: 700;
+}
+
+/* ==========================================================================
+   Puntos y cupones
+   ========================================================================== */
+.ph-saldo {
+  display: flex; align-items: center; gap: 14px;
+  background: linear-gradient(150deg, #1B5E54, #0E3B36);
+  color: #fff; border-radius: var(--radio); padding: 18px;
+  box-shadow: var(--sombra); margin-bottom: 16px;
+}
+.ph-saldo .num { font-family: 'Fraunces', Georgia, serif; font-size: 38px; font-weight: 700; line-height: 1; }
+.ph-saldo .lbl { font-size: 12px; color: var(--musgo); text-transform: uppercase; letter-spacing: .1em; font-weight: 600; }
+.ph-saldo .ico { font-size: 34px; }
+
+/* Banner de puntos en el hub */
+.ph-puntos-banner {
+  display: flex; align-items: center; gap: 12px; text-decoration: none;
+  background: var(--dorado-suave); border: none; border-radius: 18px;
+  padding: 14px 16px; margin-bottom: 16px; color: var(--tinta);
+  box-shadow: none;
+}
+.ph-puntos-banner .ico { font-size: 26px; }
+.ph-puntos-banner strong { color: #7A5514; }
+.ph-puntos-banner .flecha { margin-left: auto; color: #7A5514; font-size: 18px; }
+
+/* Ticket de cupón con borde perforado */
+.ph-ticket {
+  position: relative; display: flex; align-items: stretch;
+  background: #F5F3EC; border: none; border-radius: 16px;
+  box-shadow: none; margin-bottom: 12px; overflow: hidden;
+}
+.ph-ticket__ico {
+  flex: 0 0 64px; display: flex; align-items: center; justify-content: center;
+  font-size: 28px; background: var(--bruma);
+}
+.ph-ticket__info { flex: 1; padding: 12px 14px; border-left: 2px dashed var(--linea); position: relative; }
+.ph-ticket__info::before, .ph-ticket__info::after {
+  content: ''; position: absolute; left: -8px; width: 14px; height: 14px;
+  border-radius: 50%; background: var(--blanco);
+}
+.ph-ticket__info::before { top: -8px; }
+.ph-ticket__info::after { bottom: -8px; }
+.ph-ticket__info h3 { margin: 0; font-size: 15px; color: var(--bosque); }
+.ph-ticket__info p { margin: 3px 0 8px; font-size: 13px; color: var(--tinta-suave); }
+.ph-ticket__pie { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.ph-ticket__costo { font-weight: 700; font-size: 13px; color: #7A5514; }
+.ph-ticket__btn {
+  border: none; border-radius: 999px; padding: 8px 16px; cursor: pointer;
+  background: var(--dorado); color: #fff; font-weight: 600; font-size: 13px;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+.ph-ticket__btn:disabled { background: var(--arena-2); color: #A8B0AC; cursor: not-allowed; }
+.ph-ticket.canjeado { opacity: .92; }
+
+/* Modal de canje (QR) */
+.ph-modal-velo {
+  position: fixed; inset: 0; z-index: 950; background: rgba(12,32,29,.5);
+  display: flex; align-items: center; justify-content: center; padding: 24px;
+}
+.ph-modal {
+  background: var(--blanco); border-radius: var(--radio); padding: 24px 20px;
+  max-width: 340px; width: 100%; text-align: center; box-shadow: var(--sombra);
+}
+.ph-modal h3 { margin: 0 0 4px; color: var(--bosque); font-size: 19px; }
+.ph-modal .oferta { color: var(--tinta-suave); font-size: 14px; margin: 0 0 14px; }
+.ph-modal .qr { display: flex; justify-content: center; margin: 0 0 12px; }
+.ph-modal .codigo {
+  font-family: ui-monospace, Menlo, monospace; font-size: 17px; font-weight: 700;
+  letter-spacing: .08em; background: var(--arena-2); border-radius: 8px; padding: 9px 12px;
+  color: var(--bosque); margin-bottom: 6px;
+}
+.ph-modal small { color: var(--tinta-suave); }
+
+/* ==========================================================================
+   Perfil: hero con compañero, nivel con progreso, stats y actividad
+   ========================================================================== */
+.perfil-hero { text-align: center; margin-top: -60px; padding-bottom: 4px; }
+.perfil-hero .comp {
+  width: 104px; height: 104px; border-radius: 50%; padding: 8px;
+  margin: 0 auto 10px; border: 4px solid var(--blanco);
+  background: radial-gradient(circle at 35% 30%, #2C7A6E, #0E3B36 75%);
+  box-shadow: 0 6px 20px rgba(14,59,54,.25);
+}
+.perfil-hero .comp svg { width: 100%; height: 100%; display: block; }
+.perfil-hero h2 { margin: 0; font-size: 22px; color: var(--bosque); }
+.perfil-hero .correo { font-size: 12.5px; color: var(--tinta-suave); margin: 2px 0 10px; }
+
+.nivel-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--dorado-suave); color: #7A5514;
+  font-size: 12px; font-weight: 700; padding: 5px 14px; border-radius: 999px;
+  margin-bottom: 10px;
+}
+.prog { height: 9px; border-radius: 999px; background: #EDE9DE; overflow: hidden; max-width: 300px; margin: 0 auto; }
+.prog .fill {
+  height: 100%; border-radius: 999px;
+  background: linear-gradient(90deg, var(--verde), var(--dorado));
+  transition: width .6s ease;
+}
+.prog-txt { font-size: 11.5px; color: var(--tinta-suave); margin: 6px 0 0; }
+
+.perfil-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 18px 0 4px; }
+
+/* Gráfico de actividad (barras de puntos por día, sin librerías) */
+.graf { display: flex; align-items: flex-end; gap: 8px; height: 96px; padding: 6px 2px 0; }
+.graf .dia { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; height: 100%; justify-content: flex-end; }
+.graf .barra {
+  width: 100%; max-width: 34px; border-radius: 8px 8px 4px 4px; min-height: 4px;
+  background: linear-gradient(180deg, var(--verde), #1B5E54);
+  transition: height .5s ease;
+}
+.graf .dia.hoy .barra { background: linear-gradient(180deg, var(--dorado), #A9741F); }
+.graf .lbl { font-size: 10px; color: var(--tinta-suave); font-weight: 700; text-transform: uppercase; }
+.graf .pts { font-size: 10.5px; color: var(--bosque); font-weight: 700; }
+
+/* Insignias */
+.insignias { display: flex; flex-wrap: wrap; gap: 8px; }
+.insignia {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #F2F8F5; border-radius: 999px; padding: 7px 14px;
+  font-size: 12.5px; font-weight: 600; color: var(--bosque);
+}
+
+/* ==========================================================================
+   Módulo docente: planificar / terreno / cierre
+   ========================================================================== */
+.doc-fases { display: flex; gap: 6px; margin-bottom: 16px; }
+.doc-fase {
+  flex: 1; text-align: center; font-size: 11.5px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .06em; color: var(--tinta-suave);
+  padding: 8px 4px; border-radius: 999px; background: var(--arena-2);
+}
+.doc-fase.act { background: var(--bosque); color: #fff; }
+
+.doc-est {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; border-radius: 16px; margin-bottom: 8px;
+  border: none; background: #F5F3EC; cursor: pointer;
+}
+.doc-est.sel { background: #E4F1EB; box-shadow: inset 0 0 0 2px var(--verde); }
+.doc-est .orden {
+  flex: 0 0 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--arena-2); color: var(--tinta-suave); font-weight: 700; font-size: 14px;
+}
+.doc-est.sel .orden { background: var(--verde); color: #fff; }
+.doc-est .info { flex: 1; }
+.doc-est .info strong { display: block; color: var(--bosque); font-size: 14.5px; }
+.doc-est .info small { color: var(--tinta-suave); font-size: 12px; }
+
+/* Modo terreno: grande, legible al sol, mínimos toques */
+.campo-est {
+  background: linear-gradient(150deg, #1B5E54, #0E3B36);
+  color: #fff; border-radius: var(--radio); padding: 22px 20px;
+  box-shadow: var(--sombra); margin-bottom: 14px; text-align: center;
+}
+.campo-est .paso { font-size: 12px; color: var(--musgo); text-transform: uppercase; letter-spacing: .12em; font-weight: 700; }
+.campo-est h2 { font-size: 28px; margin: 6px 0 4px; color: #fff; }
+.campo-est p { color: #D9EAE3; font-size: 15px; margin: 0; }
+.campo-btn {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 20px 16px; border-radius: var(--radio); border: none;
+  font-family: 'Inter', system-ui, sans-serif; font-size: 18px; font-weight: 700;
+  cursor: pointer; margin-bottom: 12px; color: #fff; background: var(--verde);
+  box-shadow: var(--sombra-suave);
+}
+.campo-btn--dorado { background: var(--dorado); }
+.campo-btn--claro { background: var(--blanco); color: var(--bosque); border: 2px solid var(--verde); }
+.campo-btn:active { transform: scale(.98); }
+.campo-equipos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.campo-equipo {
+  padding: 16px 10px; border-radius: 16px; border: none;
+  background: #F5F3EC; font-family: 'Inter', system-ui, sans-serif;
+  font-size: 15px; font-weight: 700; color: var(--bosque); cursor: pointer; text-align: center;
+}
+.campo-equipo.sel { background: var(--dorado-suave); box-shadow: inset 0 0 0 2px var(--dorado); }
+
+.doc-resumen-num { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 12px 0; }
+
+/* ==========================================================================
+   Reto Observar (Guardián): matching foto-nombre + álbum
+   ========================================================================== */
+.obs-foto {
+  width: 130px; height: 130px; margin: 6px auto 14px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-size: 64px;
+  background: radial-gradient(circle at 35% 30%, var(--bruma), #CDE4DC 75%);
+  border: 3px solid var(--verde); box-shadow: var(--sombra-suave);
+}
+.obs-opciones { display: grid; gap: 10px; }
+.obs-op {
+  padding: 13px 16px; border-radius: 14px; cursor: pointer;
+  border: none; background: #F5F3EC;
+  font-family: 'Inter', system-ui, sans-serif; font-size: 14.5px; font-weight: 600;
+  color: var(--tinta); text-align: left;
+  transition: background .15s, transform .08s;
+}
+.obs-op:active { transform: scale(.98); }
+.obs-op.ok { background: var(--ok-bg); color: var(--ok-tx); }
+.obs-op.mal { background: var(--err-bg); color: var(--err-tx); }
+
+.alb-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
+.alb-item {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 12px 6px; border-radius: 16px;
+  border: none; background: #F5F3EC; text-align: center;
+}
+.alb-item .st { font-size: 30px; filter: grayscale(1); opacity: .35; }
+.alb-item small { font-size: 10.5px; color: var(--tinta-suave); line-height: 1.25; }
+.alb-item.tengo { border-color: var(--dorado); background: var(--dorado-suave); }
+.alb-item.tengo .st { filter: none; opacity: 1; }
+
+/* ==========================================================================
+   Panel municipal
+   ========================================================================== */
+.panel-wrap { max-width: 1080px; margin: 0 auto; padding: 18px 16px calc(28px + var(--safe-b)); }
+.panel-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 16px; }
+@media (min-width: 700px) { .panel-stats { grid-template-columns: repeat(4, 1fr); } }
+.panel-stat {
+  background: #F2F8F5; border: none; border-radius: 16px;
+  padding: 14px 16px; box-shadow: none;
+}
+.panel-stat .num { font-family: 'Fraunces', Georgia, serif; font-size: 30px; font-weight: 700; color: var(--bosque); line-height: 1.1; }
+.panel-stat .lbl { font-size: 12px; color: var(--tinta-suave); font-weight: 600; }
+.panel-stat--alerta .num { color: var(--dorado); }
+
+#panel-mapa { height: 340px; border-radius: var(--radio); box-shadow: var(--sombra-suave); border: 1px solid var(--linea); z-index: 1; }
+
+.panel-filtros { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 12px; }
+
+.panel-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  background: var(--blanco); border: none; border-radius: 16px;
+  padding: 13px 15px; margin-bottom: 10px; box-shadow: none;
+}
+.panel-item + .panel-item { border-top: 1px solid var(--linea); border-radius: 0; }
+.panel-item .ico { font-size: 22px; flex: 0 0 auto; margin-top: 2px; }
+.panel-item .cuerpo { flex: 1; min-width: 0; }
+.panel-item h3 { margin: 0; font-size: 14.5px; color: var(--bosque); font-family: 'Inter', system-ui, sans-serif; }
+.panel-item p { margin: 3px 0 0; font-size: 13px; color: var(--tinta-suave); }
+.panel-item .meta { font-size: 11.5px; color: #93A19B; margin-top: 4px; }
+.panel-estado {
+  flex: 0 0 auto; font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 999px;
+}
+.panel-estado--pendiente { background: var(--warn-bg); color: var(--warn-tx); }
+.panel-estado--proceso { background: #E2EEF4; color: #245A77; }
+.panel-estado--resuelta { background: var(--ok-bg); color: var(--ok-tx); }
+
+/* Puerta de acceso del panel */
+.panel-gate {
+  max-width: 380px; margin: 8vh auto 0;
+}
+
+/* ==========================================================================
+   Pie
+   ========================================================================== */
+.ph-foot {
+  text-align: center; font-size: 11px; color: #9AA8A2;
+  padding: 22px 24px calc(24px + var(--safe-b)); line-height: 1.5;
+}
+.hidden { display: none !important; }
+
+/* ==========================================================================
+   App shell: barra de pestañas inferior
+   ========================================================================== */
+body.con-tabs { padding-bottom: calc(74px + var(--safe-b)); }
+.ph-tabs {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 800;
+  display: flex; justify-content: space-around; align-items: stretch;
+  background: rgba(255,255,255,.96); backdrop-filter: blur(10px);
+  border-top: 1px solid var(--linea);
+  padding: 8px 8px calc(8px + var(--safe-b));
+}
+.ph-tab {
+  flex: 1; max-width: 110px; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  text-decoration: none; color: var(--tinta-suave);
+  font-size: 10.5px; font-weight: 600; padding: 6px 0 4px; border-radius: 14px;
+  transition: background .15s, color .15s;
+}
+.ph-tab .t-ico { font-size: 21px; line-height: 1; }
+.ph-tab.act { color: var(--bosque); background: var(--bruma); }
+body.con-tabs .ph-avatar { bottom: calc(88px + var(--safe-b)); }
+
+/* ==========================================================================
+   Mapa estilo app de viajes: pantalla completa + controles flotantes
+   ========================================================================== */
+.mapa-full { position: fixed; inset: 0; z-index: 1; }
+
+.mapa-pill {
+  position: fixed; z-index: 410; top: calc(14px + env(safe-area-inset-top, 0px));
+  left: 14px; right: 68px;
+  display: flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,.97); backdrop-filter: blur(8px);
+  border-radius: 999px; padding: 8px 14px 8px 8px;
+  box-shadow: 0 4px 18px rgba(14,59,54,.18); border: 1px solid var(--linea);
+}
+.mapa-pill .logo {
+  width: 36px; height: 36px; border-radius: 50%; flex: 0 0 auto;
+  display: flex; align-items: center; justify-content: center; font-size: 19px;
+  background: radial-gradient(circle at 35% 30%, #2C7A6E, #0E3B36 75%); color: #fff;
+}
+.mapa-pill strong { font-family: 'Fraunces', Georgia, serif; font-size: 15px; color: var(--bosque); display: block; line-height: 1.15; }
+.mapa-pill small { font-size: 10.5px; color: var(--tinta-suave); text-transform: uppercase; letter-spacing: .1em; font-weight: 700; }
+
+.mapa-stack {
+  position: fixed; z-index: 410; right: 12px; top: calc(14px + env(safe-area-inset-top, 0px));
+  display: flex; flex-direction: column; gap: 10px;
+}
+.mapa-stack button {
+  width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--linea);
+  background: rgba(255,255,255,.97); backdrop-filter: blur(8px);
+  font-size: 19px; cursor: pointer; box-shadow: 0 4px 14px rgba(14,59,54,.16);
+  display: flex; align-items: center; justify-content: center;
+}
+.mapa-stack button:active { transform: scale(.94); }
+
+/* Pins numerados (como paraderos de la referencia) */
+.pin-humedal {
+  display: flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--verde); color: #fff; font-weight: 800; font-size: 15px;
+  font-family: 'Inter', system-ui, sans-serif;
+  border: 3px solid #fff; box-shadow: 0 3px 10px rgba(14,59,54,.35);
+}
+.pin-humedal.piloto { background: var(--dorado); width: 40px; height: 40px; font-size: 18px; }
+.pin-humedal.sel { transform: scale(1.18); background: var(--bosque); }
+
+/* Sheet persistente (peek) + expandido */
+.mapa-sheet {
+  position: fixed; left: 0; right: 0; z-index: 420;
+  bottom: calc(58px + var(--safe-b));
+  background: var(--blanco); border-radius: 22px 22px 0 0;
+  box-shadow: 0 -8px 30px rgba(14,59,54,.20);
+  padding: 6px 0 10px;
+  transition: transform .3s cubic-bezier(.32,.72,.28,1);
+}
+.mapa-sheet .asa { width: 42px; height: 4.5px; border-radius: 999px; background: var(--linea); margin: 6px auto 8px; }
+.mapa-sheet h3 { margin: 0 16px 8px; font-size: 15px; color: var(--bosque); }
+
+/* Carrusel horizontal de humedales (estado peek) */
+.mapa-carrusel { display: flex; gap: 10px; overflow-x: auto; padding: 2px 16px 8px; scrollbar-width: none; }
+.mapa-carrusel::-webkit-scrollbar { display: none; }
+.mini-humedal {
+  flex: 0 0 auto; width: 150px; text-align: left; cursor: pointer;
+  background: #F5F3EC; border: none; border-radius: 16px;
+  padding: 12px 12px 10px; font-family: 'Inter', system-ui, sans-serif;
+}
+.mini-humedal .n {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; border-radius: 50%; background: var(--verde); color: #fff;
+  font-size: 12px; font-weight: 800; margin-bottom: 6px;
+}
+.mini-humedal.piloto .n { background: var(--dorado); }
+.mini-humedal strong { display: block; font-size: 13px; color: var(--bosque); line-height: 1.25; }
+.mini-humedal small { font-size: 11px; color: var(--tinta-suave); }
+.mini-humedal.sel { background: #E4F1EB; box-shadow: inset 0 0 0 2px var(--verde); }
+
+/* Detalle expandido dentro del sheet */
+.mapa-detalle { padding: 2px 16px 6px; }
+.mapa-detalle h2 { margin: 2px 0 2px; font-size: 20px; color: var(--bosque); }
+.mapa-detalle .dist { font-size: 12.5px; color: var(--tinta-suave); font-weight: 600; margin: 0 0 6px; }
+.mapa-detalle p.desc { margin: 0 0 12px; font-size: 13.5px; color: var(--tinta-suave); line-height: 1.5; }
+.mapa-detalle .botones { display: grid; grid-template-columns: 1fr 1.4fr; gap: 10px; }
+
+/* Pantallas medianas en adelante */
+@media (min-width: 700px) {
+  .ph-header h1 { font-size: 21px; }
+  .ph-sheet { left: 50%; right: auto; width: 480px; transform: translate(-50%, 105%); border-radius: 22px 22px 0 0; }
+  .ph-sheet.on { transform: translate(-50%, 0); }
+}

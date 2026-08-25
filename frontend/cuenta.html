@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#175E52">
+<title>Tu perfil · Humedales de Valdivia</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-tab="perfil">
+<header class="ph-header" style="padding-bottom:64px;">
+  <div>
+    <h1>Tu perfil</h1>
+    <p class="sub">Tu lugar en la comunidad del humedal</p>
+  </div>
+</header>
+
+<div class="ph-wrap">
+
+  <!-- Hero: compañero + nivel + progreso -->
+  <div class="perfil-hero">
+    <div class="comp" id="p-comp"></div>
+    <h2 id="p-nombre">Visitante</h2>
+    <p class="correo" id="p-email">Explorás sin cuenta — tus puntos viven en este dispositivo</p>
+    <div class="nivel-chip" id="p-nivel">🌱 Visitante</div>
+    <div class="prog"><div class="fill" id="p-prog" style="width:0%"></div></div>
+    <p class="prog-txt" id="p-prog-txt"></p>
+  </div>
+
+  <!-- Tus números -->
+  <div class="perfil-stats">
+    <div class="panel-stat"><div class="num" id="st-avist">0</div><div class="lbl">Avistamientos</div></div>
+    <div class="panel-stat panel-stat--alerta"><div class="num" id="st-rep">0</div><div class="lbl">Reportes</div></div>
+    <div class="panel-stat"><div class="num" id="st-album">0/6</div><div class="lbl">Álbum</div></div>
+  </div>
+
+  <!-- Actividad -->
+  <div class="ph-card">
+    <h2>Tu actividad</h2>
+    <p>Puntos ganados en terreno, últimos 7 días.</p>
+    <div class="graf" id="graf"></div>
+  </div>
+
+  <!-- Insignias -->
+  <div class="ph-card">
+    <h2>Insignias</h2>
+    <div class="insignias" id="p-insignias"><p style="font-size:13px;">Completá el tour 360° de un humedal para ganar tu primera insignia.</p></div>
+  </div>
+
+  <!-- Compañero -->
+  <div class="ph-card">
+    <h2>Tu compañero</h2>
+    <p>El habitante que te acompaña en cada visita.</p>
+    <div class="ph-companeros" id="comp-lista"></div>
+  </div>
+
+  <!-- Edad -->
+  <div class="ph-card">
+    <h2>¿Cómo te hablan los habitantes?</h2>
+    <p>Las historias se adaptan a tu edad. Podés cambiarlo cuando quieras.</p>
+    <div class="ph-perfiles" id="edades">
+      <button class="ph-perfil-btn" data-p="guardian"><span class="pico">🐣</span><span><strong>Guardián · menor de 13</strong>Historias simples, juego y álbum.</span></button>
+      <button class="ph-perfil-btn" data-p="explorador"><span class="pico">🔭</span><span><strong>Explorador · 13 a 17</strong>Datos más fuertes y misiones.</span></button>
+      <button class="ph-perfil-btn" data-p="guardabosques"><span class="pico">🌲</span><span><strong>Guardabosques · 18+</strong>Contexto ecológico completo.</span></button>
+    </div>
+  </div>
+
+  <!-- Modo de uso -->
+  <div class="ph-card">
+    <h2>Modo de uso</h2>
+    <div class="ph-perfiles" id="modos">
+      <button class="ph-perfil-btn" data-m="visitante"><span class="pico">🚶</span><span><strong>Visitante individual</strong>Retos, puntos canjeables y niveles.</span></button>
+      <button class="ph-perfil-btn" data-m="tutor"><span class="pico">👨‍👧</span><span><strong>Guardián con tutor</strong>Perfiles de niños; los canjes pasan por vos.</span></button>
+      <button class="ph-perfil-btn" data-m="escuela"><span class="pico">🏫</span><span><strong>Modo escuela / grupo</strong>Un celular guía a todos. Sin cupones.</span></button>
+    </div>
+
+    <div id="escuela-box" class="hidden" style="margin-top:16px;">
+      <a class="ph-btn ph-btn--prof" href="docente.html">🎒 Armar una salida grupal</a>
+    </div>
+
+    <div id="tutor-box" class="hidden" style="margin-top:16px;">
+      <h2 style="font-size:16px;">Tus Guardianes</h2>
+      <div id="ninos-lista"></div>
+      <form id="form-nino" class="ph-form" style="display:flex;gap:8px;align-items:flex-end;">
+        <span style="flex:1;"><label>Apodo</label><input type="text" id="n-apodo" placeholder="Ej: Vale"></span>
+        <span style="width:88px;"><label>Edad</label><input type="text" id="n-edad" inputmode="numeric" placeholder="8"></span>
+        <button type="submit" class="ph-btn" style="width:auto;margin-top:0;padding:13px 18px;">+</button>
+      </form>
+      <p style="font-size:12px;margin-top:8px;">Solo apodo y edad: sin datos de menores.</p>
+    </div>
+  </div>
+
+  <!-- Cupones canjeados -->
+  <div class="ph-card" id="sec-canjes">
+    <h2>Cupones canjeados</h2>
+    <div id="c-canjes"><p>Todavía no canjeaste cupones.</p></div>
+  </div>
+
+  <!-- Cuenta -->
+  <div class="ph-card">
+    <h2 id="cta-titulo">Guardá tu avance</h2>
+    <div id="sin-cuenta">
+      <p>Todo funciona sin cuenta. Registrate solo si querés que tus puntos y tu álbum sobrevivan a un cambio de celular.</p>
+      <form id="form-login" class="ph-form">
+        <label>Nombre o apodo</label>
+        <input type="text" id="f-nombre" placeholder="¿Cómo te llamamos?" required>
+        <label>Correo</label>
+        <input type="text" id="f-email" inputmode="email" placeholder="tu@correo.cl" required>
+        <button type="submit" class="ph-btn">Crear cuenta</button>
+      </form>
+      <p style="font-size:12px;margin-top:8px;">Maqueta: se guarda en este dispositivo. La versión final usará enlace mágico al correo, sin contraseña.</p>
+    </div>
+    <div id="con-cuenta" class="hidden">
+      <button class="ph-btn ph-btn--ghost" id="btn-salir">Cerrar sesión en este dispositivo</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/avatar.js"></script>
+<script src="js/puntos.js"></script>
+<script>
+(function () {
+  var NIVEL_ICO = { 'Visitante': '🌱', 'Vecino del humedal': '🏡', 'Guardián de la ribera': '🛡️', 'Voz del humedal': '🦢' };
+  var DIAS = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
+
+  function usuario() { return JSON.parse(localStorage.getItem('ph_usuario') || 'null'); }
+  function hist() { return JSON.parse(localStorage.getItem('ph_puntos_hist') || '[]'); }
+
+  /* ---- Hero: compañero, nivel y progreso ---- */
+  function pintarHero() {
+    document.getElementById('p-comp').innerHTML = PH_PERSONAJES[phCompanero()].svg;
+    var u = usuario();
+    if (u) {
+      document.getElementById('p-nombre').textContent = u.nombre;
+      document.getElementById('p-email').textContent = u.email;
+    }
+    var pts = phPuntos(), niv = phNivel();
+    document.getElementById('p-nivel').textContent = (NIVEL_ICO[niv.nombre] || '🌱') + ' ' + niv.nombre + ' · ' + pts + ' pts';
+    var actualMin = 0, sigMin = null;
+    PH_NIVELES.forEach(function (n) {
+      if (pts >= n.min) actualMin = n.min;
+      else if (sigMin === null) sigMin = n.min;
+    });
+    var pct = sigMin === null ? 100 : Math.round(100 * (pts - actualMin) / (sigMin - actualMin));
+    document.getElementById('p-prog').style.width = Math.max(4, pct) + '%';
+    document.getElementById('p-prog-txt').textContent = niv.siguiente
+      ? 'Te faltan ' + niv.faltan + ' puntos para ser ' + niv.siguiente
+      : 'Nivel máximo: el humedal habla por vos 🦢';
+  }
+
+  /* ---- Stats ---- */
+  function pintarStats() {
+    var h = hist();
+    var cta = function (m) { return h.filter(function (x) { return x.motivo === m; }).length; };
+    document.getElementById('st-avist').textContent = cta('avistamiento') + cta('reconocer');
+    document.getElementById('st-rep').textContent = cta('denuncia');
+    var album = JSON.parse(localStorage.getItem('ph_album') || '[]');
+    document.getElementById('st-album').textContent = album.length + '/6';
+  }
+
+  /* ---- Gráfico: puntos por día, últimos 7 ---- */
+  function pintarGrafico() {
+    var h = hist(), porDia = {};
+    h.forEach(function (x) { var d = x.fecha.slice(0, 10); porDia[d] = (porDia[d] || 0) + x.puntos; });
+    var out = '', max = 1, dias = [];
+    for (var i = 6; i >= 0; i--) {
+      var f = new Date(); f.setDate(f.getDate() - i);
+      var k = f.toISOString().slice(0, 10);
+      var v = porDia[k] || 0;
+      dias.push({ k: k, v: v, lbl: DIAS[f.getDay()], hoy: i === 0 });
+      if (v > max) max = v;
+    }
+    dias.forEach(function (d) {
+      out += '<div class="dia' + (d.hoy ? ' hoy' : '') + '">' +
+             (d.v ? '<span class="pts">+' + d.v + '</span>' : '') +
+             '<div class="barra" style="height:' + Math.max(5, Math.round(74 * d.v / max)) + 'px"></div>' +
+             '<span class="lbl">' + d.lbl + '</span></div>';
+    });
+    document.getElementById('graf').innerHTML = out;
+  }
+
+  /* ---- Insignias ---- */
+  function pintarInsignias() {
+    var ins = phInsignias();
+    if (!ins.length) return;
+    document.getElementById('p-insignias').innerHTML = ins.map(function (i) {
+      if (i.indexOf('tour-') === 0) return '<span class="insignia">🏅 Conocés el barrio · tour completo</span>';
+      return '<span class="insignia">🏅 ' + i + '</span>';
+    }).join('');
+  }
+
+  /* ---- Compañero ---- */
+  function pintarComp() {
+    var lista = document.getElementById('comp-lista');
+    lista.innerHTML = Object.keys(PH_PERSONAJES).map(function (k) {
+      var p = PH_PERSONAJES[k];
+      return '<button class="ph-comp-btn' + (k === phCompanero() ? ' sel' : '') + '" data-a="' + k + '">' +
+             '<span class="comp-svg">' + p.svg + '</span>' +
+             '<strong>' + p.nombre + '</strong><small>' + p.lema + '</small></button>';
+    }).join('');
+    lista.querySelectorAll('.ph-comp-btn').forEach(function (b) {
+      b.addEventListener('click', function () {
+        phSetCompanero(b.dataset.a);
+        pintarComp(); pintarHero();
+        phDecir(phHistoria('bienvenida'));
+      });
+    });
+  }
+
+  /* ---- Edad (perfil etario) ---- */
+  function pintarEdad() {
+    document.querySelectorAll('#edades .ph-perfil-btn').forEach(function (b) {
+      b.classList.toggle('sel', b.dataset.p === (PH_PERFIL || ''));
+      b.onclick = function () { phSetPerfil(b.dataset.p); pintarEdad(); phDecir(phHistoria('bienvenida')); };
+    });
+  }
+
+  /* ---- Modos ---- */
+  function pintarModo() {
+    var m = phModo();
+    document.querySelectorAll('#modos .ph-perfil-btn').forEach(function (b) {
+      b.classList.toggle('sel', b.dataset.m === m);
+    });
+    document.getElementById('tutor-box').classList.toggle('hidden', m !== 'tutor');
+    document.getElementById('escuela-box').classList.toggle('hidden', m !== 'escuela');
+    if (m === 'tutor') pintarNinos();
+  }
+  document.querySelectorAll('#modos .ph-perfil-btn').forEach(function (b) {
+    b.addEventListener('click', function () {
+      phSetModo(b.dataset.m); pintarModo();
+      if (b.dataset.m === 'escuela') phDecir('Modo grupo activo: un celular guía a todos, sin cupones.');
+      if (b.dataset.m === 'tutor') phDecir('Modo tutor: agregá a tus Guardianes con apodo y edad.');
+    });
+  });
+
+  function ninos() { return JSON.parse(localStorage.getItem('ph_ninos') || '[]'); }
+  function pintarNinos() {
+    var lista = ninos();
+    document.getElementById('ninos-lista').innerHTML = lista.length
+      ? lista.map(function (n, i) {
+          return '<p style="display:flex;justify-content:space-between;align-items:center;margin:6px 0;">' +
+                 '<span>🐣 <strong>' + n.apodo + '</strong> · ' + n.edad + ' años</span>' +
+                 '<button class="ph-tipo" data-i="' + i + '">Quitar</button></p>';
+        }).join('')
+      : '<p style="color:var(--tinta-suave);font-size:13px;">Todavía no agregaste Guardianes.</p>';
+    document.querySelectorAll('#ninos-lista [data-i]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var l = ninos(); l.splice(+b.dataset.i, 1);
+        localStorage.setItem('ph_ninos', JSON.stringify(l));
+        pintarNinos();
+      });
+    });
+  }
+  document.getElementById('form-nino').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var apodo = document.getElementById('n-apodo').value.trim();
+    var edad = parseInt(document.getElementById('n-edad').value, 10);
+    if (!apodo || !edad || edad > 12) { alert('Apodo y edad (hasta 12 años).'); return; }
+    var l = ninos(); l.push({ apodo: apodo, edad: edad });
+    localStorage.setItem('ph_ninos', JSON.stringify(l));
+    document.getElementById('n-apodo').value = ''; document.getElementById('n-edad').value = '';
+    pintarNinos();
+  });
+
+  /* ---- Canjes ---- */
+  function pintarCanjes() {
+    var canjes = phCanjes();
+    if (!canjes.length) return;
+    document.getElementById('c-canjes').innerHTML = canjes.map(function (k) {
+      var c = PH_CUPONES.find(function (x) { return x.id === k.cupon; }) || {};
+      return '<p style="display:flex;justify-content:space-between;margin:8px 0;">' +
+             '<span>' + (c.icono || '🎟️') + ' ' + (c.comercio || '') + '</span>' +
+             '<code style="font-size:12px;">' + k.codigo + '</code></p>';
+    }).join('');
+  }
+
+  /* ---- Cuenta ---- */
+  function pintarCuenta() {
+    var u = usuario();
+    document.getElementById('sin-cuenta').classList.toggle('hidden', !!u);
+    document.getElementById('con-cuenta').classList.toggle('hidden', !u);
+    document.getElementById('cta-titulo').textContent = u ? 'Tu cuenta' : 'Guardá tu avance';
+  }
+  document.getElementById('form-login').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var nombre = document.getElementById('f-nombre').value.trim();
+    var email = document.getElementById('f-email').value.trim();
+    if (!nombre || !email) return;
+    localStorage.setItem('ph_usuario', JSON.stringify({ nombre: nombre, email: email, creada: new Date().toISOString() }));
+    pintarCuenta(); pintarHero();
+    phDecir('¡Bienvenido, ' + nombre + '! Desde ahora tu avance queda guardado. Nos vemos en el humedal.');
+  });
+  document.getElementById('btn-salir').addEventListener('click', function () {
+    if (confirm('¿Cerrar sesión? Tus puntos quedan guardados en este dispositivo.')) {
+      localStorage.removeItem('ph_usuario');
+      document.getElementById('p-nombre').textContent = 'Visitante';
+      document.getElementById('p-email').textContent = 'Explorás sin cuenta — tus puntos viven en este dispositivo';
+      pintarCuenta();
+    }
+  });
+
+  pintarHero(); pintarStats(); pintarGrafico(); pintarInsignias();
+  pintarComp(); pintarEdad(); pintarModo(); pintarCanjes(); pintarCuenta();
+})();
+</script>
+<footer class="ph-foot">Las denuncias son anónimas aunque tengas cuenta. Los menores de 13 no necesitan registrarse.</footer>
+</body>
+</html>
