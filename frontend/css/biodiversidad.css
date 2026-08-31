@@ -1,0 +1,70 @@
+/* Biodiversidad: galería de especies (avistar) + ficha modal + foto del juego.
+   Componentes reutilizables, apoyados en las variables de style.css. */
+
+.bio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.bio-card {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  padding: 0;
+  border: 1px solid var(--linea, #e2e6e0);
+  border-radius: 14px;
+  background: var(--papel, #fff);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.bio-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(14,59,54,.12); }
+.bio-foto {
+  aspect-ratio: 1 / 1;
+  background-size: cover;
+  background-position: center;
+  background-color: #dfe7e3;
+}
+.bio-info { padding: 8px 10px 10px; display: flex; flex-direction: column; gap: 2px; }
+.bio-nombre { font-weight: 600; font-size: 14px; color: var(--bosque, #0E3B36); line-height: 1.2; }
+.bio-sci { font-style: italic; font-size: 12px; color: var(--tinta-suave, #6b7a75); }
+.bio-count { font-size: 12px; color: var(--tinta-suave, #6b7a75); margin-top: 2px; }
+
+/* Modal de ficha técnica */
+.bio-modal { position: fixed; inset: 0; z-index: 60; display: flex; align-items: flex-end; justify-content: center; }
+.bio-modal[hidden] { display: none; }
+.bio-modal__bg { position: absolute; inset: 0; background: rgba(10,44,40,.55); }
+.bio-modal__panel {
+  position: relative; z-index: 1; width: 100%; max-width: 560px; max-height: 88vh;
+  overflow-y: auto; background: var(--papel, #fff);
+  border-radius: 20px 20px 0 0; box-shadow: 0 -8px 30px rgba(0,0,0,.25);
+}
+@media (min-width: 620px) { .bio-modal { align-items: center; } .bio-modal__panel { border-radius: 20px; } }
+.bio-modal__x {
+  position: absolute; top: 12px; right: 12px; z-index: 2;
+  width: 34px; height: 34px; border-radius: 50%; border: none;
+  background: rgba(255,255,255,.9); font-size: 16px; cursor: pointer; color: var(--bosque, #0E3B36);
+}
+.ficha-hero { height: 220px; background-size: cover; background-position: center; background-color: #cdd8d2; }
+.ficha-cuerpo { padding: 16px 18px 22px; }
+.ficha-titulo { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.ficha-titulo h3 { margin: 0; font-size: 20px; color: var(--bosque, #0E3B36); }
+.ficha-estado { color: #fff; font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px; }
+.ficha-sci { font-style: italic; color: var(--tinta-suave, #6b7a75); margin: 4px 0 12px; }
+.ficha-grupo { font-style: normal; }
+.ficha-thumbs { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+.ficha-thumb { width: 54px; height: 54px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 1px solid var(--linea, #e2e6e0); }
+.ficha-taxo { display: flex; flex-direction: column; gap: 3px; font-size: 13px; color: var(--tinta, #24322e); margin-bottom: 12px; }
+.ficha-desc { font-size: 14px; line-height: 1.6; color: var(--tinta, #24322e); }
+.ficha-stats { display: flex; gap: 14px; margin: 14px 0; }
+.ficha-stats > div { flex: 1; background: var(--verde-agua, #eef4ef); border-radius: 12px; padding: 10px; text-align: center; }
+.ficha-stats strong { display: block; font-size: 20px; color: var(--bosque, #0E3B36); }
+.ficha-stats span { font-size: 12px; color: var(--tinta-suave, #6b7a75); }
+.ficha-cargando { color: var(--tinta-suave, #6b7a75); }
+.modal-link { display: inline-block; margin-top: 4px; color: var(--bosque, #0E3B36); font-weight: 600; text-decoration: none; }
+
+/* Foto real en el mini-juego (reemplaza el emoji) */
+.obs-foto--img { background-size: cover; background-position: center; background-color: #dfe7e3; }
+.alb-item .st.obs-foto--img { display: block; width: 100%; aspect-ratio: 1 / 1; border-radius: 10px; }
+.bio-status--err { color: #d6322b; }

@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#0E3B36">
 <title>Reconocer especies · Humedales de Valdivia</title>
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/biodiversidad.css">
 </head>
 <body data-tab="humedal">
 <header class="ph-header">
@@ -17,7 +18,7 @@
   <!-- Juego -->
   <div id="juego" class="ph-card">
     <p id="j-pregunta" style="text-align:center;font-weight:600;color:var(--bosque);">¿Quién es este habitante del humedal?</p>
-    <div class="obs-foto" id="j-foto">🦢</div>
+    <div class="obs-foto" id="j-foto">🔎</div>
     <div class="obs-opciones" id="j-opciones"></div>
     <div id="geo" class="ph-geo ph-geo--wait" style="margin-top:16px;">📍 Viendo si estás en el humedal…</div>
   </div>
@@ -25,7 +26,7 @@
   <!-- Álbum -->
   <div class="ph-card">
     <h2>Tu álbum del humedal</h2>
-    <p>Cada especie que reconocés se pega en tu álbum. Nota para la maqueta: los dibujos serán fotos reales de las especies.</p>
+    <p>Cada especie que reconocés se pega en tu álbum, con su foto real.</p>
     <div class="alb-grid" id="album"></div>
   </div>
 </div>
@@ -33,33 +34,18 @@
 <script src="js/config.js"></script>
 <script src="js/nav.js"></script>
 <script src="js/geo.js"></script>
+<script src="js/biodiversidad.js"></script>
 <script src="js/avatar.js"></script>
 <script src="js/puntos.js"></script>
+<script src="js/juego-especies.js"></script>
 <script>
 (async function () {
   var id = new URLSearchParams(location.search).get('id') || 'laguna-los-patos';
   document.getElementById('back').href = 'humedal.html?id=' + id;
 
-  /* Especies del humedal (emoji = placeholder de la foto real) */
-  var ESPECIES = [
-    { id: 'cisne', foto: '🦢', nombre: 'Cisne de cuello negro' },
-    { id: 'ranita', foto: '🐸', nombre: 'Ranita de Darwin' },
-    { id: 'garza', foto: '🕊️', nombre: 'Garza grande' },
-    { id: 'queltehue', foto: '🐦', nombre: 'Queltehue' },
-    { id: 'coipo', foto: '🦫', nombre: 'Coipo' },
-    { id: 'monito', foto: '🐭', nombre: 'Monito del Monte' }
-  ];
-
-  function album() { return JSON.parse(localStorage.getItem('ph_album') || '[]'); }
-  function pegar(eid) {
-    var a = album();
-    if (a.indexOf(eid) < 0) { a.push(eid); localStorage.setItem('ph_album', JSON.stringify(a)); }
-  }
-
   /* Geolocalización: el álbum se llena en cualquier parte,
      pero los puntos solo se ganan dentro del polígono */
-  var dentro = false;
-  var geoBox = document.getElementById('geo');
+  var dentro = false, geoBox = document.getElementById('geo');
   try {
     var feature = await phFeatureDe(id);
     navigator.geolocation && navigator.geolocation.getCurrentPosition(function (p) {
@@ -74,57 +60,14 @@
     });
   } catch (e) {}
 
-  /* Juego: aparece una "foto", elegí el nombre correcto */
-  var pendientes = [], actual = null;
-
-  function barajar(arr) {
-    return arr.slice().sort(function () { return Math.random() - .5; });
-  }
-
-  function pintarAlbum() {
-    var a = album();
-    document.getElementById('album').innerHTML = ESPECIES.map(function (e) {
-      var tengo = a.indexOf(e.id) >= 0;
-      return '<div class="alb-item' + (tengo ? ' tengo' : '') + '">' +
-             '<span class="st">' + e.foto + '</span><small>' + (tengo ? e.nombre : '¿?') + '</small></div>';
-    }).join('');
-  }
-
-  function ronda() {
-    if (!pendientes.length) pendientes = barajar(ESPECIES);
-    actual = pendientes.shift();
-    document.getElementById('j-foto').textContent = actual.foto;
-    var opciones = barajar([actual].concat(barajar(ESPECIES.filter(function (e) { return e.id !== actual.id; })).slice(0, 2)));
-    var box = document.getElementById('j-opciones');
-    box.innerHTML = opciones.map(function (o) {
-      return '<button class="obs-op" data-e="' + o.id + '">' + o.nombre + '</button>';
-    }).join('');
-    box.querySelectorAll('.obs-op').forEach(function (b) {
-      b.addEventListener('click', function () { responder(b); });
-    });
-  }
-
-  function responder(b) {
-    var esNuevo = album().indexOf(actual.id) < 0;
-    if (b.dataset.e === actual.id) {
-      b.classList.add('ok');
-      pegar(actual.id);
-      pintarAlbum();
-      var msj = '¡Sí! Es ' + actual.nombre + '.' + (esNuevo ? ' Se pegó en tu álbum ⭐' : '');
-      if (esNuevo && dentro) {
-        var g = phSumarPuntos('reconocer');
-        msj += ' Y como estás en el humedal, ganaste +' + g + ' puntos.';
-      }
-      phDecir(msj);
-      setTimeout(ronda, 1400);
-    } else {
-      b.classList.add('mal');
-      phDecir('Mmm, no… mirá bien y probá de nuevo. La paciencia es la mejor lupa.');
-    }
-  }
-
-  pintarAlbum();
-  ronda();
+  phMontarJuego({
+    humedalId: id,
+    foto: 'j-foto',
+    opciones: 'j-opciones',
+    album: 'album',
+    conPuntos: true,
+    dentroFn: function () { return dentro; }
+  });
 })();
 </script>
 <footer class="ph-foot">Reto Observar para Guardianes: se reconoce, no se sube nada. Siempre con un adulto.</footer>

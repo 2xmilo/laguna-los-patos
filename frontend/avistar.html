@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#0E3B36">
 <title>Avistar · Humedales de Valdivia</title>
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/biodiversidad.css">
 </head>
 <body data-tab="humedal">
 <header class="ph-header">
@@ -29,13 +30,38 @@
     </form>
     <div id="msg"></div>
   </div>
+
+  <div class="ph-card" id="juego-card">
+    <h2>Mini-juego: ¿reconocés las especies?</h2>
+    <p>Practicá identificando las especies reales de este humedal. No subís nada.</p>
+    <div class="obs-foto" id="j-foto">🔎</div>
+    <div class="obs-opciones" id="j-opciones"></div>
+    <p id="j-racha" style="text-align:center;color:var(--tinta-suave);font-size:13px;margin-top:8px;"></p>
+  </div>
+
+  <div class="ph-card" id="bio-card">
+    <h2>Biodiversidad registrada aquí</h2>
+    <p>Especies observadas en este humedal por la comunidad de iNaturalist. Tocá una para ver su ficha.</p>
+    <div id="bio-status" class="ph-geo ph-geo--wait">Cargando especies…</div>
+    <div class="bio-grid" id="bio-grid"></div>
+  </div>
+</div>
+
+<div id="bio-modal" class="bio-modal" hidden>
+  <div class="bio-modal__bg" data-close></div>
+  <div class="bio-modal__panel">
+    <button class="bio-modal__x" data-close aria-label="Cerrar">✕</button>
+    <div id="bio-ficha"></div>
+  </div>
 </div>
 
 <script src="js/config.js"></script>
 <script src="js/nav.js"></script>
 <script src="js/geo.js"></script>
+<script src="js/biodiversidad.js"></script>
 <script src="js/avatar.js"></script>
 <script src="js/puntos.js"></script>
+<script src="js/juego-especies.js"></script>
 <script>
 (async function () {
   var id = new URLSearchParams(location.search).get('id') || 'laguna-los-patos';
@@ -104,6 +130,51 @@
       }
     }
   });
+})();
+</script>
+
+<script>
+(function () {
+  var id = new URLSearchParams(location.search).get('id') || 'laguna-los-patos';
+  var grid = document.getElementById('bio-grid');
+  var status = document.getElementById('bio-status');
+  var modal = document.getElementById('bio-modal');
+  var fichaBox = document.getElementById('bio-ficha');
+  var ESTADOS = { LC:['Preocupación menor','#4caf50'], NT:['Casi amenazada','#9acb3c'], VU:['Vulnerable','#f0a818'], EN:['En peligro','#e8722c'], CR:['En peligro crítico','#d6322b'], EW:['Extinta en estado silvestre','#7a3b8f'], EX:['Extinta','#444'], DD:['Datos insuficientes','#9e9e9e'] };
+  function esc(s){ var d=document.createElement('div'); d.textContent=(s==null?'':String(s)); return d.innerHTML; }
+  function limpiar(h){ var d=document.createElement('div'); d.innerHTML=h||''; return (d.textContent||'').trim(); }
+  function chipE(cs){ if(!cs) return ''; var c=String(cs.status||'').toUpperCase(); var i=ESTADOS[c]; var l=i?i[0]:(cs.status_name||c); var col=i?i[1]:'#777'; return '<span class="ficha-estado" style="background:'+col+'">'+esc(l)+'</span>'; }
+  function taxo(anc){ var q={class:'Clase',order:'Orden',family:'Familia'}; return (anc||[]).filter(function(a){return q[a.rank];}).map(function(a){ return '<span><b>'+q[a.rank]+':</b> '+esc(a.preferred_common_name||a.name)+'</span>'; }).join(''); }
+  function thumbs(tp){ var fs=(tp||[]).map(function(x){return x.photo&&(x.photo.medium_url||x.photo.square_url);}).filter(Boolean).slice(0,6); if(fs.length<2) return ''; return '<div class="ficha-thumbs">'+fs.map(function(u){ var big=u.replace('/medium.','/large.').replace('/square.','/large.'); return '<img src="'+u+'" data-big="'+big+'" class="ficha-thumb">'; }).join('')+'</div>'; }
+  function abrirFicha(r){
+    modal.hidden=false;
+    var fotoBig=phFotoTaxon(r.taxon,'large')||phFotoTaxon(r.taxon,'medium')||'';
+    fichaBox.innerHTML='<div class="ficha-hero" style="background-image:url(\''+fotoBig+'\')"></div><div class="ficha-cuerpo"><div class="ficha-titulo"><h3>'+esc(phNombreTaxon(r.taxon))+'</h3></div><p class="ficha-cargando">Cargando ficha…</p></div>';
+    phFichaTaxon(r.taxon.id).then(function(t){
+      if(!t||modal.hidden) return;
+      var resumen=limpiar(t.wikipedia_summary);
+      fichaBox.innerHTML='<div class="ficha-hero" id="ficha-hero" style="background-image:url(\''+fotoBig+'\')"></div><div class="ficha-cuerpo"><div class="ficha-titulo"><h3>'+esc(phNombreTaxon(t))+'</h3>'+chipE(t.conservation_status)+'</div><p class="ficha-sci">'+esc(t.name||'')+' · <span class="ficha-grupo">'+esc(t.iconic_taxon_name||'')+'</span></p>'+thumbs(t.taxon_photos)+'<div class="ficha-taxo">'+taxo(t.ancestors)+'</div>'+(resumen?'<p class="ficha-desc">'+esc(resumen)+'</p>':'')+'<div class="ficha-stats"><div><strong>'+r.count+'</strong><span>obs. aquí</span></div><div><strong>'+(t.observations_count||0).toLocaleString('es-CL')+'</strong><span>obs. en el mundo</span></div></div><a class="modal-link" href="https://www.inaturalist.org/taxa/'+t.id+'" target="_blank" rel="noopener">Ver ficha completa en iNaturalist ↗</a></div>';
+    }).catch(function(){});
+  }
+  grid.addEventListener('click', function(e){ var c=e.target.closest('.bio-card'); if(!c||!grid._data) return; var r=grid._data[+c.dataset.i]; if(r) abrirFicha(r); });
+  fichaBox.addEventListener('click', function(e){ var t=e.target.closest('.ficha-thumb'); if(!t) return; var h=document.getElementById('ficha-hero'); if(h) h.style.backgroundImage="url('"+(t.dataset.big||t.src)+"')"; });
+  modal.querySelectorAll('[data-close]').forEach(function(el){ el.addEventListener('click', function(){ modal.hidden=true; }); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') modal.hidden=true; });
+
+  phEspeciesDe(id).then(function(res){
+    grid._data=res;
+    if(!res.length){ status.textContent='Todavía no hay especies registradas en este humedal.'; return; }
+    status.style.display='none';
+    grid.innerHTML=res.map(function(r,i){ var foto=phFotoTaxon(r.taxon,'medium'); if(!foto) return ''; return '<button class="bio-card" data-i="'+i+'"><div class="bio-foto" style="background-image:url(\''+foto+'\')"></div><div class="bio-info"><span class="bio-nombre">'+esc(phNombreTaxon(r.taxon))+'</span><span class="bio-sci">'+esc(r.taxon.name||'')+'</span><span class="bio-count">'+r.count+' obs.</span></div></button>'; }).join('');
+  }).catch(function(){ status.className='ph-geo bio-status--err'; status.textContent='No se pudo cargar la biodiversidad. Intentá más tarde.'; });
+})();
+</script>
+
+<script>
+(function () {
+  var id = new URLSearchParams(location.search).get('id') || 'laguna-los-patos';
+  if (typeof PH_PERFIL !== 'undefined' && PH_PERFIL === 'guardian') return;
+  phMontarJuego({ humedalId: id, foto: 'j-foto', opciones: 'j-opciones', racha: 'j-racha', conPuntos: false });
 })();
 </script>
 <footer class="ph-foot">Los puntos se ganan solo con acciones geolocalizadas dentro del polígono del humedal.</footer>
