@@ -16,3 +16,6 @@ desktop.ini
 # Editores
 .vscode/
 .idea/
+
+# Documento de trabajo de guiones (no versionar)
+docs/GUIONES.md
