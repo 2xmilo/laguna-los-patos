@@ -65,31 +65,6 @@
     </div>
   </div>
 
-  <!-- Modo de uso -->
-  <div class="ph-card">
-    <h2>Modo de uso</h2>
-    <div class="ph-perfiles" id="modos">
-      <button class="ph-perfil-btn" data-m="visitante"><span class="pico">🚶</span><span><strong>Visitante individual</strong>Retos, puntos canjeables y niveles.</span></button>
-      <button class="ph-perfil-btn" data-m="tutor"><span class="pico">👨‍👧</span><span><strong>Guardián con tutor</strong>Perfiles de niños; los canjes pasan por vos.</span></button>
-      <button class="ph-perfil-btn" data-m="escuela"><span class="pico">🏫</span><span><strong>Modo escuela / grupo</strong>Un celular guía a todos. Sin cupones.</span></button>
-    </div>
-
-    <div id="escuela-box" class="hidden" style="margin-top:16px;">
-      <a class="ph-btn ph-btn--prof" href="docente.html">🎒 Armar una salida grupal</a>
-    </div>
-
-    <div id="tutor-box" class="hidden" style="margin-top:16px;">
-      <h2 style="font-size:16px;">Tus Guardianes</h2>
-      <div id="ninos-lista"></div>
-      <form id="form-nino" class="ph-form" style="display:flex;gap:8px;align-items:flex-end;">
-        <span style="flex:1;"><label>Apodo</label><input type="text" id="n-apodo" placeholder="Ej: Vale"></span>
-        <span style="width:88px;"><label>Edad</label><input type="text" id="n-edad" inputmode="numeric" placeholder="8"></span>
-        <button type="submit" class="ph-btn" style="width:auto;margin-top:0;padding:13px 18px;">+</button>
-      </form>
-      <p style="font-size:12px;margin-top:8px;">Solo apodo y edad: sin datos de menores.</p>
-    </div>
-  </div>
-
   <!-- Cupones canjeados -->
   <div class="ph-card" id="sec-canjes">
     <h2>Cupones canjeados</h2>
@@ -217,53 +192,6 @@
     });
   }
 
-  /* ---- Modos ---- */
-  function pintarModo() {
-    var m = phModo();
-    document.querySelectorAll('#modos .ph-perfil-btn').forEach(function (b) {
-      b.classList.toggle('sel', b.dataset.m === m);
-    });
-    document.getElementById('tutor-box').classList.toggle('hidden', m !== 'tutor');
-    document.getElementById('escuela-box').classList.toggle('hidden', m !== 'escuela');
-    if (m === 'tutor') pintarNinos();
-  }
-  document.querySelectorAll('#modos .ph-perfil-btn').forEach(function (b) {
-    b.addEventListener('click', function () {
-      phSetModo(b.dataset.m); pintarModo();
-      if (b.dataset.m === 'escuela') phDecir('Modo grupo activo: un celular guía a todos, sin cupones.');
-      if (b.dataset.m === 'tutor') phDecir('Modo tutor: agregá a tus Guardianes con apodo y edad.');
-    });
-  });
-
-  function ninos() { return JSON.parse(localStorage.getItem('ph_ninos') || '[]'); }
-  function pintarNinos() {
-    var lista = ninos();
-    document.getElementById('ninos-lista').innerHTML = lista.length
-      ? lista.map(function (n, i) {
-          return '<p style="display:flex;justify-content:space-between;align-items:center;margin:6px 0;">' +
-                 '<span>🐣 <strong>' + n.apodo + '</strong> · ' + n.edad + ' años</span>' +
-                 '<button class="ph-tipo" data-i="' + i + '">Quitar</button></p>';
-        }).join('')
-      : '<p style="color:var(--tinta-suave);font-size:13px;">Todavía no agregaste Guardianes.</p>';
-    document.querySelectorAll('#ninos-lista [data-i]').forEach(function (b) {
-      b.addEventListener('click', function () {
-        var l = ninos(); l.splice(+b.dataset.i, 1);
-        localStorage.setItem('ph_ninos', JSON.stringify(l));
-        pintarNinos();
-      });
-    });
-  }
-  document.getElementById('form-nino').addEventListener('submit', function (e) {
-    e.preventDefault();
-    var apodo = document.getElementById('n-apodo').value.trim();
-    var edad = parseInt(document.getElementById('n-edad').value, 10);
-    if (!apodo || !edad || edad > 12) { alert('Apodo y edad (hasta 12 años).'); return; }
-    var l = ninos(); l.push({ apodo: apodo, edad: edad });
-    localStorage.setItem('ph_ninos', JSON.stringify(l));
-    document.getElementById('n-apodo').value = ''; document.getElementById('n-edad').value = '';
-    pintarNinos();
-  });
-
   /* ---- Canjes ---- */
   function pintarCanjes() {
     var canjes = phCanjes();
@@ -302,7 +230,7 @@
   });
 
   pintarHero(); pintarStats(); pintarGrafico(); pintarInsignias();
-  pintarComp(); pintarEdad(); pintarModo(); pintarCanjes(); pintarCuenta();
+  pintarComp(); pintarEdad(); pintarCanjes(); pintarCuenta();
 })();
 </script>
 <footer class="ph-foot">Las denuncias son anónimas aunque tengas cuenta. Los menores de 13 no necesitan registrarse.</footer>

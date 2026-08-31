@@ -55,7 +55,7 @@ body[data-tab] { font-family: var(--sv-font); }
 }
 .mini-humedal.sel { box-shadow:0 0 0 2px var(--sv-green), 0 4px 14px rgba(0,0,0,.05); }
 .sv-foto {
-  position:relative; height:118px; background-size:cover; background-position:center;
+  position:relative; height:88px; background-size:cover; background-position:center;
   background-image:repeating-linear-gradient(45deg,#d6e5c6 0 10px,#c8dcb4 10px 20px);
 }
 .sv-num {
@@ -71,10 +71,10 @@ body[data-tab] { font-family: var(--sv-font); }
 .sv-fav svg { width:16px; height:16px; }
 .sv-fav.on svg { fill:var(--sv-red); stroke:var(--sv-red); }
 .sv-ph { position:absolute; bottom:6px; left:8px; font-family:ui-monospace,monospace; font-size:9px; color:#5a6b46; }
-.sv-body { padding:11px 13px 12px; text-align:left; }
-.sv-nom { font-weight:800; font-size:16px; color:var(--sv-ink); letter-spacing:-.2px; }
-.sv-sub { font-weight:600; font-size:12px; color:var(--sv-muted); margin-top:2px; }
-.sv-chips { display:flex; align-items:center; gap:6px; margin-top:10px; }
+.sv-body { padding:8px 12px 10px; text-align:left; }
+.sv-nom { font-weight:800; font-size:15px; color:var(--sv-ink); letter-spacing:-.2px; }
+.sv-sub { font-weight:600; font-size:11.5px; color:var(--sv-muted); margin-top:1px; }
+.sv-chips { display:flex; align-items:center; gap:6px; margin-top:8px; }
 .sv-chip { font-weight:700; font-size:10.5px; color:var(--sv-chip-tx); background:var(--sv-tint); border-radius:20px; padding:4px 9px; white-space:nowrap; }
 .sv-cta { margin-left:auto; width:30px; height:30px; flex:none; border-radius:50%; background:var(--sv-green); display:flex; align-items:center; justify-content:center; }
 .sv-cta svg { width:15px; height:15px; }

@@ -19,8 +19,8 @@
   };
   var TABS = [
     { id: 'mapa', href: 'index.html', txt: 'Mapa' },
-    { id: 'explorar', href: 'humedal.html?id=' + ultimo, txt: 'Explorar' },
-    { id: 'guias', href: 'tour.html?id=' + ultimo, txt: 'Guías' },
+    { id: 'explorar', href: 'tour.html?id=' + ultimo, txt: 'Explorar' },
+    { id: 'guias', href: 'guias.html', txt: 'Guías' },
     { id: 'logros', href: 'cupones.html?id=' + ultimo, txt: 'Logros' },
     { id: 'perfil', href: 'cuenta.html?id=' + ultimo, txt: 'Perfil' }
   ];
