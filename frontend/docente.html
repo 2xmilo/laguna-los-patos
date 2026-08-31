@@ -31,8 +31,8 @@
       <h2>Recorridos listos</h2>
       <p>Armados según el currículum de Ciencias Naturales (o el tuyo propio, abajo).</p>
       <div class="ph-perfiles">
-        <button class="ph-perfil-btn" data-t="3b"><span class="pico">💧</span><span><strong>3° básico · Agua y aves</strong>Espejo de agua + totoral. OA: ciclos de vida y hábitat.</span></button>
-        <button class="ph-perfil-btn" data-t="6b"><span class="pico">🌳</span><span><strong>6° básico · El bosque y las especies antiguas</strong>Totoral + ribera + bosque. OA: ecosistemas y acción humana.</span></button>
+        <button class="ph-perfil-btn" data-t="3b"><span class="pico">💧</span><span><strong>3° básico · Agua y aves</strong>Espejo de agua. OA: ciclos de vida y hábitat.</span></button>
+        <button class="ph-perfil-btn" data-t="6b"><span class="pico">🏙️</span><span><strong>6° básico · Agua y ciudad</strong>Espejo de agua + ribera. OA: ecosistema y acción humana.</span></button>
       </div>
     </div>
 
@@ -94,7 +94,7 @@
   var h = meta.humedales.find(function (x) { return x.id === 'laguna-los-patos'; });
   var RETO_TXT = { avistar: '🔍 Observar', reportar: '🛡️ Cuidar', descubrir: '✨ Descubrir' };
   var EQUIPOS = ['Equipo Ranita 🐸', 'Equipo Cisne 🦢', 'Equipo Garza 🕊️', 'Equipo Monito 🐭'];
-  var PLANTILLAS = { '3b': ['espejo-de-agua', 'totoral'], '6b': ['totoral', 'ribera', 'bosque-riberenio'] };
+  var PLANTILLAS = { '3b': ['espejo-de-agua'], '6b': ['espejo-de-agua', 'ribera'] };
 
   function salida() { return JSON.parse(localStorage.getItem('ph_salida') || 'null'); }
   function guardar(s) { localStorage.setItem('ph_salida', JSON.stringify(s)); }
@@ -169,7 +169,7 @@
   }
   document.getElementById('btn-historia').addEventListener('click', function () {
     var s = salida(), slug = s.estaciones[s.actual];
-    phDecir(phHistoria('estaciones', slug), { quien: PH_PERSONAJE_ESTACION[slug] || 'cisne' });
+    var n = phNarrarEstacion(slug, h.especies); phDecir(n.texto, { quien: n.quien });
   });
   document.getElementById('btn-hallazgo').addEventListener('click', function () {
     if (equipoSel === null) { phDecir('Primero tocá el equipo que encontró algo.'); return; }

@@ -138,43 +138,6 @@ var PH_HISTORIAS = {
       guardabosques: 'Ardea alba te recibe. Cazo por espera: la observación inmóvil es mi método, y también sirve para conocer un humedal. Vamos.'
     }
   },
-  estaciones: {
-    'espejo-de-agua': {
-      guardian: 'Aquí en el agua abierta nadamos los cisnes. Nosotros llevamos a nuestros pichones en la espalda, ¿lo sabías? ¡Como un botecito!',
-      explorador: 'Este es el espejo de agua. Los cisnes cargamos a las crías sobre el lomo mientras nadamos, para protegerlas del frío y de los depredadores.',
-      guardabosques: 'Espejo de agua: hábitat de Cygnus melancoryphus. El transporte dorsal de crías reduce la depredación y el estrés térmico. En 2004 este espejo casi se vació de cisnes tras el desastre del Río Cruces: por eso hoy la comunidad es su vigilancia.'
-    },
-    'totoral': {
-      guardian: 'Shhh… soy la Ranita. Me escondo entre los juncos como una hojita. Este totoral es la cuna del humedal: aquí las aves esconden sus nidos. ¿Puedes encontrar uno sin hacer ruido?',
-      explorador: 'Soy la Ranita de Darwin y casi nadie me ve: me camuflo como hoja seca, y si algo me asusta, me hago la muerta. El totoral es la sala cuna del humedal: nidos flotantes ocultos entre los juncos. Mirá despacio.',
-      guardabosques: 'Totoral / juncal: zona de nidificación y refugio (Schoenoplectus, Typha). Habla Rhinoderma darwinii: aquí lo diminuto sostiene todo. Un dato de mi biología: los machos incubamos las crías en el saco vocal, único en el mundo.'
-    },
-    'ribera': {
-      guardian: 'Soy la Garza. Cazo quietita en la orilla, sin moverme ni un poquito. Esta orilla es donde el agua toca la tierra… y donde a veces la gente deja basura. Si ves algo raro, avísale a tu adulto.',
-      explorador: 'Soy la Garza Grande: puedo esperar inmóvil durante horas en esta orilla. La ribera es la frontera entre agua y tierra, donde más se nota el impacto humano. Observá como yo, sin apuro: aquí tu reporte importa.',
-      guardabosques: 'Ribera: interfaz acuático-terrestre, zona de mayor presión antrópica. Habla Ardea alba, cazadora de espera: micro-basurales, rellenos y pérdida de vegetación se ven desde aquí. Los reportes georreferenciados alimentan el panel municipal.'
-    },
-    'bosque-riberenio': {
-      guardian: '¡Hola! Soy el Monito del Monte y este bosque oscuro es mi casa. Soy muy, muy viejito… ¡y de noche planto el bosque sin darme cuenta!',
-      explorador: 'Soy el Monito del Monte, un marsupial nocturno. Disperso las semillas del quintral: sin mí, este bosque no se regenera igual. Vivo aquí desde antes que existieran los Andes.',
-      guardabosques: 'Dromiciops gliroides: fósil viviente, único representante del orden Microbiotheria y único dispersor efectivo de Tristerix corymbosus (quintral). Mi rol mutualista es clave para la regeneración del bosque valdiviano.'
-    },
-    'si-mirador': {
-      guardian: 'Soy la Garza. Desde aquí arriba se ve todo: el totoral abajo y la ciudad alrededor. ¿Ves cuántas casas rodean al humedal? Él también es un vecino del barrio.',
-      explorador: 'Mirador del totoral: Santa Inés vive rodeado de calles, casas y un colegio. Soy la Garza, y desde la altura se entiende algo importante: esto no es un sitio eriazo, es un vecino vivo del barrio.',
-      guardabosques: 'Santa Inés desde la altura: humedal urbano inmerso en la matriz de la ciudad. La urbanización fragmenta el hábitat, pero también acerca observadores: cada vecino que mira es vigilancia potencial. Habla Ardea alba.'
-    },
-    'si-totoral': {
-      guardian: 'Este mar de juncos dorados es mi escondite favorito. En invierno parece seco y dormido… ¡pero está lleno de vida escondida! Mira despacito.',
-      explorador: 'El corazón del totoral. En invierno se ve dorado y quieto, pero entre los junquillos hay nidos, anfibios e insectos esperando la primavera. Soy la Ranita: aquí lo pequeño manda.',
-      guardabosques: 'Junquillal denso: refugio y sitio de nidificación. La senescencia invernal es parte del ciclo — la biomasa seca protege el rebrote y la fauna. Rhinoderma darwinii: donde el ojo ve «campo seco», el humedal está trabajando.'
-    },
-    'si-borde': {
-      guardian: 'Aquí el humedal toca la calle, y ese canalito lleva su agua. Si ves basura o algo raro en este borde, avísale a tu adulto: es la parte más frágil de mi casa.',
-      explorador: 'El borde: la calle, los autos y el canal de drenaje que aprieta al humedal. Antes era más grande. Aquí es donde más importan tus ojos: los rellenos y basurales siempre parten por el borde.',
-      guardabosques: 'Interfaz humedal-ciudad: drenaje, relleno histórico y presión inmobiliaria. Los bordes son la primera línea de pérdida de superficie. Habla Cygnus melancoryphus: la memoria dice que este humedal era más ancho. Reportar aquí tiene el máximo valor.'
-    }
-  },
   avistamiento: {
     cisne: 'Buen avistamiento. Quedó registrado y georreferenciado: el dato ya es parte de la memoria del humedal.',
     monito: 'Buen hallazgo. Cada registro es una historia nueva en un lugar muy antiguo. Quedó guardado.',
@@ -188,17 +151,6 @@ var PH_HISTORIAS = {
     garza: 'Reporte enviado al panel municipal. Observaste bien y a tiempo: así se cuida la orilla.'
   },
   reporte_guardian: 'Gracias por avisarle a tu adulto. Cuidar el humedal es cuidar nuestra casa.'
-};
-
-// Anfitrión de cada estación del tour
-var PH_PERSONAJE_ESTACION = {
-  'espejo-de-agua': 'cisne',
-  'totoral': 'ranita',
-  'ribera': 'garza',
-  'bosque-riberenio': 'monito',
-  'si-mirador': 'garza',
-  'si-totoral': 'ranita',
-  'si-borde': 'cisne'
 };
 
 /* ============================================================================
@@ -222,18 +174,34 @@ var PH_INTRO = {
 };
 
 // Contenido del LUGAR (hechos + especies reales del sitio), por perfil etario.
-// El avatar lo entrega con su intro. PILOTO: solo espejo-de-agua migrado; las
-// demas estaciones siguen con el texto viejo (fallback en phNarrarEstacion).
+// El avatar lo entrega con su intro (PH_INTRO). Neutro de anfitrión: no dice
+// "Soy la Garza…" ni nombra especies ausentes. Las estaciones de reportar hablan
+// del daño en CONDICIONAL (no afirman que haya basura).
 var PH_LUGARES = {
   'espejo-de-agua': {
     guardian: 'Esta es el agua abierta de la laguna. Ahí nadan los patos y las taguas, unos pajaritos negros de pico blanco. ¿Cuántos podés contar?',
     explorador: 'El espejo de agua abierta está cubierto de luchecillos, plantas que flotan justo bajo la superficie. Acá mandan los patos —que llegaron con la gente y ya no se fueron— y las taguas, que se disputan cada rincón a los gritos.',
     guardabosques: 'Espejo de agua: la lámina abierta de la laguna, con praderas sumergidas de luchecillo. La fauna visible aquí son patos introducidos y taguas. Esta laguna cargó el golpe del desastre del Río Cruces en 2004; por eso hoy la observación ciudadana es su vigilancia.'
   },
-  'bosque-riberenio': {
-    guardian: 'Este es el bosque que crece con los pies en el agua: árboles viejos como el temu y la pitra, y una sombra fresca donde todo va más lento. Acá el humedal se vuelve bosque.',
-    explorador: 'El bosque ribereño es la parte más antigua y sombría del humedal: el temu y la pitra hunden sus raíces en el suelo inundado y forman un dosel cerrado. Es refugio y penumbra —el lugar donde el agua se hace bosque y guarda lo que no se ve de día.',
-    guardabosques: 'Bosque ribereño: formación de temu (Blepharocalyx cruckshanksii) y pitra (Myrceugenia exsucca) sobre suelo saturado, la fisonomía más antigua del humedal valdiviano. Dosel denso y microclima húmedo y umbrío: refugio clave, y de los más frágiles ante el avance urbano sobre la ribera.'
+  'ribera': {
+    guardian: 'Esta es la orilla, donde el agua toca la tierra: la parte más delicada del humedal. Si ves algo raro que lo pueda dañar, avisale a tu adulto.',
+    explorador: 'La ribera es la frontera entre el agua y la tierra, y la zona más expuesta a la ciudad. Si ves algo que dañe el humedal —basura, un relleno, un borde alterado—, acá tu reporte es el que más pesa.',
+    guardabosques: 'Ribera: interfaz acuático-terrestre y zona de mayor presión urbana. Es donde primero aparecen los signos de deterioro; por eso los reportes georreferenciados desde aquí son los más valiosos para el panel municipal.'
+  },
+  'si-mirador': {
+    guardian: 'Desde aquí arriba se ve todo el humedal, con la ciudad alrededor. ¿Ves cuántas casas lo rodean? También es un vecino del barrio.',
+    explorador: 'Desde el mirador, Santa Inés aparece rodeado de calles, casas y un colegio. Desde la altura se entiende algo clave: no es un sitio eriazo, es un vecino vivo del barrio.',
+    guardabosques: 'Santa Inés desde la altura: un humedal urbano inserto en plena matriz de la ciudad. La urbanización fragmenta el hábitat, pero también acerca observadores: cada vecino que mira es vigilancia potencial.'
+  },
+  'si-totoral': {
+    guardian: 'Este mar de juncos dorados parece dormido en invierno… ¡pero está lleno de vida escondida! Mirá despacito y la vas a descubrir.',
+    explorador: 'El corazón del totoral. En invierno se ve dorado y quieto, pero entre los junquillos esperan nidos, anfibios e insectos a que llegue la primavera. Acá lo pequeño manda.',
+    guardabosques: 'Junquillal denso: refugio y sitio de nidificación. La senescencia invernal es parte del ciclo — la biomasa seca protege el rebrote y a la fauna. Donde el ojo ve «campo seco», el humedal sigue trabajando.'
+  },
+  'si-borde': {
+    guardian: 'Aquí el humedal toca la calle, y ese canalito se lleva su agua: es la parte más frágil. Si ves algo que lo dañe, avisale a tu adulto.',
+    explorador: 'El borde: la calle, los autos y el canal de drenaje que aprietan al humedal. Antes era más ancho. Es la primera línea de pérdida — si ves algo que lo dañe, acá tu reporte importa más que en ningún lado.',
+    guardabosques: 'Interfaz humedal-ciudad: drenaje, relleno histórico y presión inmobiliaria. Los bordes son la primera línea de pérdida de superficie; reportar aquí tiene el máximo valor.'
   }
 };
 
@@ -243,25 +211,21 @@ function phAvatarPresente(especies) {
   return !!s && (especies || []).indexOf(s) >= 0;
 }
 
-// Narracion de una estacion con la nueva regla. Devuelve { texto, quien }.
-// Si la estacion aun no tiene contenido de lugar migrado, cae al texto viejo del
-// anfitrion (para no romper las estaciones no migradas).
+// Narracion de una estacion: el avatar ELEGIDO narra el contenido de lugar
+// (PH_LUGARES), en 1a persona si su especie esta presente, o como guia si no.
+// Devuelve { texto, quien }.
 function phNarrarEstacion(slug, especies) {
   var perfil = PH_PERFIL || 'guardabosques';
-  var lugar = (PH_LUGARES[slug] || {})[perfil];
-  if (!lugar) {
-    return { texto: phHistoria('estaciones', slug), quien: PH_PERSONAJE_ESTACION[slug] || 'cisne' };
-  }
   var comp = phCompanero();
   var voz = PH_INTRO[comp] || {};
   var intro = phAvatarPresente(especies) ? (voz.presente || voz.guia) : voz.guia;
-  return { texto: (intro ? intro + ' ' : '') + lugar, quien: comp };
+  var lugar = (PH_LUGARES[slug] || {})[perfil] || '';
+  return { texto: (intro || '') + (intro && lugar ? ' ' : '') + lugar, quien: comp };
 }
 
 function phHistoria(grupo, clave) {
   var perfil = PH_PERFIL || 'guardabosques';
   if (grupo === 'bienvenida') return PH_HISTORIAS.bienvenida[phCompanero()][perfil];
-  if (grupo === 'estaciones') return (PH_HISTORIAS.estaciones[clave] || {})[perfil] || '';
   if (grupo === 'avistamiento') return PH_HISTORIAS.avistamiento[phCompanero()];
   if (grupo === 'reporte') {
     return perfil === 'guardian' ? PH_HISTORIAS.reporte_guardian : PH_HISTORIAS.reporte[phCompanero()];

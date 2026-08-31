@@ -7,7 +7,7 @@
       "descripcion": "Laguna urbana de Isla Teja, corazón del piloto. Aquí funciona además el monitoreo ciudadano de nivel de agua, que cruza cada lectura con la estación meteorológica Isla Teja (DMC) para construir el balance hídrico.",
       "piloto": true,
       "monitoreo_nivel": true,
-      "estaciones": ["espejo-de-agua", "totoral", "ribera", "bosque-riberenio"],
+      "estaciones": ["espejo-de-agua", "ribera"],
       "especies": ["pato-introducido", "tagua", "piden", "siete-colores", "queltehue", "garza-chica", "garza-grande", "ranita-darwin"]
     },
     {
@@ -78,16 +78,6 @@
       "norte": 143.9,
       "real": true
     },
-    "totoral": {
-      "nombre": "Totoral / juncal",
-      "tema": "La sala cuna del humedal: refugio y reproducción, donde anidan y se esconden las aves.",
-      "accion": "avistar",
-      "accion_texto": "Reto de descubrimiento: encontrar el nido escondido",
-      "pano": "panos/totoral.jpg",
-      "centro": [-39.8096, -73.2566],
-      "norte": 0,
-      "real": false
-    },
     "ribera": {
       "nombre": "Ribera",
       "tema": "La laguna vista desde lo alto: la ciudad que la rodea y la aprieta.",
@@ -97,16 +87,6 @@
       "centro": [-39.8100616, -73.2561322],
       "norte": 56.0,
       "real": true
-    },
-    "bosque-riberenio": {
-      "nombre": "Bosque ribereño",
-      "tema": "El dosel, lo antiguo y lo umbrío: el humedal hecho bosque.",
-      "accion": "descubrir",
-      "accion_texto": "Escuchar las historias profundas del avatar",
-      "pano": "panos/bosque-riberenio.jpg",
-      "centro": [-39.8103, -73.2567],
-      "norte": 0,
-      "real": false
     },
     "si-mirador": {
       "nombre": "Mirador del totoral",
