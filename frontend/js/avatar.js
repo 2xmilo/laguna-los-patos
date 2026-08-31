@@ -179,9 +179,9 @@ var PH_INTRO = {
 // del daño en CONDICIONAL (no afirman que haya basura).
 var PH_LUGARES = {
   'espejo-de-agua': {
-    guardian: 'Esta es el agua abierta de la laguna. Ahí nadan los patos y las taguas, unos pajaritos negros de pico blanco. ¿Cuántos podés contar?',
-    explorador: 'El espejo de agua abierta está cubierto de luchecillos, plantas que flotan justo bajo la superficie. Acá mandan los patos —que llegaron con la gente y ya no se fueron— y las taguas, que se disputan cada rincón a los gritos.',
-    guardabosques: 'Espejo de agua: la lámina abierta de la laguna, con praderas sumergidas de luchecillo. La fauna visible aquí son patos introducidos y taguas. Esta laguna cargó el golpe del desastre del Río Cruces en 2004; por eso hoy la observación ciudadana es su vigilancia.'
+    guardian: 'Esta es el agua abierta de la laguna. Ahí flotan las flores de loto, y nadan los patos y las taguas, unos pajaritos negros de pico blanco. ¿Cuántos podés contar?',
+    explorador: 'El espejo de agua abierta de la laguna, con flores de loto flotando en la superficie. Acá mandan los patos —que llegaron con la gente y ya no se fueron— y las taguas, que se disputan cada rincón a los gritos.',
+    guardabosques: 'Espejo de agua: la lámina abierta de la laguna, cubierta de flor de loto que flota sobre la superficie. La fauna visible aquí son patos introducidos y taguas. Es el corazón de la laguna, y la observación ciudadana es hoy su principal vigilancia.'
   },
   'ribera': {
     guardian: 'Esta es la orilla, donde el agua toca la tierra: la parte más delicada del humedal. Si ves algo raro que lo pueda dañar, avisale a tu adulto.',

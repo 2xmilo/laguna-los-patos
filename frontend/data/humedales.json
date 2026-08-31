@@ -70,7 +70,7 @@
   "estaciones": {
     "espejo-de-agua": {
       "nombre": "Espejo de agua",
-      "tema": "La pasarela sobre el agua abierta y los luchecillos, entre patos y taguas.",
+      "tema": "La pasarela sobre el agua abierta y las flores de loto, entre patos y taguas.",
       "accion": "avistar",
       "accion_texto": "Identificar aves acuáticas",
       "pano": "panos/espejo-de-agua.jpg",
