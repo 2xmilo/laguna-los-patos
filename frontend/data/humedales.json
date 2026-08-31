@@ -7,7 +7,8 @@
       "descripcion": "Laguna urbana de Isla Teja, corazón del piloto. Aquí funciona además el monitoreo ciudadano de nivel de agua, que cruza cada lectura con la estación meteorológica Isla Teja (DMC) para construir el balance hídrico.",
       "piloto": true,
       "monitoreo_nivel": true,
-      "estaciones": ["espejo-de-agua", "totoral", "ribera", "bosque-riberenio"]
+      "estaciones": ["espejo-de-agua", "totoral", "ribera", "bosque-riberenio"],
+      "especies": ["pato-introducido", "tagua", "piden", "siete-colores", "queltehue", "garza-chica", "garza-grande", "ranita-darwin"]
     },
     {
       "id": "santa-ines",
@@ -16,7 +17,8 @@
       "descripcion": "Humedal de la red de Isla Teja, refugio de aves acuáticas y vegetación palustre. Ahora con tour 360° propio.",
       "piloto": false,
       "monitoreo_nivel": false,
-      "estaciones": ["si-mirador", "si-totoral", "si-borde"]
+      "estaciones": ["si-mirador", "si-totoral", "si-borde"],
+      "especies": ["ranita-darwin", "garza-chica", "garza-grande", "siete-colores", "piden", "queltehue"]
     },
     {
       "id": "humedal-cancha",
@@ -52,7 +54,8 @@
       "descripcion": "Hualve o bosque pantanoso: la forma más antigua de humedal valdiviano, dominado por temu y pitra.",
       "piloto": false,
       "monitoreo_nivel": false,
-      "estaciones": []
+      "estaciones": [],
+      "especies": ["monito-del-monte"]
     },
     {
       "id": "humedal-rotonda",
@@ -67,7 +70,7 @@
   "estaciones": {
     "espejo-de-agua": {
       "nombre": "Espejo de agua",
-      "tema": "La pasarela sobre el agua abierta y los luchecillos. Donde nadan los cisnes.",
+      "tema": "La pasarela sobre el agua abierta y los luchecillos, entre patos y taguas.",
       "accion": "avistar",
       "accion_texto": "Identificar aves acuáticas",
       "pano": "panos/espejo-de-agua.jpg",
@@ -97,7 +100,7 @@
     },
     "bosque-riberenio": {
       "nombre": "Bosque ribereño",
-      "tema": "El dosel, lo antiguo y lo nocturno. Territorio del Monito del Monte.",
+      "tema": "El dosel, lo antiguo y lo umbrío: el humedal hecho bosque.",
       "accion": "descubrir",
       "accion_texto": "Escuchar las historias profundas del avatar",
       "pano": "panos/bosque-riberenio.jpg",

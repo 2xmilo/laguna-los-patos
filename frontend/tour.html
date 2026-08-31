@@ -154,14 +154,16 @@
     var a = document.getElementById('t-accion');
     if (est.accion === 'reportar') { a.textContent = '⚠️ ' + est.accion_texto; a.href = 'reportar.html?id=' + id; a.onclick = null; }
     else if (est.accion === 'descubrir') { a.textContent = '✨ ' + est.accion_texto; a.href = '#';
-      a.onclick = function (e) { e.preventDefault(); phDecir(phHistoria('estaciones', slug), { quien: PH_PERSONAJE_ESTACION[slug] || 'cisne' }); }; }
+      a.onclick = function (e) { e.preventDefault(); var n = phNarrarEstacion(slug, h.especies); phDecir(n.texto, { quien: n.quien }); }; }
     else { a.textContent = '📷 ' + est.accion_texto; a.href = 'avistar.html?id=' + id; a.onclick = null; }
 
     // Miniaturas activas
     document.querySelectorAll('#nav .tour-est').forEach(function (b, k) { b.classList.toggle('act', k === i); });
 
-    // El personaje de la estación cuenta su historia (cisne o monito)
-    phDecir(phHistoria('estaciones', slug), { quien: PH_PERSONAJE_ESTACION[slug] || 'cisne' });
+    // El avatar ELEGIDO narra: 1a persona si su especie esta presente en el
+    // humedal, o como guia si no (regla de voz, escalable por `especies`).
+    var _nar = phNarrarEstacion(slug, h.especies);
+    phDecir(_nar.texto, { quien: _nar.quien });
 
     // Progresión por completar el tour (insignia, sin puntos canjeables:
     // los puntos solo se ganan con acciones geolocalizadas en terreno)

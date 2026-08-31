@@ -6,13 +6,15 @@
    Nunca se le miente al niño: simplemente se le cuenta menos.
    ========================================================================== */
 
-// Perfil etario y compañero elegido (memoria local, sin cuenta obligatoria)
-var PH_PERFIL = sessionStorage.getItem('ph_perfil') || null;
+// Perfil etario y compañero elegido. Ambos en localStorage: se eligen UNA sola
+// vez y se recuerdan entre sesiones (antes el perfil vivía en sessionStorage y
+// se borraba al cerrar, por eso lo re-preguntaba). Se cambian desde el perfil.
+var PH_PERFIL = localStorage.getItem('ph_perfil') || null;
 var PH_COMPANERO = localStorage.getItem('ph_companero') || null;
 
 function phSetPerfil(p) {
   PH_PERFIL = p;
-  sessionStorage.setItem('ph_perfil', p);
+  localStorage.setItem('ph_perfil', p);
 }
 function phSetCompanero(a) {
   if (!PH_PERSONAJES[a]) return;
@@ -20,11 +22,12 @@ function phSetCompanero(a) {
   localStorage.setItem('ph_companero', a);
   phCambiarPersonaje(a);
 }
-function phCompanero() { return PH_COMPANERO || 'cisne'; }
+function phCompanero() { return PH_COMPANERO || 'ranita'; }  // default honesto: especie real y presente, no el Cisne (ausente)
 
 /* -------- Los cuatro habitantes (SVG inline animable por CSS) -------------- */
 var PH_PERSONAJES = {
   cisne: {
+    slug: 'cisne-cuello-negro',
     nombre: 'Cisne de Cuello Negro',
     especie: 'Cygnus melancoryphus',
     lema: 'La memoria del humedal. Lleva a sus crías en la espalda.',
@@ -44,6 +47,7 @@ var PH_PERSONAJES = {
       '</g></g></svg>'
   },
   monito: {
+    slug: 'monito-del-monte',
     nombre: 'Monito del Monte',
     especie: 'Dromiciops gliroides',
     lema: 'El sabio antiguo. Fósil viviente que siembra el bosque de noche.',
@@ -66,6 +70,7 @@ var PH_PERSONAJES = {
       '</g></g></svg>'
   },
   ranita: {
+    slug: 'ranita-darwin',
     nombre: 'Ranita de Darwin',
     especie: 'Rhinoderma darwinii',
     lema: 'La observadora paciente. Se camufla como hoja y mira lo pequeño.',
@@ -84,6 +89,7 @@ var PH_PERSONAJES = {
       '</g></g></svg>'
   },
   garza: {
+    slug: 'garza-grande',
     nombre: 'Garza Grande',
     especie: 'Ardea alba',
     lema: 'La cazadora quieta. Enseña a esperar sin apurar la mirada.',
@@ -194,6 +200,63 @@ var PH_PERSONAJE_ESTACION = {
   'si-totoral': 'ranita',
   'si-borde': 'cisne'
 };
+
+/* ============================================================================
+   REGLA DE VOZ (escalable a toda la red)
+   Cada humedal declara sus `especies` reales (en data/humedales.json). El avatar
+   elegido habla en 1a persona SOLO si su especie esta presente en ese humedal; si
+   no, narra como GUIA. Los guiones de lugar (PH_LUGARES) solo nombran especies
+   reales del sitio. Sumar un humedal nuevo = cargar sus `especies`, sin reescribir
+   avatares.
+   ============================================================================ */
+
+// Capa de personalidad reutilizable: intro corta del avatar, segun este presente
+// o no. Cisne y Monito no estan en estos humedales -> solo voz de guia.
+var PH_INTRO = {
+  cisne:  { guia: 'Te acompaño como guía por este humedal.' },
+  monito: { guia: 'Soy el Monito del Monte. Yo habito los bosques pantanosos —los hualves—, no este humedal, pero te lo muestro con gusto.' },
+  ranita: { presente: 'Soy la Ranita de Darwin. Mi rincón es el totoral, pero desde acá se ve todo.',
+            guia: 'Soy la Ranita de Darwin, y te acompaño a mirar de cerca.' },
+  garza:  { presente: 'Soy la Garza, de las que cazan quietas en estos bordes.',
+            guia: 'Soy la Garza, y te acompaño a observar con paciencia.' }
+};
+
+// Contenido del LUGAR (hechos + especies reales del sitio), por perfil etario.
+// El avatar lo entrega con su intro. PILOTO: solo espejo-de-agua migrado; las
+// demas estaciones siguen con el texto viejo (fallback en phNarrarEstacion).
+var PH_LUGARES = {
+  'espejo-de-agua': {
+    guardian: 'Esta es el agua abierta de la laguna. Ahí nadan los patos y las taguas, unos pajaritos negros de pico blanco. ¿Cuántos podés contar?',
+    explorador: 'El espejo de agua abierta está cubierto de luchecillos, plantas que flotan justo bajo la superficie. Acá mandan los patos —que llegaron con la gente y ya no se fueron— y las taguas, que se disputan cada rincón a los gritos.',
+    guardabosques: 'Espejo de agua: la lámina abierta de la laguna, con praderas sumergidas de luchecillo. La fauna visible aquí son patos introducidos y taguas. Esta laguna cargó el golpe del desastre del Río Cruces en 2004; por eso hoy la observación ciudadana es su vigilancia.'
+  },
+  'bosque-riberenio': {
+    guardian: 'Este es el bosque que crece con los pies en el agua: árboles viejos como el temu y la pitra, y una sombra fresca donde todo va más lento. Acá el humedal se vuelve bosque.',
+    explorador: 'El bosque ribereño es la parte más antigua y sombría del humedal: el temu y la pitra hunden sus raíces en el suelo inundado y forman un dosel cerrado. Es refugio y penumbra —el lugar donde el agua se hace bosque y guarda lo que no se ve de día.',
+    guardabosques: 'Bosque ribereño: formación de temu (Blepharocalyx cruckshanksii) y pitra (Myrceugenia exsucca) sobre suelo saturado, la fisonomía más antigua del humedal valdiviano. Dosel denso y microclima húmedo y umbrío: refugio clave, y de los más frágiles ante el avance urbano sobre la ribera.'
+  }
+};
+
+// ¿El avatar elegido esta presente en este humedal? (lista `especies` del JSON)
+function phAvatarPresente(especies) {
+  var s = (PH_PERSONAJES[phCompanero()] || {}).slug;
+  return !!s && (especies || []).indexOf(s) >= 0;
+}
+
+// Narracion de una estacion con la nueva regla. Devuelve { texto, quien }.
+// Si la estacion aun no tiene contenido de lugar migrado, cae al texto viejo del
+// anfitrion (para no romper las estaciones no migradas).
+function phNarrarEstacion(slug, especies) {
+  var perfil = PH_PERFIL || 'guardabosques';
+  var lugar = (PH_LUGARES[slug] || {})[perfil];
+  if (!lugar) {
+    return { texto: phHistoria('estaciones', slug), quien: PH_PERSONAJE_ESTACION[slug] || 'cisne' };
+  }
+  var comp = phCompanero();
+  var voz = PH_INTRO[comp] || {};
+  var intro = phAvatarPresente(especies) ? (voz.presente || voz.guia) : voz.guia;
+  return { texto: (intro ? intro + ' ' : '') + lugar, quien: comp };
+}
 
 function phHistoria(grupo, clave) {
   var perfil = PH_PERFIL || 'guardabosques';
