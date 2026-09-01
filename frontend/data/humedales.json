@@ -9,7 +9,8 @@
       "monitoreo_nivel": true,
       "estaciones": ["espejo-de-agua", "ribera"],
       "especies": ["pato-introducido", "tagua", "piden", "siete-colores", "queltehue", "garza-chica", "garza-grande", "ranita-darwin"],
-      "tags": ["360°", "Dron", "Biodiversidad"]
+      "tags": ["360°", "Dron", "Biodiversidad"],
+      "foto": "img/portadas/laguna-los-patos.jpg"
     },
     {
       "id": "santa-ines",
@@ -20,7 +21,8 @@
       "monitoreo_nivel": false,
       "estaciones": ["si-mirador", "si-totoral", "si-borde"],
       "especies": ["ranita-darwin", "garza-chica", "garza-grande", "siete-colores", "piden", "queltehue"],
-      "tags": ["360°", "Flora", "Avifauna"]
+      "tags": ["360°", "Flora", "Avifauna"],
+      "foto": "img/portadas/santa-ines.jpg"
     },
     {
       "id": "humedal-cancha",

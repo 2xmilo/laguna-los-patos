@@ -101,6 +101,7 @@
   document.getElementById('h-desc').textContent = h.descripcion;
   document.getElementById('det-avatar').textContent = h.piloto ? '🦢' : '🌿';
   if (h.piloto) document.getElementById('det-avatar').classList.add('piloto');
+  if (h.foto) document.getElementById('det-hero').style.backgroundImage = "url('" + h.foto + "')";
 
   // Chips: tags reales del humedal (o piloto/monitoreo como respaldo)
   var tags = h.tags && h.tags.length ? h.tags.slice(0, 3) : [];
