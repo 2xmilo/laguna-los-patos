@@ -183,3 +183,30 @@ body.sv-page { background:#fff; }
 .ph-tab .t-ico { font-size:0; }
 .ph-tab .t-ico svg { width:24px; height:24px; display:block; }
 .ph-tab.act { color:var(--sv-green); background:transparent; font-weight:800; }
+
+/* ============================================================================
+   CONTENCIÓN DESKTOP — la app es mobile-first; en pantallas anchas se centra
+   en una columna tipo teléfono, con fondo a los lados. El móvil no se toca.
+   ============================================================================ */
+@media (min-width: 640px) {
+  :root { --app-w: 440px; }
+  html { background: #e4e0d6; }
+
+  /* Páginas de contenido (todo menos el mapa): columna centrada */
+  body[data-tab]:not([data-tab="mapa"]) {
+    max-width: var(--app-w); margin: 0 auto; background: #fff;
+    min-height: 100vh; box-shadow: 0 0 40px rgba(0,0,0,.10);
+  }
+
+  /* Nav inferior: centrado a la columna */
+  .ph-tabs { left: 50%; right: auto; transform: translateX(-50%); width: var(--app-w); }
+
+  /* Widget del avatar: pegado al borde de la columna */
+  .ph-avatar { right: calc(50% - (var(--app-w) / 2) + 14px) !important; }
+
+  /* Página de mapa: elementos fijos confinados a la columna */
+  #mapa.mapa-full { left: calc(50% - (var(--app-w) / 2)); right: auto; transform: none; width: var(--app-w); }
+  .mapa-pill { left: 50%; right: auto; transform: translateX(-50%); width: calc(var(--app-w) - 28px); }
+  .mapa-sheet { left: 50%; right: auto; transform: translateX(-50%); width: var(--app-w); }
+  .mapa-stack { left: auto; right: calc(50% - (var(--app-w) / 2) + 14px); }
+}

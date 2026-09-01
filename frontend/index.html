@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/suave.css?v=m1">
+<link rel="stylesheet" href="css/suave.css?v=m4">
 </head>
 <body data-tab="mapa">
 
@@ -69,6 +69,9 @@
   var map = L.map('mapa', { zoomControl: false, attributionControl: false }).setView(MAPA_CENTRO, MAPA_ZOOM);
   L.control.attribution({ position: 'topleft', prefix: false }).addAttribution('© OpenStreetMap').addTo(map);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+  // La contención desktop cambia el ancho del contenedor: re-medir el mapa.
+  setTimeout(function () { map.invalidateSize(); map.setView(MAPA_CENTRO, MAPA_ZOOM); }, 150);
+  window.addEventListener('resize', function () { map.invalidateSize(); });
 
   var meta = await (await fetch('data/humedales.json')).json();
   var geo = await (await fetch('data/humedales.geojson')).json();
