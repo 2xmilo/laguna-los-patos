@@ -79,6 +79,104 @@ body[data-tab] { font-family: var(--sv-font); }
 .sv-cta { margin-left:auto; width:30px; height:30px; flex:none; border-radius:50%; background:var(--sv-green); display:flex; align-items:center; justify-content:center; }
 .sv-cta svg { width:15px; height:15px; }
 
+/* ---- Páginas Suave scrolleables (no-mapa) ---- */
+body.sv-page { background:#fff; }
+
+/* ---- Explorar: lista vertical de humedales ---- */
+.exp-head { padding: calc(18px + env(safe-area-inset-top,0px)) 18px 10px; display:flex; align-items:flex-start; justify-content:space-between; }
+.exp-head h1 { margin:0; font-family:var(--sv-font); font-weight:800; font-size:26px; color:var(--sv-ink); letter-spacing:-.5px; line-height:1.1; }
+.exp-head .sub { font-weight:600; font-size:13px; color:var(--sv-muted); margin-top:2px; }
+.exp-ico { width:40px; height:40px; flex:none; border-radius:50%; background:#f4f6f1; display:flex; align-items:center; justify-content:center; }
+.exp-ico svg { width:19px; height:19px; }
+.exp-list { display:flex; flex-direction:column; gap:14px; padding:4px 18px 16px; }
+.exp-card { display:block; width:100%; text-align:left; padding:0; background:#fff; border:1px solid var(--sv-line); border-radius:20px; overflow:hidden; box-shadow:0 4px 14px rgba(0,0,0,.08); cursor:pointer; font-family:var(--sv-font); }
+.exp-card .sv-foto { height:118px; }
+.exp-card.piloto .sv-num { background:#C98A2D; color:#fff; }
+
+/* ---- Detalle de humedal ---- */
+.det-hero { height:230px; position:relative; }
+.det-hero__top { position:absolute; top:calc(14px + env(safe-area-inset-top,0px)); left:14px; right:14px; display:flex; align-items:center; justify-content:space-between; }
+.det-hero__actions { display:flex; gap:10px; }
+.det-ico { width:40px; height:40px; border-radius:50%; background:rgba(255,255,255,.92); display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; }
+.det-ico svg { width:20px; height:20px; }
+.det-body { padding:0 18px 20px; position:relative; }
+.det-avatar { width:56px; height:56px; border-radius:50%; background:#eef4ea; border:3px solid #fff; display:flex; align-items:center; justify-content:center; font-size:28px; margin-top:-28px; box-shadow:0 2px 8px rgba(0,0,0,.12); position:relative; z-index:1; }
+.det-avatar.piloto { background:#e8952e; }
+.det-nom { margin:8px 0 0; font-family:var(--sv-font); font-weight:800; font-size:24px; color:var(--sv-ink); letter-spacing:-.4px; line-height:1.1; }
+.det-sub { font-weight:600; font-size:13px; color:var(--sv-muted); margin:2px 0 0; }
+.det-chips { display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; }
+.det-desc { font-weight:600; font-size:14px; line-height:1.5; color:#54614f; margin:14px 0 0; }
+.det-tiles { display:flex; gap:8px; margin-top:16px; }
+.det-tile { flex:1; background:#f4f6f1; border-radius:14px; padding:12px 4px; text-align:center; }
+.det-tile .ic { font-size:20px; }
+.det-tile .big { font-weight:800; font-size:13px; color:var(--sv-ink); margin-top:4px; }
+.det-tile .lbl { font-weight:700; font-size:10px; color:var(--sv-muted); margin-top:1px; }
+.det-cta { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:16px; background:var(--sv-green); color:#fff; border-radius:16px; padding:15px; font-family:var(--sv-font); font-weight:800; font-size:15px; text-decoration:none; }
+.det-cta.off { background:#b9c6ba; }
+.det-h { font-family:var(--sv-font); font-weight:800; font-size:17px; color:var(--sv-ink); margin:20px 0 0; }
+.det-acciones { display:flex; gap:10px; margin-top:12px; }
+.det-accion { flex:1; background:#f4f6f1; border-radius:16px; padding:14px 6px; text-align:center; text-decoration:none; }
+.det-accion .ic { font-size:22px; display:block; }
+.det-accion .tx { font-weight:700; font-size:12px; color:var(--sv-ink); display:block; margin-top:4px; }
+.det-llegar { margin-top:6px; }
+.det-llegar__head { display:flex; align-items:center; justify-content:space-between; }
+.det-llegar__head a { font-weight:700; font-size:13px; color:var(--sv-green); }
+.det-mapa { height:80px; border-radius:14px; margin-top:10px; }
+.det-dir { font-weight:600; font-size:12px; color:var(--sv-muted); margin:8px 0 0; }
+.det-body .ph-puntos-banner { margin-top:16px; }
+.det-body #bloque-nivel { margin-top:16px; }
+
+/* ---- Logros ---- */
+.lg-nivel { background:#f4f6f1; border-radius:20px; padding:18px; display:flex; align-items:center; gap:16px; margin:8px 18px 0; }
+.lg-nivel .info { flex:1; min-width:0; }
+.lg-nivel .nom { font-family:var(--sv-font); font-weight:800; font-size:18px; color:var(--sv-ink); line-height:1.1; }
+.lg-nivel .pts { font-weight:800; font-size:30px; color:var(--sv-green); line-height:1; margin-top:8px; }
+.lg-nivel .pts small { font-size:14px; color:var(--sv-muted); font-weight:700; }
+.lg-nivel .falta { font-weight:600; font-size:12px; color:var(--sv-muted); margin-top:8px; }
+.lg-bar { height:8px; border-radius:6px; background:#e2e7dd; margin-top:6px; overflow:hidden; }
+.lg-bar > i { display:block; height:100%; background:linear-gradient(90deg,#7cc47f,#2e6b3e); }
+.lg-medal { width:60px; flex:none; text-align:center; font-size:44px; }
+.lg-sec-h { display:flex; align-items:center; justify-content:space-between; margin:22px 18px 0; }
+.lg-sec-h h2 { margin:0; font-family:var(--sv-font); font-weight:800; font-size:17px; color:var(--sv-ink); }
+.lg-insignias { display:flex; gap:10px; margin:12px 18px 0; }
+.lg-insig { flex:1; text-align:center; }
+.lg-insig .em { font-size:32px; }
+.lg-insig.off .em { filter:grayscale(1); opacity:.35; }
+.lg-insig .t { font-weight:700; font-size:10px; color:#54614f; margin-top:4px; line-height:1.2; }
+.lg-stats { margin:10px 18px 0; }
+.lg-stat { display:flex; align-items:center; justify-content:space-between; padding:11px 0; border-bottom:1px solid #f0f0ec; }
+.lg-stat:last-child { border-bottom:none; }
+.lg-stat .k { display:flex; align-items:center; gap:10px; font-weight:700; font-size:13.5px; color:#54614f; }
+.lg-stat .v { font-weight:800; font-size:13.5px; color:var(--sv-ink); }
+.lg-canje { margin:22px 0 0; }
+.lg-canje h2, .sv-h2 { font-family:var(--sv-font); font-weight:800; font-size:17px; color:var(--sv-ink); margin:0 18px 10px; }
+
+/* ---- Descubre (biodiversidad) ---- */
+.dsc-tabs { display:flex; gap:8px; padding:2px 18px 12px; overflow-x:auto; scrollbar-width:none; }
+.dsc-tabs::-webkit-scrollbar { display:none; }
+.dsc-tab { flex:none; font-family:var(--sv-font); font-weight:700; font-size:12px; color:#54614f; background:#f0f2ed; border:none; border-radius:20px; padding:6px 14px; cursor:pointer; }
+.dsc-tab.act { color:#fff; background:var(--sv-green); font-weight:800; }
+.dsc-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; padding:2px 18px 4px; }
+.dsc-load { grid-column:1/-1; color:var(--sv-muted); font-size:13px; }
+.dsc-esp { text-decoration:none; display:block; }
+.dsc-esp .foto { height:92px; border-radius:14px; background-size:cover; background-position:center; background-color:#dfe7e3; }
+.dsc-esp .nom { font-weight:800; font-size:12.5px; color:var(--sv-ink); margin-top:6px; line-height:1.2; }
+.dsc-esp .lat { font-weight:600; font-style:italic; font-size:10px; color:var(--sv-muted); margin-top:1px; line-height:1.2; }
+.dsc-progreso { margin:16px 18px 0; background:#f4f6f1; border-radius:18px; padding:16px; display:flex; align-items:center; justify-content:space-between; }
+.dsc-progreso .t1 { font-weight:800; font-size:16px; color:var(--sv-ink); }
+.dsc-progreso .t2 { font-weight:600; font-size:12px; color:var(--sv-muted); margin-top:2px; }
+.dsc-ring { width:58px; height:58px; flex:none; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+.dsc-ring .in { width:44px; height:44px; border-radius:50%; background:#f4f6f1; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.dsc-ring .n { font-weight:800; font-size:16px; color:var(--sv-ink); line-height:1; }
+.dsc-ring .d { font-weight:700; font-size:9px; color:var(--sv-muted); }
+.dsc-guias { display:flex; flex-direction:column; gap:10px; padding:0 18px; }
+.dsc-guia { display:flex; align-items:center; gap:14px; background:#fff; border:1px solid var(--sv-line); border-radius:16px; padding:14px; text-decoration:none; box-shadow:0 3px 10px rgba(0,0,0,.04); }
+.dsc-guia .ic { font-size:24px; }
+.dsc-guia .tx { flex:1; }
+.dsc-guia .tx strong { display:block; font-weight:800; font-size:15px; color:var(--sv-ink); }
+.dsc-guia .tx small { font-weight:600; font-size:12px; color:var(--sv-muted); }
+.dsc-guia .ch { color:var(--sv-muted); font-size:20px; }
+
 /* ---- Nav inferior (5 pestañas) ---- */
 .ph-tabs { background:#fff; backdrop-filter:none; border-top:1px solid #f0f0ec; }
 .ph-tab { max-width:none; color:var(--sv-inactive); font-family:var(--sv-font); font-weight:700; font-size:10.5px; gap:4px; }

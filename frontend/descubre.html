@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#ffffff">
+<title>Descubre · Humedales de Valdivia</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/suave.css?v=m1">
+</head>
+<body data-tab="descubre" class="sv-page">
+
+<div class="exp-head">
+  <div><h1>Descubre</h1><p class="sub" id="dsc-sub">Biodiversidad del humedal</p></div>
+  <span class="exp-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#3a5a3f" stroke-width="1.9" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg></span>
+</div>
+
+<div class="dsc-tabs" id="dsc-tabs">
+  <button class="dsc-tab act" data-tx="">Todas</button>
+  <button class="dsc-tab" data-tx="Plantae">Flora</button>
+  <button class="dsc-tab" data-tx="Aves">Aves</button>
+  <button class="dsc-tab" data-tx="Amphibia">Anfibios</button>
+  <button class="dsc-tab" data-tx="Animalia">Fauna</button>
+</div>
+
+<div class="dsc-grid" id="grid"><p class="dsc-load">Cargando especies…</p></div>
+
+<div class="dsc-progreso">
+  <div>
+    <div class="t1">Tu progreso</div>
+    <div class="t2">Especies reconocidas</div>
+  </div>
+  <div class="dsc-ring" id="ring"><div class="in"><span class="n" id="ring-n">0</span><span class="d" id="ring-d">/0</span></div></div>
+</div>
+
+<h2 class="sv-h2" style="margin-top:22px">Estudios guiados</h2>
+<div class="dsc-guias">
+  <a class="dsc-guia" href="docente.html"><span class="ic">🎒</span><span class="tx"><strong>Salida grupal</strong><small>Un celular guía a todo el grupo</small></span><span class="ch">›</span></a>
+  <a class="dsc-guia" id="g-juego" href="#"><span class="ic">🔍</span><span class="tx"><strong>Reconocer especies</strong><small>Mini-juego de identificación</small></span><span class="ch">›</span></a>
+  <a class="dsc-guia" id="g-tour" href="#"><span class="ic">🌐</span><span class="tx"><strong>Tour 360°</strong><small>Recorré el humedal inmersivo</small></span><span class="ch">›</span></a>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/nav.js?v=4"></script>
+<script src="js/geo.js"></script>
+<script src="js/biodiversidad.js"></script>
+<script src="js/avatar.js"></script>
+<script src="js/puntos.js"></script>
+<script>
+(async function () {
+  var id = localStorage.getItem('ph_ultimo_humedal') || 'laguna-los-patos';
+  var meta = await (await fetch('data/humedales.json')).json();
+  var h = meta.humedales.find(function (x) { return x.id === id; }) || meta.humedales[0];
+  document.getElementById('dsc-sub').textContent = 'Biodiversidad · ' + h.nombre;
+
+  // Estudios guiados
+  document.getElementById('g-juego').href = 'observar.html?id=' + h.id;
+  var gt = document.getElementById('g-tour');
+  if (h.estaciones && h.estaciones.length) { gt.href = 'tour.html?id=' + h.id; }
+  else { gt.style.opacity = .5; gt.addEventListener('click', function (e) { e.preventDefault(); }); }
+
+  var grid = document.getElementById('grid');
+  function render(taxon) {
+    grid.innerHTML = '<p class="dsc-load">Cargando especies…</p>';
+    phEspeciesDe(h.id, taxon).then(function (lista) {
+      if (!lista || !lista.length) { grid.innerHTML = '<p class="dsc-load">Sin especies registradas para este grupo.</p>'; return; }
+      grid.innerHTML = lista.map(function (r) {
+        var foto = phFotoTaxon(r.taxon, 'medium');
+        if (!foto) return '';
+        return '<a class="dsc-esp" href="https://www.inaturalist.org/taxa/' + r.taxon.id + '" target="_blank" rel="noopener">' +
+          '<div class="foto" style="background-image:url(\'' + foto + '\')"></div>' +
+          '<div class="nom">' + phNombreTaxon(r.taxon) + '</div>' +
+          '<div class="lat">' + (r.taxon.name || '') + '</div></a>';
+      }).join('');
+    }).catch(function () { grid.innerHTML = '<p class="dsc-load">No se pudo cargar la biodiversidad.</p>'; });
+  }
+
+  // Progreso: especies del álbum vs total observadas en el humedal
+  phEspeciesDe(h.id, '').then(function (lista) {
+    var total = (lista || []).length;
+    var album = JSON.parse(localStorage.getItem('ph_album') || '[]').length;
+    document.getElementById('ring-n').textContent = album;
+    document.getElementById('ring-d').textContent = '/' + total;
+    var pct = total ? Math.min(100, Math.round(100 * album / total)) : 0;
+    document.getElementById('ring').style.background = 'conic-gradient(#2e6b3e 0 ' + pct + '%, #e2e7dd ' + pct + '% 100%)';
+  });
+
+  document.querySelectorAll('#dsc-tabs .dsc-tab').forEach(function (b) {
+    b.addEventListener('click', function () {
+      document.querySelectorAll('#dsc-tabs .dsc-tab').forEach(function (x) { x.classList.remove('act'); });
+      b.classList.add('act');
+      render(b.dataset.tx);
+    });
+  });
+  render('');
+})();
+</script>
+</body>
+</html>

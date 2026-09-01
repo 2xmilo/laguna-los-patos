@@ -3,21 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="theme-color" content="#0E3B36">
+<meta name="theme-color" content="#ffffff">
 <title>Humedal · Humedales de Valdivia</title>
 <link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/suave.css?v=m1">
 </head>
-<body data-tab="humedal">
-<header class="ph-header">
-  <a class="back" href="index.html">‹</a>
-  <div>
-    <h1 id="h-nombre">Humedal</h1>
-    <p class="sub">Isla Teja · Valdivia</p>
-  </div>
-</header>
+<body data-tab="explorar" class="sv-page">
 
-<div class="ph-wrap">
-  <!-- Paso 1: perfil etario (una vez por sesión) -->
+<!-- Gates de onboarding (se muestran una vez) -->
+<div class="ph-wrap" id="gates">
   <div id="perfil-gate" class="ph-card hidden">
     <h2>¿Quién visita el humedal?</h2>
     <p>Sus habitantes te hablan distinto según tu edad. No pedimos nombre ni datos.</p>
@@ -27,26 +24,39 @@
       <button class="ph-perfil-btn" data-p="guardabosques"><span class="pico">🌲</span><span><strong>Guardabosques · 18+</strong>Contexto ecológico completo y ciencia ciudadana.</span></button>
     </div>
   </div>
-
-  <!-- Paso 2: elegir compañero (una vez, queda guardado) -->
   <div id="comp-gate" class="ph-card hidden">
     <h2>Elegí a tu compañero</h2>
     <p>Un habitante del humedal te abre las puertas de su casa y te acompaña en cada visita. Los cuatro existen de verdad en los humedales de Valdivia.</p>
     <div class="ph-companeros" id="comp-lista"></div>
   </div>
+</div>
 
-  <div id="hub" class="hidden">
-    <!-- Hero con identidad -->
-    <div class="ph-hero">
-      <div id="h-chips"></div>
-      <h2 id="h-titulo"></h2>
-      <p id="h-desc"></p>
+<!-- DETALLE -->
+<div id="hub" class="hidden">
+  <div class="det-hero sv-foto" id="det-hero">
+    <div class="det-hero__top">
+      <a class="det-ico" href="explorar.html" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="#21301f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></a>
+      <div class="det-hero__actions">
+        <button class="det-ico" aria-label="Compartir"><svg viewBox="0 0 24 24" fill="none" stroke="#21301f" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5 8.6 10.5"/></svg></button>
+        <button class="det-ico det-fav" aria-label="Favorito"><svg viewBox="0 0 24 24" fill="none" stroke="#e5484d" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 5.6a5.5 5.5 0 0 0-8-.4L12 6l-.8-.8a5.5 5.5 0 0 0-8 8L12 21l8.8-8.8a5.5 5.5 0 0 0 0-6.6z"/></svg></button>
+      </div>
     </div>
+  </div>
 
-    <!-- Confianza ganada en el humedal -->
+  <div class="det-body">
+    <div class="det-avatar" id="det-avatar">🦢</div>
+    <h1 class="det-nom" id="h-titulo"></h1>
+    <p class="det-sub">Isla Teja · Valdivia</p>
+    <div class="det-chips" id="h-chips"></div>
+    <p class="det-desc" id="h-desc"></p>
+
+    <div class="det-tiles" id="det-tiles"></div>
+
+    <a id="a-tour" class="det-cta" href="#"><span aria-hidden="true">🔄</span> Ver tour 360°</a>
+
     <a id="banner-puntos" class="ph-puntos-banner" href="#">
       <span class="ico">🎟️</span>
-      <span><strong id="b-nivel">Visitante</strong> · <strong id="b-puntos">0</strong> puntos<br><small style="color:var(--tinta-suave);" id="b-sub">La confianza se gana en terreno</small></span>
+      <span><strong id="b-nivel">Visitante</strong> · <strong id="b-puntos">0</strong> puntos<br><small style="color:var(--sv-muted);" id="b-sub">La confianza se gana en terreno</small></span>
       <span class="flecha">›</span>
     </a>
 
@@ -56,20 +66,28 @@
       <a id="link-nivel" class="ph-btn ph-btn--azul" href="#">Registrar nivel de la laguna →</a>
     </div>
 
-    <div class="ph-card">
-      <h2>¿Cómo aportás hoy?</h2>
-      <div class="ph-acciones">
-        <a id="a-tour" class="ph-accion" href="#"><span class="ico">🌐</span>Tour 360°<span class="nota">Sus habitantes te pasean</span></a>
-        <a id="a-avistar" class="ph-accion" href="#"><span class="ico">📷</span>Avistar<span class="nota">Sumá al álbum común</span></a>
-        <a id="a-reportar" class="ph-accion" href="#"><span class="ico">⚠️</span>Reportar<span class="nota">Defendé este lugar</span></a>
-        <a id="a-siguiente" class="ph-accion" href="index.html"><span class="ico">🗺️</span>Otro humedal<span class="nota">Visitá al vecindario</span></a>
+    <h2 class="det-h">¿Cómo aportás hoy?</h2>
+    <div class="det-acciones">
+      <a id="a-avistar" class="det-accion" href="#"><span class="ic">📷</span><span class="tx">Avistar</span></a>
+      <a id="a-reportar" class="det-accion" href="#"><span class="ic">⚠️</span><span class="tx">Reportar</span></a>
+      <a id="a-siguiente" class="det-accion" href="explorar.html"><span class="ic">🗺️</span><span class="tx">Otro humedal</span></a>
+    </div>
+
+    <div class="det-llegar">
+      <div class="det-llegar__head">
+        <h2 class="det-h">¿Cómo llegar?</h2>
+        <a id="det-ruta" href="#" target="_blank" rel="noopener">Ver ruta →</a>
       </div>
+      <div class="det-mapa sv-foto phm"></div>
+      <p class="det-dir">Isla Teja, Valdivia</p>
     </div>
   </div>
 </div>
 
 <script src="js/config.js"></script>
-<script src="js/nav.js"></script>
+<script src="js/nav.js?v=4"></script>
+<script src="js/geo.js"></script>
+<script src="js/biodiversidad.js"></script>
 <script src="js/avatar.js"></script>
 <script src="js/puntos.js"></script>
 <script>
@@ -77,74 +95,95 @@
   var id = new URLSearchParams(location.search).get('id') || 'laguna-los-patos';
   var meta = await (await fetch('data/humedales.json')).json();
   var h = meta.humedales.find(function (x) { return x.id === id; }) || meta.humedales[0];
-  localStorage.setItem('ph_ultimo_humedal', h.id); // para las pestañas
+  localStorage.setItem('ph_ultimo_humedal', h.id);
 
-  document.getElementById('h-nombre').textContent = h.nombre;
   document.getElementById('h-titulo').textContent = h.nombre;
   document.getElementById('h-desc').textContent = h.descripcion;
-  var chips = '';
-  if (h.piloto) chips += '<span class="ph-chip ph-chip--piloto">Piloto</span>';
-  if (h.monitoreo_nivel) chips += '<span class="ph-chip ph-chip--nivel">Monitoreo de nivel</span>';
-  document.getElementById('h-chips').innerHTML = chips;
+  document.getElementById('det-avatar').textContent = h.piloto ? '🦢' : '🌿';
+  if (h.piloto) document.getElementById('det-avatar').classList.add('piloto');
 
-  // Enlaces de acción
-  document.getElementById('a-tour').href = h.estaciones.length ? ('tour.html?id=' + id) : '#';
-  if (!h.estaciones.length) {
-    var t = document.getElementById('a-tour');
-    t.style.opacity = .5; t.title = 'Tour disponible en el humedal piloto';
-    t.addEventListener('click', function (e) { e.preventDefault(); phDecir('El tour 360° está disponible por ahora en la Laguna de los Patos, el humedal piloto.'); });
+  // Chips: tags reales del humedal (o piloto/monitoreo como respaldo)
+  var tags = h.tags && h.tags.length ? h.tags.slice(0, 3) : [];
+  if (!tags.length) { if (h.piloto) tags.push('Piloto'); if (h.monitoreo_nivel) tags.push('Monitoreo'); }
+  document.getElementById('h-chips').innerHTML = tags.map(function (t) { return '<span class="sv-chip">' + t + '</span>'; }).join('');
+
+  // Tiles de datos (reales / derivables)
+  var tiles = [];
+  tiles.push({ ic: '🛩️', big: h.estaciones.length ? 'Tour 360°' : 'Pronto', lbl: h.estaciones.length ? (h.estaciones.length + ' estaciones') : 'Sin tour aún' });
+  tiles.push({ ic: '🌿', big: '<span id="tile-esp">…</span>', lbl: 'Especies' });
+  tiles.push(h.monitoreo_nivel
+    ? { ic: '💧', big: 'Nivel', lbl: 'Monitoreo agua' }
+    : { ic: '📍', big: 'Isla Teja', lbl: 'Valdivia' });
+  document.getElementById('det-tiles').innerHTML = tiles.map(function (t) {
+    return '<div class="det-tile"><div class="ic">' + t.ic + '</div><div class="big">' + t.big + '</div><div class="lbl">' + t.lbl + '</div></div>';
+  }).join('');
+  // Conteo real de especies (iNaturalist), async
+  if (typeof phEspeciesDe === 'function') {
+    phEspeciesDe(id).then(function (lista) {
+      var el = document.getElementById('tile-esp'); if (el) el.textContent = (lista || []).length || '0';
+    }).catch(function () { var el = document.getElementById('tile-esp'); if (el) el.textContent = '—'; });
   }
-  // Reto Observar declinado por edad: el Guardián reconoce (matching), no sube fotos
+
+  // Cómo llegar (Google Maps a pie)
+  var destino = h.centro[0] + ',' + h.centro[1];
+  document.getElementById('det-ruta').href = 'https://www.google.com/maps/dir/?api=1&destination=' + destino + '&travelmode=walking';
+
+  // CTA tour
+  var aTour = document.getElementById('a-tour');
+  aTour.href = h.estaciones.length ? ('tour.html?id=' + id) : '#';
+  if (!h.estaciones.length) {
+    aTour.classList.add('off');
+    aTour.addEventListener('click', function (e) { e.preventDefault(); phDecir('El tour 360° todavía no está disponible en este humedal.'); });
+  }
+
+  // Reto Observar por edad: Guardián reconoce (matching), no sube fotos
   function ajustarPorPerfil() {
     var av = document.getElementById('a-avistar');
     if (PH_PERFIL === 'guardian') {
       av.href = 'observar.html?id=' + id;
-      av.innerHTML = '<span class="ico">🔍</span>Reconocer<span class="nota">Jugá y llená tu álbum</span>';
+      av.querySelector('.ic').textContent = '🔍';
+      av.querySelector('.tx').textContent = 'Reconocer';
     } else {
       av.href = 'avistar.html?id=' + id;
+      av.querySelector('.ic').textContent = '📷';
+      av.querySelector('.tx').textContent = 'Avistar';
     }
   }
   ajustarPorPerfil();
   document.getElementById('a-reportar').href = 'reportar.html?id=' + id;
 
-  // Banner de confianza
+  // Banner de confianza (puntos reales)
   document.getElementById('banner-puntos').href = 'cupones.html?id=' + id;
   document.getElementById('b-puntos').textContent = phPuntos();
   var niv = phNivel();
   document.getElementById('b-nivel').textContent = niv.nombre;
   if (niv.siguiente) document.getElementById('b-sub').textContent = 'Te faltan ' + niv.faltan + ' pts para ser ' + niv.siguiente;
 
-  // Bloque de nivel solo en la laguna
   if (h.monitoreo_nivel) {
     document.getElementById('bloque-nivel').classList.remove('hidden');
     document.getElementById('link-nivel').href = MONITOREO_LAGUNA_URL;
   }
 
-  // Puntos por medición de nivel VERIFICADA CON FOTO (vuelve del monitoreo).
-  // Tope: una vez al día. La validación fuerte será server-side con Supabase.
+  // Puntos por medición de nivel verificada con foto (vuelve del monitoreo)
   if (new URLSearchParams(location.search).get('nivel_verificado') === '1') {
-    history.replaceState(null, '', 'humedal.html?id=' + id); // limpia la URL (no re-otorga al recargar)
+    history.replaceState(null, '', 'humedal.html?id=' + id);
     var hoy = new Date().toISOString().slice(0, 10);
     if (localStorage.getItem('ph_nivel_dia') !== hoy) {
       localStorage.setItem('ph_nivel_dia', hoy);
       var gN = phSumarPuntos('nivel');
-      setTimeout(function () {
-        phDecir('Tu medición de nivel llegó verificada con foto: +' + gN + ' puntos 🎟️. El agua de la laguna también te lo agradece.');
-      }, 800);
+      setTimeout(function () { phDecir('Tu medición de nivel llegó verificada con foto: +' + gN + ' puntos 🎟️. El agua de la laguna también te lo agradece.'); }, 800);
     } else {
-      setTimeout(function () {
-        phDecir('Tu medición quedó registrada. Los puntos por nivel se ganan una vez al día: mañana podés volver a medir.');
-      }, 800);
+      setTimeout(function () { phDecir('Tu medición quedó registrada. Los puntos por nivel se ganan una vez al día: mañana podés volver a medir.'); }, 800);
     }
   }
 
   // Gate en dos pasos: edad → compañero
   function abrirHub() {
+    var gw = document.getElementById('gates'); if (gw) gw.style.display = 'none';
     document.getElementById('perfil-gate').classList.add('hidden');
     document.getElementById('comp-gate').classList.add('hidden');
     document.getElementById('hub').classList.remove('hidden');
     ajustarPorPerfil();
-    // Modo escuela: sin cupones (aprendizaje y datos, no recompensas)
     if (!phCuponesActivos()) document.getElementById('banner-puntos').classList.add('hidden');
     phDecir(phHistoria('bienvenida'));
   }

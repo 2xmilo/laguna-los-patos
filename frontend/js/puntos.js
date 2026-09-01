@@ -66,7 +66,7 @@ function phGastarPuntos(pts) {
 
 /* ---- Catálogo de cupones (comercios de ejemplo para la maqueta) ---------- */
 var PH_CUPONES = [
-  { id: 'cafe-humedal', icono: '☕', comercio: 'Café La Última Frontera', oferta: '2x1 en café de grano', costo: 30 },
+  { id: 'cafe-humedal', icono: '☕', comercio: 'Café Panaka', oferta: '2x1 en café de grano', costo: 30 },
   { id: 'kayak-cruces', icono: '🛶', comercio: 'Kayak Río Cruces', oferta: '20% dcto. en salida guiada', costo: 60 },
   { id: 'libreria-austral', icono: '📚', comercio: 'Librería Qué Leo Valdivia', oferta: '15% dcto. en guías de aves', costo: 40 },
   { id: 'jardin-botanico', icono: '🌱', comercio: 'Vivero Nativo', oferta: 'Un árbol nativo para plantar', costo: 80 },

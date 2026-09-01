@@ -3,107 +3,129 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="theme-color" content="#0E3B36">
-<title>Cupones · Humedales de Valdivia</title>
+<meta name="theme-color" content="#ffffff">
+<title>Logros · Humedales de Valdivia</title>
 <link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/suave.css?v=m1">
 </head>
-<body data-tab="cupones">
-<header class="ph-header">
-  <a class="back" id="back" href="index.html">‹</a>
-  <div><h1>Tus puntos y cupones</h1><p class="sub">Recompensas del humedal</p></div>
-</header>
+<body data-tab="logros" class="sv-page">
 
-<div class="ph-wrap">
-  <div class="ph-saldo">
-    <span class="ico">🎟️</span>
-    <div>
-      <div class="num" id="saldo">0</div>
-      <div class="lbl" id="saldo-nivel">puntos · Visitante</div>
+<div class="exp-head">
+  <div><h1>Logros</h1><p class="sub">Sigue explorando</p></div>
+</div>
+
+<div id="contenido">
+  <!-- Nivel + puntos acumulados (resaltado) -->
+  <div class="lg-nivel">
+    <div class="info">
+      <div class="nom" id="lg-nombre">Visitante</div>
+      <div class="pts"><span id="lg-puntos">0</span> <small>pts acumulados</small></div>
+      <div class="lg-bar"><i id="lg-bar" style="width:4%"></i></div>
+      <div class="falta" id="lg-falta"></div>
     </div>
+    <div class="lg-medal">🏅</div>
   </div>
 
-  <a id="aviso-cuenta" class="ph-puntos-banner hidden" href="cuenta.html">
-    <span class="ico">🦆</span>
-    <span><strong>Guardá tus puntos con una cuenta</strong><br><small style="color:var(--tinta-suave);">Opcional · para no perderlos si cambiás de celular</small></span>
-    <span class="flecha">›</span>
-  </a>
+  <div class="lg-sec-h"><h2>Insignias</h2></div>
+  <div class="lg-insignias" id="lg-insignias"></div>
 
-  <div class="ph-card">
-    <h2>La confianza se gana en terreno</h2>
-    <p>Los puntos no se compran: son la confianza que el humedal deposita en vos por aportar <strong>en terreno</strong>. <strong>+10</strong> por avistamiento, <strong>+15</strong> por defenderlo con un reporte, <strong>+10</strong> por reconocer especies dentro del humedal, <strong>+15</strong> por medir el nivel de la laguna con foto de verificación (una vez al día). El tour virtual da progresión, pero los puntos se ganan con los pies en el barro. Los comercios de Valdivia agradecen a quienes cuidan sus humedales.</p>
-  </div>
+  <div class="lg-sec-h"><h2>Estadísticas</h2></div>
+  <div class="lg-stats" id="lg-stats"></div>
 
-  <h2 style="font-size:19px;color:var(--bosque);margin:20px 4px 10px;">Canjeá tus puntos</h2>
-  <div id="catalogo"></div>
-
-  <div id="mis-canjes-sec" class="hidden">
-    <h2 style="font-size:19px;color:var(--bosque);margin:20px 4px 10px;">Tus cupones canjeados</h2>
-    <div id="mis-canjes"></div>
+  <div class="lg-canje">
+    <h2>Canjeá tus puntos</h2>
+    <div id="catalogo" style="padding:0 18px"></div>
+    <div id="mis-canjes-sec" class="hidden">
+      <h2 style="margin-top:20px">Tus cupones canjeados</h2>
+      <div id="mis-canjes" style="padding:0 18px"></div>
+    </div>
   </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="js/config.js"></script>
-<script src="js/nav.js"></script>
+<script src="js/nav.js?v=4"></script>
 <script src="js/avatar.js"></script>
 <script src="js/puntos.js"></script>
 <script>
 (function () {
-  var id = new URLSearchParams(location.search).get('id');
-  if (id) document.getElementById('back').href = 'humedal.html?id=' + id;
-
-  // Modo escuela: la salida es aprendizaje y datos, no recompensas
+  // Modo escuela: sin cupones (aprendizaje y datos, no recompensas)
   if (!phCuponesActivos()) {
-    document.querySelector('.ph-wrap').innerHTML =
-      '<div class="ph-card"><h2>🏫 Modo escuela</h2>' +
-      '<p>En modo escuela no hay cupones: el curso gana conocimiento y aporta datos reales al humedal. ' +
-      'Un curso entero no debe farmear descuentos; los puntos comerciales son del visitante individual.</p>' +
-      '<a class="ph-btn ph-btn--prof" href="docente.html">🎒 Armar una salida grupal</a>' +
-      '<a class="ph-btn ph-btn--ghost" href="' + (id ? 'humedal.html?id=' + id : 'index.html') + '">Volver al humedal</a></div>';
+    document.getElementById('contenido').innerHTML =
+      '<div style="padding:0 18px"><div class="lg-nivel" style="display:block"><div class="nom">🏫 Modo escuela</div>' +
+      '<p style="font-weight:600;font-size:14px;color:#54614f;margin-top:8px">En modo escuela no hay cupones: el curso gana conocimiento y aporta datos reales al humedal. Los puntos comerciales son del visitante individual.</p>' +
+      '<a class="det-cta" style="margin-top:14px" href="docente.html">🎒 Armar una salida grupal</a></div></div>';
     return;
   }
 
-  // Invitación a crear cuenta (solo si no existe)
-  var aviso = document.getElementById('aviso-cuenta');
-  if (!localStorage.getItem('ph_usuario')) aviso.classList.remove('hidden');
-  if (id) aviso.href = 'cuenta.html?id=' + id;
+  var hist = JSON.parse(localStorage.getItem('ph_puntos_hist') || '[]');
+  function cont(m) { return hist.filter(function (x) { return x.motivo === m; }).length; }
 
   function pintar() {
-    document.getElementById('saldo').textContent = phPuntos();
-    var niv = phNivel();
-    document.getElementById('saldo-nivel').textContent = 'puntos · ' + niv.nombre +
-      (niv.siguiente ? ' · faltan ' + niv.faltan + ' para ' + niv.siguiente : '');
+    var pts = phPuntos(), niv = phNivel();
+    document.getElementById('lg-nombre').textContent = niv.nombre;
+    document.getElementById('lg-puntos').textContent = pts;
+    // Progreso hacia el siguiente nivel
+    var actualMin = 0, sigMin = null;
+    PH_NIVELES.forEach(function (n) { if (pts >= n.min) actualMin = n.min; else if (sigMin === null) sigMin = n.min; });
+    var pct = sigMin === null ? 100 : Math.round(100 * (pts - actualMin) / (sigMin - actualMin));
+    document.getElementById('lg-bar').style.width = Math.max(4, pct) + '%';
+    document.getElementById('lg-falta').textContent = niv.siguiente
+      ? 'Te faltan ' + niv.faltan + ' pts para ser ' + niv.siguiente
+      : 'Nivel máximo: el humedal habla por vos';
 
-    // Catálogo
+    // Insignias (reales)
+    var album = JSON.parse(localStorage.getItem('ph_album') || '[]');
+    var tours = phInsignias().filter(function (i) { return i.indexOf('tour-') === 0; }).length;
+    var badges = [
+      { em: '🥇', t: 'Primer avistamiento', on: (cont('avistamiento') + cont('reconocer')) > 0 },
+      { em: '🌿', t: 'Coleccionista · 5 especies', on: album.length >= 5 },
+      { em: '🛡️', t: 'Guardián · primer reporte', on: cont('denuncia') > 0 },
+      { em: '🧭', t: 'Conocés el barrio · tour', on: tours > 0 }
+    ];
+    document.getElementById('lg-insignias').innerHTML = badges.map(function (b) {
+      return '<div class="lg-insig' + (b.on ? '' : ' off') + '"><div class="em">' + b.em + '</div><div class="t">' + b.t + '</div></div>';
+    }).join('');
+
+    // Estadísticas (reales)
+    var stats = [
+      { k: '⭐ Puntos acumulados', v: pts + ' pts' },
+      { k: '📷 Avistamientos', v: cont('avistamiento') + cont('reconocer') },
+      { k: '⚠️ Reportes', v: cont('denuncia') },
+      { k: '🌿 Especies en tu álbum', v: album.length },
+      { k: '💧 Mediciones de nivel', v: cont('nivel') }
+    ];
+    document.getElementById('lg-stats').innerHTML = stats.map(function (s) {
+      return '<div class="lg-stat"><div class="k">' + s.k + '</div><div class="v">' + s.v + '</div></div>';
+    }).join('');
+
+    // Catálogo de cupones (canje real + QR)
     var cat = document.getElementById('catalogo');
     cat.innerHTML = '';
     PH_CUPONES.forEach(function (c) {
-      var alcanza = phPuntos() >= c.costo;
+      var alcanza = pts >= c.costo;
       var t = document.createElement('div');
       t.className = 'ph-ticket';
       t.innerHTML =
         '<div class="ph-ticket__ico">' + c.icono + '</div>' +
-        '<div class="ph-ticket__info">' +
-        '<h3>' + c.comercio + '</h3><p>' + c.oferta + '</p>' +
+        '<div class="ph-ticket__info"><h3>' + c.comercio + '</h3><p>' + c.oferta + '</p>' +
         '<div class="ph-ticket__pie"><span class="ph-ticket__costo">' + c.costo + ' pts</span>' +
         '<button class="ph-ticket__btn" ' + (alcanza ? '' : 'disabled') + ' data-c="' + c.id + '">' +
-        (alcanza ? 'Canjear' : 'Te faltan ' + (c.costo - phPuntos())) + '</button></div></div>';
+        (alcanza ? 'Canjear' : 'Te faltan ' + (c.costo - pts)) + '</button></div></div>';
       cat.appendChild(t);
     });
     cat.querySelectorAll('.ph-ticket__btn[data-c]').forEach(function (b) {
-      b.addEventListener('click', function () {
-        var canje = phCanjear(b.dataset.c);
-        if (canje) { mostrarQR(canje); pintar(); }
-      });
+      b.addEventListener('click', function () { var k = phCanjear(b.dataset.c); if (k) { mostrarQR(k); pintar(); } });
     });
 
     // Canjeados
-    var lista = phCanjes();
-    var sec = document.getElementById('mis-canjes-sec');
+    var lista = phCanjes(), sec = document.getElementById('mis-canjes-sec');
     if (lista.length) {
       sec.classList.remove('hidden');
-      var cont = document.getElementById('mis-canjes');
-      cont.innerHTML = '';
+      var cc = document.getElementById('mis-canjes'); cc.innerHTML = '';
       lista.forEach(function (k) {
         var c = PH_CUPONES.find(function (x) { return x.id === k.cupon; }) || {};
         var t = document.createElement('div');
@@ -113,7 +135,7 @@
           '<div class="ph-ticket__info"><h3>' + (c.comercio || '') + '</h3><p>' + (c.oferta || '') + '</p>' +
           '<div class="ph-ticket__pie"><span class="ph-ticket__costo">' + k.codigo + '</span>' +
           '<button class="ph-ticket__btn" data-q="' + k.codigo + '">Ver QR</button></div></div>';
-        cont.appendChild(t);
+        cc.appendChild(t);
         t.querySelector('[data-q]').addEventListener('click', function () { mostrarQR(k, c); });
       });
     }
@@ -124,14 +146,11 @@
     var velo = document.createElement('div');
     velo.className = 'ph-modal-velo';
     velo.innerHTML =
-      '<div class="ph-modal">' +
-      '<h3>' + (c.comercio || 'Cupón') + '</h3>' +
-      '<p class="oferta">' + (c.oferta || '') + '</p>' +
-      '<div class="qr" id="qr-box"></div>' +
+      '<div class="ph-modal"><h3>' + (c.comercio || 'Cupón') + '</h3>' +
+      '<p class="oferta">' + (c.oferta || '') + '</p><div class="qr" id="qr-box"></div>' +
       '<div class="codigo">' + canje.codigo + '</div>' +
       '<small>Mostrá este código en el comercio. (Maqueta: canje de demostración)</small>' +
-      '<button class="ph-btn ph-btn--prof" id="qr-cerrar">Listo</button>' +
-      '</div>';
+      '<button class="ph-btn ph-btn--prof" id="qr-cerrar">Listo</button></div>';
     document.body.appendChild(velo);
     new QRCode(document.getElementById('qr-box'), { text: canje.codigo, width: 150, height: 150 });
     velo.addEventListener('click', function (e) { if (e.target === velo) velo.remove(); });

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#ffffff">
+<title>Explorar · Humedales de Valdivia</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/suave.css?v=m1">
+</head>
+<body data-tab="explorar" class="sv-page">
+
+<div class="exp-head">
+  <div>
+    <h1>Explorar</h1>
+    <p class="sub" id="exp-sub">humedales para visitar</p>
+  </div>
+  <span class="exp-ico" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#3a5a3f" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+  </span>
+</div>
+
+<div class="exp-list" id="lista"></div>
+
+<script src="js/config.js"></script>
+<script src="js/nav.js?v=4"></script>
+<script>
+(async function () {
+  var meta = await (await fetch('data/humedales.json')).json();
+  document.getElementById('exp-sub').textContent = meta.humedales.length + ' humedales para visitar';
+  var lista = document.getElementById('lista');
+  lista.innerHTML = meta.humedales.map(function (h, i) {
+    var chips = (h.tags || []).map(function (t) { return '<span class="sv-chip">' + t + '</span>'; }).join('');
+    var foto = h.foto ? ' style="background-image:url(\'' + h.foto + '\')"' : '';
+    return '<button class="exp-card' + (h.piloto ? ' piloto' : '') + '" data-h="' + h.id + '">' +
+      '<div class="sv-foto"' + foto + '>' +
+        '<span class="sv-num">' + (h.piloto ? '🦢' : (i + 1)) + '</span>' +
+        '<span class="sv-fav" aria-label="Favorito"><svg viewBox="0 0 24 24" fill="none" stroke="#5a6b52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 5.6a5.5 5.5 0 0 0-8-.4L12 6l-.8-.8a5.5 5.5 0 0 0-8 8L12 21l8.8-8.8a5.5 5.5 0 0 0 0-6.6z"/></svg></span>' +
+        (h.foto ? '' : '<span class="sv-ph">foto</span>') +
+      '</div>' +
+      '<div class="sv-body">' +
+        '<div class="sv-nom">' + h.nombre + '</div>' +
+        '<div class="sv-sub">' + (h.piloto ? 'Humedal piloto · tour 360°' : 'Red Isla Teja') + '</div>' +
+        (chips ? '<div class="sv-chips">' + chips + '</div>' : '') +
+      '</div>' +
+    '</button>';
+  }).join('');
+  lista.querySelectorAll('.exp-card').forEach(function (c) {
+    c.addEventListener('click', function () { location.href = 'humedal.html?id=' + c.dataset.h; });
+  });
+  lista.querySelectorAll('.sv-fav').forEach(function (f) {
+    f.addEventListener('click', function (e) { e.stopPropagation(); f.classList.toggle('on'); });
+  });
+})();
+</script>
+</body>
+</html>
