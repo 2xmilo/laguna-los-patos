@@ -233,6 +233,27 @@ function phHistoria(grupo, clave) {
   return '';
 }
 
+/* -------- Silenciar al guía ------------------------------------------------
+   Cuando está muteado, el guía NO abre solo su globo al entrar a un humedal
+   (phDecir deja el texto listo pero oculto). El visitante puede tocar la carita
+   cuando quiera para leerlo. La preferencia se recuerda entre sesiones. */
+function phMuteado() { return localStorage.getItem('ph_mute') === '1'; }
+function phSetMute(v) {
+  localStorage.setItem('ph_mute', v ? '1' : '0');
+  phActualizarMute();
+  if (v) { var g = document.getElementById('ph-avatar-globo'); if (g) g.hidden = true; }
+}
+function phToggleMute() { phSetMute(!phMuteado()); }
+function phActualizarMute() {
+  var b = document.getElementById('ph-avatar-mute');
+  if (!b) return;
+  var m = phMuteado();
+  b.textContent = m ? '🔇' : '🔊';
+  b.classList.toggle('is-muted', m);
+  b.setAttribute('aria-label', m ? 'Activar al guía' : 'Silenciar al guía');
+  b.title = m ? 'Guía silenciado — tocá la carita para leerlo' : 'Silenciar al guía';
+}
+
 /* -------- Widget flotante -------------------------------------------------- */
 var phQuienActual = null;
 var phTypeTimer = null;
@@ -244,18 +265,23 @@ function phMontarAvatar() {
   box.id = 'ph-avatar';
   box.className = 'ph-avatar';
   box.innerHTML =
-    '<button class="ph-avatar__cara" id="ph-avatar-cara" aria-label="Hablar con tu compañero">' +
-    PH_PERSONAJES[phQuienActual].svg +
-    '</button>' +
     '<div class="ph-avatar__globo" id="ph-avatar-globo" hidden>' +
     '<strong id="ph-avatar-nombre"></strong>' +
     '<span id="ph-avatar-texto"></span>' +
+    '</div>' +
+    '<div class="ph-avatar__cw">' +
+    '<button class="ph-avatar__cara" id="ph-avatar-cara" aria-label="Hablar con tu compañero">' +
+    PH_PERSONAJES[phQuienActual].svg +
+    '</button>' +
+    '<button class="ph-avatar__mute" id="ph-avatar-mute" type="button"></button>' +
     '</div>';
   document.body.appendChild(box);
   document.getElementById('ph-avatar-cara').addEventListener('click', function () {
     var globo = document.getElementById('ph-avatar-globo');
     globo.hidden = !globo.hidden;
   });
+  document.getElementById('ph-avatar-mute').addEventListener('click', phToggleMute);
+  phActualizarMute();
 }
 
 function phCambiarPersonaje(quien) {
@@ -278,9 +304,13 @@ function phDecir(texto, opts) {
   var cuerpo = document.getElementById('ph-avatar-texto');
   var cara = document.getElementById('ph-avatar-cara');
   nombre.textContent = p.nombre;
-  globo.hidden = false;
-
   clearInterval(phTypeTimer);
+
+  // Silenciado: dejamos el mensaje listo pero sin abrir el globo ni animar.
+  // El visitante toca la carita cuando quiera para leerlo.
+  if (phMuteado()) { cuerpo.textContent = texto; globo.hidden = true; cara.classList.remove('hablando'); return; }
+
+  globo.hidden = false;
   cuerpo.textContent = '';
   cara.classList.add('hablando');
   var i = 0;

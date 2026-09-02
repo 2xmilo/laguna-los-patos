@@ -111,8 +111,25 @@ body.sv-page { background:#fff; }
 .det-tile .ic { font-size:20px; }
 .det-tile .big { font-weight:800; font-size:13px; color:var(--sv-ink); margin-top:4px; }
 .det-tile .lbl { font-weight:700; font-size:10px; color:var(--sv-muted); margin-top:1px; }
-.det-cta { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:16px; background:var(--sv-green); color:#fff; border-radius:16px; padding:15px; font-family:var(--sv-font); font-weight:800; font-size:15px; text-decoration:none; }
-.det-cta.off { background:#b9c6ba; }
+.det-cta { display:flex; align-items:center; justify-content:center; gap:11px; margin-top:16px;
+  background:linear-gradient(135deg,#3f8a52 0%,#2e6b3e 100%); color:#fff;
+  border-radius:18px; padding:16px 18px; font-family:var(--sv-font); font-weight:800;
+  font-size:15.5px; letter-spacing:.005em; text-decoration:none;
+  box-shadow:0 10px 24px rgba(46,107,62,.30); transition:transform .12s ease, box-shadow .12s ease; }
+.det-cta:active { transform:translateY(1px) scale(.99); box-shadow:0 6px 16px rgba(46,107,62,.24); }
+.det-cta__ic { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px;
+  border-radius:50%; background:rgba(255,255,255,.22); flex:0 0 auto; }
+.det-cta__ic svg { width:16px; height:16px; display:block; }
+.det-cta.off { background:#b9c6ba; box-shadow:none; }
+
+/* Botón silenciar del guía (badge sobre la carita del avatar) */
+.ph-avatar__cw { position:relative; display:inline-block; }
+.ph-avatar__mute { position:absolute; top:-4px; right:-4px; width:27px; height:27px; border-radius:50%;
+  border:2px solid #fff; background:#2e6b3e; color:#fff; font-size:13px; line-height:1; cursor:pointer;
+  padding:0; display:flex; align-items:center; justify-content:center;
+  box-shadow:0 3px 9px rgba(0,0,0,.28); transition:transform .1s ease, background .15s ease; z-index:2; }
+.ph-avatar__mute:active { transform:scale(.9); }
+.ph-avatar__mute.is-muted { background:#9aa39a; }
 .det-h { font-family:var(--sv-font); font-weight:800; font-size:17px; color:var(--sv-ink); margin:20px 0 0; }
 .det-acciones { display:flex; gap:10px; margin-top:12px; }
 .det-accion { flex:1; background:#f4f6f1; border-radius:16px; padding:14px 6px; text-align:center; text-decoration:none; }
