@@ -39,10 +39,28 @@ function phMontarJuego(opts) {
   }
   var ESPECIES = [], pendientes = [], actual = null, aciertos = 0;
 
+  var lastBig = null; // foto grande de la especie actual (para ampliar)
+
   function esUrl(f) { return f && /^https?:/.test(f); }
   function barajar(a) { return a.slice().sort(function () { return Math.random() - .5; }); }
   function album() { return JSON.parse(localStorage.getItem('ph_album') || '[]'); }
   function pegar(id) { var a = album(); if (a.indexOf(id) < 0) { a.push(id); localStorage.setItem('ph_album', JSON.stringify(a)); } }
+
+  // Ampliar la foto: a veces la observación de iNaturalist no enfoca bien a la
+  // especie; tocando el círculo se ve en grande.
+  function abrirLightbox(url) {
+    if (!url) return;
+    var lb = document.getElementById('ph-lightbox');
+    if (!lb) {
+      lb = document.createElement('div');
+      lb.id = 'ph-lightbox'; lb.className = 'ph-lightbox';
+      lb.innerHTML = '<img alt="Especie ampliada"><span class="ph-lightbox__x" aria-hidden="true">✕</span>';
+      document.body.appendChild(lb);
+      lb.addEventListener('click', function () { lb.classList.remove('on'); });
+    }
+    lb.querySelector('img').src = url;
+    lb.classList.add('on');
+  }
 
   function mostrarFoto(elm, f) {
     if (esUrl(f)) { elm.classList.add('obs-foto--img'); elm.textContent = ''; elm.style.backgroundImage = "url('" + f + "')"; }
@@ -67,6 +85,7 @@ function phMontarJuego(opts) {
     if (!pendientes.length) pendientes = barajar(ESPECIES);
     actual = pendientes.shift();
     mostrarFoto(foto, actual.foto);
+    lastBig = esUrl(actual.foto) ? (actual.fotoBig || actual.foto) : null;
     // Distractores coherentes: primero del mismo grupo (ave con ave, planta con
     // planta…); si no hay 2, del mismo reino; y recién al final, cualquiera.
     var otros = ESPECIES.filter(function (e) { return e.id !== actual.id; });
@@ -104,10 +123,18 @@ function phMontarJuego(opts) {
     }
   }
 
+  // Tap en la foto → verla en grande. Botón para saltar imágenes poco claras.
+  foto.addEventListener('click', function () { abrirLightbox(lastBig); });
+  var skip = document.createElement('button');
+  skip.className = 'obs-skip'; skip.type = 'button';
+  skip.textContent = 'No se ve bien · ver otra';
+  opciones.parentNode.insertBefore(skip, opciones.nextSibling);
+  skip.addEventListener('click', function () { if (typeof phDecir === 'function') phDecir('Va otra especie del humedal.'); ronda(); });
+
   opciones.innerHTML = '<p style="text-align:center;color:var(--tinta-suave);font-size:13px;">Buscando las especies del humedal…</p>';
   phEspeciesDe(humedalId).then(function (lista) {
     var reales = (lista || [])
-      .map(function (r) { return { id: 't' + r.taxon.id, foto: phFotoTaxon(r.taxon, 'medium'), nombre: phNombreTaxon(r.taxon), grupo: r.taxon.iconic_taxon_name || 'Otros' }; })
+      .map(function (r) { return { id: 't' + r.taxon.id, foto: phFotoTaxon(r.taxon, 'medium'), fotoBig: phFotoTaxon(r.taxon, 'large'), nombre: phNombreTaxon(r.taxon), grupo: r.taxon.iconic_taxon_name || 'Otros' }; })
       .filter(function (e) { return e.foto; })
       .slice(0, 10);
     // Solo preguntamos especies cuyo REINO tenga al menos 3 miembros, para poder

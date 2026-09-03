@@ -268,3 +268,22 @@ body.sv-page { background:#fff; }
 
 /* Estudio guiado desactivado (p.ej. Salida grupal, hasta rediseñarlo) */
 .dsc-guia.is-off { opacity:.5; pointer-events:none; }
+
+/* Hoja del mapa: los dos botones del mismo tamaño (antes "Planificar ruta"
+   era más ancho y se leía como el principal). */
+.mapa-detalle .botones { grid-template-columns: 1fr 1fr; }
+
+/* Mini-juego: ampliar la foto (tap) y saltar imágenes poco claras */
+.obs-foto { cursor: zoom-in; }
+.obs-skip { display:block; margin:14px auto 0; padding:9px 16px; border:none; cursor:pointer;
+  background:#f0f2ec; color:var(--sv-muted); border-radius:999px;
+  font-family:var(--sv-font); font-weight:700; font-size:12.5px; }
+.obs-skip:active { transform:scale(.97); }
+.ph-lightbox { position:fixed; inset:0; z-index:2000; display:none;
+  align-items:center; justify-content:center; padding:24px;
+  background:rgba(16,24,15,.82); -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px); }
+.ph-lightbox.on { display:flex; }
+.ph-lightbox img { max-width:100%; max-height:82vh; border-radius:16px; box-shadow:0 12px 40px rgba(0,0,0,.5); }
+.ph-lightbox__x { position:absolute; top:16px; right:18px; width:40px; height:40px; border-radius:50%;
+  background:rgba(255,255,255,.92); color:var(--sv-ink); font-size:18px; display:flex;
+  align-items:center; justify-content:center; }
