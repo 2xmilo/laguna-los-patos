@@ -122,14 +122,20 @@ body.sv-page { background:#fff; }
 .det-cta__ic svg { width:16px; height:16px; display:block; }
 .det-cta.off { background:#b9c6ba; box-shadow:none; }
 
-/* Botón silenciar del guía (badge sobre la carita del avatar) */
 .ph-avatar__cw { position:relative; display:inline-block; }
-.ph-avatar__mute { position:absolute; top:-4px; right:-4px; width:27px; height:27px; border-radius:50%;
-  border:2px solid #fff; background:#2e6b3e; color:#fff; font-size:13px; line-height:1; cursor:pointer;
-  padding:0; display:flex; align-items:center; justify-content:center;
-  box-shadow:0 3px 9px rgba(0,0,0,.28); transition:transform .1s ease, background .15s ease; z-index:2; }
-.ph-avatar__mute:active { transform:scale(.9); }
-.ph-avatar__mute.is-muted { background:#9aa39a; }
+
+/* Botón fijo arriba a la derecha para ocultar / mostrar al guía */
+.ph-guia-toggle { position:fixed; top:calc(12px + env(safe-area-inset-top,0px)); right:12px; z-index:1200;
+  display:inline-flex; align-items:center; gap:7px; padding:8px 13px 8px 11px; border:none; cursor:pointer;
+  background:rgba(255,255,255,.93); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+  border-radius:999px; box-shadow:0 3px 12px rgba(0,0,0,.18);
+  font-family:var(--sv-font); font-weight:700; font-size:12.5px; color:var(--sv-ink);
+  transition:transform .1s ease, background .15s ease; }
+.ph-guia-toggle .ico { display:inline-flex; }
+.ph-guia-toggle svg { width:16px; height:16px; display:block; }
+.ph-guia-toggle:active { transform:scale(.96); }
+.ph-guia-toggle.is-oculta { background:var(--sv-green); color:#fff; }
+.tour-body .ph-guia-toggle { display:none; }  /* el tour tiene su propia UI arriba */
 .det-h { font-family:var(--sv-font); font-weight:800; font-size:17px; color:var(--sv-ink); margin:20px 0 0; }
 .det-acciones { display:flex; gap:10px; margin-top:12px; }
 .det-accion { flex:1; background:#f4f6f1; border-radius:16px; padding:14px 6px; text-align:center; text-decoration:none; }
@@ -220,6 +226,7 @@ body.sv-page { background:#fff; }
 
   /* Widget del avatar: pegado al borde de la columna */
   .ph-avatar { right: calc(50% - (var(--app-w) / 2) + 14px) !important; }
+  .ph-guia-toggle { right: calc(50% - (var(--app-w) / 2) + 12px); }
 
   /* Página de mapa: elementos fijos confinados a la columna */
   #mapa.mapa-full { left: calc(50% - (var(--app-w) / 2)); right: auto; transform: none; width: var(--app-w); }
