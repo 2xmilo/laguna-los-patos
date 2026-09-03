@@ -26,11 +26,17 @@ function phMontarJuego(opts) {
 
   /* Fallback honesto si falla la red: solo especies que sí están (nunca cisne/monito). */
   var FALLBACK = [
-    { id: 'f-pato', foto: '🦆', nombre: 'Pato jergón' },
-    { id: 'f-tagua', foto: '🐦‍⬛', nombre: 'Tagua' },
-    { id: 'f-piden', foto: '🐦', nombre: 'Pidén' },
-    { id: 'f-garza', foto: '🕊️', nombre: 'Garza grande' }
+    { id: 'f-pato', foto: '🦆', nombre: 'Pato jergón', grupo: 'Aves' },
+    { id: 'f-tagua', foto: '🐦‍⬛', nombre: 'Tagua', grupo: 'Aves' },
+    { id: 'f-piden', foto: '🐦', nombre: 'Pidén', grupo: 'Aves' },
+    { id: 'f-garza', foto: '🕊️', nombre: 'Garza grande', grupo: 'Aves' }
   ];
+  // Reino a partir del grupo iónico de iNaturalist (para no mezclar plantas con
+  // animales cuando no alcanzan distractores del mismo grupo fino).
+  function reino(g) {
+    if (g === 'Plantae' || g === 'Fungi' || g === 'Protozoa' || g === 'Chromista') return g;
+    return 'Animalia';
+  }
   var ESPECIES = [], pendientes = [], actual = null, aciertos = 0;
 
   function esUrl(f) { return f && /^https?:/.test(f); }
@@ -61,7 +67,13 @@ function phMontarJuego(opts) {
     if (!pendientes.length) pendientes = barajar(ESPECIES);
     actual = pendientes.shift();
     mostrarFoto(foto, actual.foto);
-    var distract = barajar(ESPECIES.filter(function (e) { return e.id !== actual.id; })).slice(0, 2);
+    // Distractores coherentes: primero del mismo grupo (ave con ave, planta con
+    // planta…); si no hay 2, del mismo reino; y recién al final, cualquiera.
+    var otros = ESPECIES.filter(function (e) { return e.id !== actual.id; });
+    var mismoGrupo = otros.filter(function (e) { return e.grupo === actual.grupo; });
+    var mismoReino = otros.filter(function (e) { return e.grupo !== actual.grupo && reino(e.grupo) === reino(actual.grupo); });
+    var resto = otros.filter(function (e) { return reino(e.grupo) !== reino(actual.grupo); });
+    var distract = barajar(mismoGrupo).concat(barajar(mismoReino)).concat(barajar(resto)).slice(0, 2);
     opciones.innerHTML = barajar([actual].concat(distract)).map(function (o) {
       return '<button class="obs-op" data-e="' + o.id + '">' + o.nombre + '</button>';
     }).join('');
@@ -95,10 +107,16 @@ function phMontarJuego(opts) {
   opciones.innerHTML = '<p style="text-align:center;color:var(--tinta-suave);font-size:13px;">Buscando las especies del humedal…</p>';
   phEspeciesDe(humedalId).then(function (lista) {
     var reales = (lista || [])
-      .map(function (r) { return { id: 't' + r.taxon.id, foto: phFotoTaxon(r.taxon, 'medium'), nombre: phNombreTaxon(r.taxon) }; })
+      .map(function (r) { return { id: 't' + r.taxon.id, foto: phFotoTaxon(r.taxon, 'medium'), nombre: phNombreTaxon(r.taxon), grupo: r.taxon.iconic_taxon_name || 'Otros' }; })
       .filter(function (e) { return e.foto; })
       .slice(0, 10);
-    ESPECIES = reales.length >= 3 ? reales : FALLBACK;
+    // Solo preguntamos especies cuyo REINO tenga al menos 3 miembros, para poder
+    // armar siempre 3 opciones del mismo reino (nunca planta vs animal). Las de
+    // reinos con 1-2 miembros (p.ej. un hongo suelto) quedan fuera del quiz.
+    var porReino = {};
+    reales.forEach(function (e) { var k = reino(e.grupo); porReino[k] = (porReino[k] || 0) + 1; });
+    var jugables = reales.filter(function (e) { return porReino[reino(e.grupo)] >= 3; });
+    ESPECIES = jugables.length >= 3 ? jugables : (reales.length >= 3 ? reales : FALLBACK);
     pintarAlbum(); pintarRacha(); ronda();
   }).catch(function () { ESPECIES = FALLBACK; ronda(); });
 }
