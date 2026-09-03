@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/suave.css?v=m6">
+<link rel="stylesheet" href="css/suave.css?v=m7">
 </head>
 <body data-tab="explorar" class="sv-page">
 
@@ -71,7 +71,10 @@
         <h2 class="det-h">¿Cómo llegar?</h2>
         <a id="det-ruta" href="#" target="_blank" rel="noopener">Ver ruta →</a>
       </div>
-      <div class="det-mapa sv-foto phm"></div>
+      <div class="det-mapa" id="det-mapa">
+        <iframe id="det-mapa-frame" title="Mapa del humedal" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <a class="det-mapa__tap" id="det-mapa-tap" target="_blank" rel="noopener" aria-label="Abrir en Google Maps"></a>
+      </div>
       <p class="det-dir">Isla Teja, Valdivia</p>
     </div>
   </div>
@@ -121,6 +124,13 @@
   // Cómo llegar (Google Maps a pie)
   var destino = h.centro[0] + ',' + h.centro[1];
   document.getElementById('det-ruta').href = 'https://www.google.com/maps/dir/?api=1&destination=' + destino + '&travelmode=walking';
+
+  // Vista previa embebida de Google Maps, centrada en el humedal. El tap abre
+  // el lugar en Google Maps a pantalla completa (evita robar el scroll).
+  document.getElementById('det-mapa-frame').src =
+    'https://www.google.com/maps?q=' + destino + '&z=16&hl=es&output=embed';
+  document.getElementById('det-mapa-tap').href =
+    'https://www.google.com/maps/search/?api=1&query=' + destino;
 
   // CTA tour
   var aTour = document.getElementById('a-tour');

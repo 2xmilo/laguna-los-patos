@@ -144,7 +144,11 @@ body.sv-page { background:#fff; }
 .det-llegar { margin-top:6px; }
 .det-llegar__head { display:flex; align-items:center; justify-content:space-between; }
 .det-llegar__head a { font-weight:700; font-size:13px; color:var(--sv-green); }
-.det-mapa { height:80px; border-radius:14px; margin-top:10px; }
+.det-mapa { position:relative; height:150px; border-radius:14px; margin-top:10px; overflow:hidden; background:#eef1ea; }
+.det-mapa iframe { width:100%; height:100%; border:0; display:block; }
+/* Overlay transparente: captura el tap para abrir Google Maps y evita que el
+   iframe robe el scroll de la página en el móvil. */
+.det-mapa__tap { position:absolute; inset:0; display:block; }
 .det-dir { font-weight:600; font-size:12px; color:var(--sv-muted); margin:8px 0 0; }
 .det-body .ph-puntos-banner { margin-top:16px; }
 .det-body #bloque-nivel { margin-top:16px; }
