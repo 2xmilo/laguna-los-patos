@@ -17,8 +17,8 @@ var PH_SUPA_ANON_KEY = 'sb_publishable_Ktgx7rFsqDjXvxiDie0XYQ_LxOgYFY8';
 // ANIDADA dentro de este mismo deploy (misma URL). Ruta interna relativa.
 var MONITOREO_LAGUNA_URL = 'herramientas/laguna-los-patos/monitoreo-nivel/';
 
-// Centro del mapa: intersección Los Robles con Los Lingues (Isla Teja, Valdivia)
-var MAPA_CENTRO = [-39.814061, -73.259746];
+// Centro del mapa (Isla Teja, Valdivia)
+var MAPA_CENTRO = [-39.817628, -73.259117];
 var MAPA_ZOOM = 15;
 
 // Modo demo: si el backend no responde, los formularios simulan la respuesta
