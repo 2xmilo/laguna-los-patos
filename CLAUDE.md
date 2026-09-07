@@ -20,8 +20,13 @@ Frontend en `frontend/` → Vercel (rama `main`). Repo `2xmilo/laguna-los-patos`
   `style.css` y lo sobreescribe.
 - **Biología honesta:** el avatar habla en 1ª persona solo si su especie está en
   `especies` del humedal; nunca nombrar especies que no están en el sitio.
-- **Panos 360°:** ubicación/orientación se hornean en `humedales.json` vía
-  `scripts/panos_geo.py` (GPS→`centro`, GimbalYaw→`norte`). No se lee EXIF en runtime.
+- **Panos 360°:** ubicación, orientación y altura se hornean en `humedales.json`
+  vía `scripts/panos_geo.py` (GPS→`centro`, GimbalYaw→`norte`,
+  RelativeAltitude→`altitud`). No se lee EXIF en runtime. **`altitud` es
+  obligatoria**: `tour.html` calcula con ella el pitch de cada flecha (se apoya
+  en el suelo del destino); sin ese dato vuelven a quedar todas a la misma
+  altura. 7 de los 11 panos perdieron el XMP al reexportarse: su `altitud` está
+  cargada a mano y el script no la pisa.
 - **Flujo:** el usuario revisa en el **celular** por Vercel → **commit + push
   después de cada tanda**. Mensajes de commit en español.
 - Atribución de commits: `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>`.

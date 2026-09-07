@@ -3,9 +3,10 @@
 """
 panos_geo.py  ·  Mapea automáticamente los panos 360° del dron.
 
-Lee el GPS y el rumbo (GimbalYawDegree) que las capturas DJI guardan en su
-metadata (EXIF + XMP) y completa `centro` [lat, lon] y `norte` (grados) de cada
-estación en frontend/data/humedales.json.
+Lee el GPS, el rumbo (GimbalYawDegree) y la altura de vuelo
+(RelativeAltitude) que las capturas DJI guardan en su metadata (EXIF + XMP) y
+completa `centro` [lat, lon], `norte` (grados) y `altitud` (metros sobre el
+terreno) de cada estación en frontend/data/humedales.json.
 
 Por qué existe: la ubicación y orientación de cada tour NO se toman del EXIF en
 tiempo de ejecución, sino de esos dos campos del JSON. Este script evita
@@ -19,6 +20,10 @@ Uso (desde la raíz del repo, o desde cualquier lado):
 Notas:
 - `norte` = GimbalYawDegree (hacia dónde apuntaba la cámara). Es el criterio con
   el que quedó bien orientada la estación si-mirador.
+- `altitud` = RelativeAltitude (altura del dron sobre el punto de despegue).
+  `tour.html` la usa para el pitch de las flechas: el marcador se apoya en el
+  suelo bajo la estación destino, así que sin este dato todas quedarían a la
+  misma altura sin importar desde dónde mires.
 - Solo toca estaciones cuyo pano tenga metadata real (capturas del dron). Los
   panos de muestra (placeholders, sin GPS) se dejan intactos.
 - Preserva el formato del JSON (reemplazo quirúrgico, no reescribe todo el
@@ -40,11 +45,12 @@ def _dms_a_grados(v, ref):
 
 
 def leer_metadata(path):
-    """Devuelve {lat, lon, gimbal, flight} o None si la foto no tiene GPS."""
+    """Devuelve {lat, lon, gimbal, flight, alt} o None si la foto no tiene GPS."""
     img = Image.open(path)
     ex = img.getexif()
-    lat = lon = gimbal = flight = None
+    lat = lon = gimbal = flight = alt = None
     gps = ex.get_ifd(0x8825) if ex else None
+    g = {}
     if gps:
         g = {GPSTAGS.get(k, k): v for k, v in gps.items()}
         if g.get("GPSLatitude"):
@@ -54,13 +60,18 @@ def leer_metadata(path):
     txt = open(path, "rb").read(300000).decode("latin-1", "ignore")
     mg = re.search(r'GimbalYawDegree\s*=\s*"([^"]*)"', txt)
     mf = re.search(r'FlightYawDegree\s*=\s*"([^"]*)"', txt)
+    ma = re.search(r'RelativeAltitude\s*=\s*"([^"]*)"', txt)
     if mg:
         gimbal = round(float(mg.group(1)), 1)
     if mf:
         flight = round(float(mf.group(1)), 1)
+    if ma:
+        alt = round(float(ma.group(1)), 1)
+    elif g.get("GPSAltitude") is not None:
+        alt = round(float(g["GPSAltitude"]), 1)
     if lat is None or lon is None:
         return None
-    return {"lat": lat, "lon": lon, "gimbal": gimbal, "flight": flight}
+    return {"lat": lat, "lon": lon, "gimbal": gimbal, "flight": flight, "alt": alt}
 
 
 def _set_campo(texto, slug, campo, nuevo_valor_str):
@@ -90,8 +101,8 @@ def main():
     estaciones = data.get("estaciones", {})
 
     cambios = []
-    print("Estacion            | centro (lat,lon)                 | norte")
-    print("-" * 72)
+    print("Estacion            | centro (lat,lon)                 | norte  | altitud")
+    print("-" * 84)
     for slug, est in estaciones.items():
         pano = est.get("pano")
         p = os.path.join(ROOT, pano) if pano else None
@@ -106,18 +117,24 @@ def main():
         centro_str = f"[{meta['lat']}, {meta['lon']}]"
         norte_val = meta["gimbal"] if meta["gimbal"] is not None else meta["flight"]
         norte_str = str(norte_val)
+        alt_str = str(meta["alt"]) if meta["alt"] is not None else None
 
         c_actual = est.get("centro")
         n_actual = est.get("norte")
+        a_actual = est.get("altitud")
         cambia_c = (c_actual is None) or (round(c_actual[0], 7) != meta["lat"] or round(c_actual[1], 7) != meta["lon"])
         cambia_n = str(n_actual) != norte_str
+        # Si la foto perdió el XMP (reexportada), no pisamos la altitud cargada.
+        cambia_a = alt_str is not None and str(a_actual) != alt_str
         marca = []
         if cambia_c: marca.append("centro")
         if cambia_n: marca.append(f"norte {n_actual}->{norte_str}")
-        print(f"  {slug:18}| {centro_str:32}| {norte_str:6} {'  <= ' + ', '.join(marca) if marca else ''}")
+        if cambia_a: marca.append(f"altitud {a_actual}->{alt_str}")
+        print(f"  {slug:18}| {centro_str:32}| {norte_str:6} | {alt_str or '-':7}"
+              f"{'  <= ' + ', '.join(marca) if marca else ''}")
 
-        if cambia_c or cambia_n:
-            cambios.append((slug, centro_str, norte_str, cambia_c, cambia_n))
+        if cambia_c or cambia_n or cambia_a:
+            cambios.append((slug, centro_str, norte_str, alt_str, cambia_c, cambia_n, cambia_a))
 
     if not cambios:
         print("\nTodo al día: nada que cambiar.")
@@ -128,11 +145,13 @@ def main():
         return
 
     texto = raw
-    for slug, centro_str, norte_str, cambia_c, cambia_n in cambios:
+    for slug, centro_str, norte_str, alt_str, cambia_c, cambia_n, cambia_a in cambios:
         if cambia_c:
             texto, _ = _set_campo(texto, slug, "centro", centro_str)
         if cambia_n:
             texto, _ = _set_campo(texto, slug, "norte", norte_str)
+        if cambia_a:
+            texto, _ = _set_campo(texto, slug, "altitud", alt_str)
     json.loads(texto)  # valida que sigue siendo JSON correcto
     open(JSON_PATH, "w", encoding="utf-8").write(texto)
     print(f"\nOK: {len(cambios)} estacion(es) actualizadas en {os.path.relpath(JSON_PATH, os.path.dirname(__file__))}")

@@ -287,3 +287,58 @@ body.sv-page { background:#fff; }
 .ph-lightbox__x { position:absolute; top:16px; right:18px; width:40px; height:40px; border-radius:50%;
   background:rgba(255,255,255,.92); color:var(--sv-ink); font-size:18px; display:flex;
   align-items:center; justify-content:center; }
+
+/* ==========================================================================
+   Tour 360° · marcadores con geometría real
+   El disco se apoya en el SUELO bajo la estación destino: el pitch sale de la
+   altitud del dron (humedales.json), así que desde un pano alto se ve en
+   picada y desde uno bajo casi en el horizonte. El tamaño baja con la
+   distancia. Solo el salto a OTRO humedal lleva etiqueta.
+   ========================================================================== */
+.ph-hs {
+  position: absolute; width: 54px; height: 54px;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.ph-hs__disco {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: rgba(255,255,255,.93);
+  box-shadow: 0 4px 14px rgba(0,0,0,.45), inset 0 0 0 1px rgba(10,44,40,.12);
+  transform: scale(var(--esc, 1));
+  transition: transform .18s ease, background .18s ease;
+}
+.ph-hs:hover .ph-hs__disco { background: #fff; transform: scale(calc(var(--esc, 1) * 1.12)); }
+.ph-hs:active .ph-hs__disco { transform: scale(calc(var(--esc, 1) * .93)); }
+.ph-hs:focus-visible { outline: none; }
+.ph-hs:focus-visible .ph-hs__disco { box-shadow: 0 0 0 3px var(--dorado), 0 4px 14px rgba(0,0,0,.45); }
+
+/* Flecha "hacia allá" (mismo lenguaje que antes, pero ya bien ubicada) */
+.ph-hs__flecha {
+  width: 0; height: 0; margin-top: -1px;
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-bottom: 15px solid #0A2C28;
+}
+
+/* Cruce a otro humedal: dorado y con nombre, para que se lea como otro lugar */
+.ph-hs--cruce .ph-hs__disco {
+  background: var(--dorado, #C98A2D);
+  box-shadow: 0 4px 16px rgba(0,0,0,.5), inset 0 0 0 1.5px rgba(255,255,255,.5);
+}
+.ph-hs--cruce:hover .ph-hs__disco { background: #d99a3d; }
+.ph-hs__pie { font-size: 22px; line-height: 1; }
+
+.ph-hs__txt {
+  position: absolute; top: 100%; left: 50%;
+  transform: translate(-50%, 5px);
+  pointer-events: none;
+  width: max-content; max-width: 42vw; text-align: center; line-height: 1.25;
+  font-family: var(--sv-font, 'Nunito', system-ui, sans-serif);
+  font-size: 11.5px; font-weight: 700; color: #fff;
+  background: rgba(10,44,40,.72);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,.22);
+  padding: 4px 11px; border-radius: 12px;
+  text-shadow: 0 1px 3px rgba(0,0,0,.5);
+}

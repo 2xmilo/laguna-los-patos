@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/suave.css?v=m9">
+<link rel="stylesheet" href="css/suave.css?v=m10">
 </head>
 <body class="tour-body">
 
@@ -25,7 +25,7 @@
 </div>
 <button class="tour-btn tour-full" id="btn-full" aria-label="Pantalla completa">⛶</button>
 
-<div class="tour-hint" id="hint">Arrastrá para mirar · tocá una estación para viajar</div>
+<div class="tour-hint" id="hint">Arrastrá para mirar · tocá una flecha para viajar</div>
 
 <!-- Estaciones como miniaturas circulares -->
 <div class="tour-abajo">
@@ -42,27 +42,146 @@
   var id = new URLSearchParams(location.search).get('id') || 'laguna-los-patos';
 
   var meta = await (await fetch('data/humedales.json')).json();
-  var h = meta.humedales.find(function (x) { return x.id === id; }) || meta.humedales[0];
-  var slugs = h.estaciones;
-  var viewer = null, actual = 0;
+  var E = meta.estaciones;
+  var h = meta.humedales.find(function (x) { return x.id === id && x.estaciones.length; })
+       || meta.humedales.find(function (x) { return x.estaciones.length; });
+  id = h.id;
+  var viewer = null, actual = null;
 
-  /* ---- Geometría: rumbo y distancia reales entre estaciones (EXIF GPS) ---- */
+  /* ==================================================================
+     Geometría real: GPS + rumbo + ALTITUD del dron (humedales.json)
+     ================================================================== */
+  var R2D = 180 / Math.PI, D2R = Math.PI / 180;
+
   function distM(a, b) {
-    var R = 6371e3, f1 = a[0]*Math.PI/180, f2 = b[0]*Math.PI/180;
-    var df = (b[0]-a[0])*Math.PI/180, dl = (b[1]-a[1])*Math.PI/180;
+    var R = 6371e3, f1 = a[0]*D2R, f2 = b[0]*D2R;
+    var df = (b[0]-a[0])*D2R, dl = (b[1]-a[1])*D2R;
     var x = Math.sin(df/2)*Math.sin(df/2) + Math.cos(f1)*Math.cos(f2)*Math.sin(dl/2)*Math.sin(dl/2);
     return R * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1-x));
   }
   function rumbo(a, b) { // grados desde el norte, 0-360
-    var f1 = a[0]*Math.PI/180, f2 = b[0]*Math.PI/180, dl = (b[1]-a[1])*Math.PI/180;
+    var f1 = a[0]*D2R, f2 = b[0]*D2R, dl = (b[1]-a[1])*D2R;
     var y = Math.sin(dl)*Math.cos(f2);
     var x = Math.cos(f1)*Math.sin(f2) - Math.sin(f1)*Math.cos(f2)*Math.cos(dl);
-    return (Math.atan2(y, x) * 180/Math.PI + 360) % 360;
+    return (Math.atan2(y, x) * R2D + 360) % 360;
   }
   function distTxt(m) { return m < 1000 ? Math.round(m) + ' m' : (m/1000).toFixed(1) + ' km'; }
   function normYaw(y) { y = y % 360; if (y > 180) y -= 360; if (y < -180) y += 360; return y; }
 
-  /* Pantalla completa (se oculta si el navegador no la soporta, ej. iPhone) */
+  /* El marcador se apoya en el SUELO bajo la estación destino, no en su
+     cámara. El pano está `altitud` m sobre el terreno (RelativeAltitude del
+     dron) y el humedal es plano, así que el suelo del destino queda `altitud`
+     m más abajo, a `d` m de distancia horizontal. Por eso desde un pano alto
+     las flechas caen en picada y desde uno bajo quedan casi en el horizonte:
+     antes todas estaban clavadas en pitch -4 y por eso se veían a la misma
+     altura sin importar desde dónde mirabas. */
+  function pitchSuelo(alt, d) {
+    return Math.max(-80, -Math.atan2(alt || 0, Math.max(d, 1)) * R2D);
+  }
+
+  /* Tamaño aparente: lo cercano se ve grande, lo lejano chico. */
+  function escala(d) {
+    return Math.min(1.25, Math.max(0.62, Math.pow(80 / Math.max(d, 1), 0.4))).toFixed(3);
+  }
+
+  function humedalDe(slug) {
+    return meta.humedales.find(function (x) { return x.estaciones.indexOf(slug) >= 0; });
+  }
+
+  /* ==================================================================
+     Marcadores
+     ================================================================== */
+  function marcador(div, a) {
+    div.setAttribute('role', 'button');
+    div.setAttribute('tabindex', '0');
+    div.setAttribute('aria-label', a.aria);
+    div.title = a.aria;
+    div.style.setProperty('--esc', a.esc);
+    div.innerHTML =
+      '<span class="ph-hs__disco">' +
+        (a.cruce ? '<span class="ph-hs__pie">🚶</span>' : '<span class="ph-hs__flecha"></span>') +
+      '</span>' +
+      (a.etiqueta ? '<span class="ph-hs__txt">' + a.etiqueta + '</span>' : '');
+  }
+
+  /* Dentro de un humedal la flecha va limpia. La que CRUZA a otro humedal
+     lleva etiqueta con el nombre del humedal, para que se lea como un salto
+     distinto y no como una estación más. */
+  function hotspot(desde, hacia, d, nombreHumedal) {
+    var a = E[desde], b = E[hacia];
+    return {
+      pitch: pitchSuelo(a.altitud, d),
+      yaw: normYaw(rumbo(a.centro, b.centro) - (a.norte || 0)),
+      cssClass: 'ph-hs' + (nombreHumedal ? ' ph-hs--cruce' : ''),
+      createTooltipFunc: marcador,
+      createTooltipArgs: {
+        esc: escala(d),
+        cruce: !!nombreHumedal,
+        etiqueta: nombreHumedal ? nombreHumedal + ' · ' + distTxt(d) : '',
+        aria: (nombreHumedal ? 'Cruzar a ' + nombreHumedal + ', ' : '') + b.nombre + ', a ' + distTxt(d)
+      },
+      clickHandlerFunc: function () { viajar(desde, hacia); }
+    };
+  }
+
+  function escena(slug, hm) {
+    var est = E[slug], spots = [];
+
+    hm.estaciones.forEach(function (s) {
+      if (s === slug || !est.centro || !E[s].centro) return;
+      spots.push(hotspot(slug, s, distM(est.centro, E[s].centro), null));
+    });
+
+    // Cruce a otro humedal: se entra por su estación más cercana.
+    meta.humedales.forEach(function (o) {
+      if (o.id === hm.id || !o.estaciones.length || !est.centro) return;
+      var mejor = null, md = Infinity;
+      o.estaciones.forEach(function (s) {
+        var c = E[s].centro; if (!c) return;
+        var d = distM(est.centro, c);
+        if (d < md) { md = d; mejor = s; }
+      });
+      if (mejor) spots.push(hotspot(slug, mejor, md, o.nombre));
+    });
+
+    var cfg = { type: 'equirectangular', panorama: est.pano, hotSpots: spots };
+    if (est.vista) { // fotos parciales (no 360): limitan el giro
+      cfg.haov = est.vista.haov; cfg.vaov = est.vista.vaov;
+      cfg.minYaw = -est.vista.haov / 2; cfg.maxYaw = est.vista.haov / 2;
+      cfg.minPitch = -est.vista.vaov / 2; cfg.maxPitch = est.vista.vaov / 2;
+      cfg.pitch = est.vista.pitchInicial || 0;
+    }
+    return cfg;
+  }
+
+  /* Todas las estaciones de todos los humedales son escenas del MISMO visor:
+     así el salto es un fundido (loadScene) y no destruir + recrear el visor. */
+  var scenes = {};
+  meta.humedales.forEach(function (hm) {
+    hm.estaciones.forEach(function (slug) { scenes[slug] = escena(slug, hm); });
+  });
+
+  /* ==================================================================
+     Viajar entre estaciones conservando la orientación
+     ================================================================== */
+  // Al tocar una flecha llegás mirando hacia donde venías caminando.
+  function viajar(desde, hacia) {
+    var a = E[desde], b = E[hacia];
+    var yaw = normYaw(rumbo(a.centro, b.centro) - (b.norte || 0));
+    viewer.loadScene(hacia, 0, yaw, viewer.getHfov());
+  }
+  // Al tocar una miniatura se conserva el rumbo real que estabas mirando,
+  // para que el mundo no "gire" al cambiar de foto.
+  function saltar(hacia) {
+    if (hacia === actual) return;
+    var a = E[actual], b = E[hacia];
+    var mundo = viewer.getYaw() + (a.norte || 0);
+    viewer.loadScene(hacia, 0, normYaw(mundo - (b.norte || 0)), viewer.getHfov());
+  }
+
+  /* ==================================================================
+     UI
+     ================================================================== */
   var full = document.getElementById('btn-full');
   if (!document.documentElement.requestFullscreen && !document.documentElement.webkitRequestFullscreen) {
     full.style.display = 'none';
@@ -78,126 +197,119 @@
   document.addEventListener('fullscreenchange', function () {
     full.textContent = document.fullscreenElement ? '✕' : '⛶';
   });
-
   setTimeout(function () { document.getElementById('hint').classList.add('off'); }, 5000);
 
-  /* Cambiar de humedal SIN salir del visor (cruce a pie virtual) */
-  function cargarHumedal(nuevoId, estIdx) {
-    id = nuevoId;
-    h = meta.humedales.find(function (x) { return x.id === nuevoId; });
-    slugs = h.estaciones;
-    localStorage.setItem('ph_ultimo_humedal', nuevoId);
-    document.getElementById('back').href = 'humedal.html?id=' + nuevoId;
-    armarMiniaturas();
-    cargar(estIdx || 0);
+  function armarMiniaturas() {
+    var nav = document.getElementById('nav');
+    nav.innerHTML = '';
+    h.estaciones.forEach(function (s) {
+      var est = E[s];
+      var b = document.createElement('button');
+      b.className = 'tour-est';
+      b.dataset.slug = s;
+      var foto = document.createElement('span');
+      foto.className = 'tour-est__foto';
+      foto.style.backgroundImage = 'url("' + est.pano + '")';
+      var txt = document.createElement('span');
+      txt.className = 'tour-est__nombre';
+      txt.textContent = est.nombre;
+      b.appendChild(foto); b.appendChild(txt);
+      b.addEventListener('click', function () { saltar(s); });
+      nav.appendChild(b);
+    });
   }
 
-  function cargar(i) {
-    actual = i;
-    var slug = slugs[i];
-    var est = meta.estaciones[slug];
+  /* Precarga acotada: solo las 2 estaciones más cercanas, y sin guardar la
+     referencia (alcanza con dejar los bytes en la caché HTTP). En celular no
+     conviene tener 11 panos de 6000x3000 decodificados a la vez. */
+  function precargarVecinas(slug) {
+    var est = E[slug], hm = humedalDe(slug);
+    if (!est.centro || !hm) return;
+    hm.estaciones
+      .filter(function (s) { return s !== slug && E[s].centro; })
+      .map(function (s) { return { s: s, d: distM(est.centro, E[s].centro) }; })
+      .sort(function (a, b) { return a.d - b.d; })
+      .slice(0, 2)
+      .forEach(function (x) { var im = new Image(); im.src = E[x.s].pano; });
+  }
+
+  /* Giro automático solo cuando nadie toca nada: ahora el rumbo importa, así
+     que no puede estar girando mientras mirás. */
+  var tRot;
+  function reprogramarGiro() {
+    clearTimeout(tRot);
+    if (viewer) viewer.stopAutoRotate();
+    tRot = setTimeout(function () { if (viewer) viewer.startAutoRotate(-1.4); }, 14000);
+  }
+  ['pointerdown', 'wheel', 'touchstart', 'keydown'].forEach(function (ev) {
+    document.getElementById('panorama').addEventListener(ev, reprogramarGiro, { passive: true });
+  });
+
+  function alLlegar(slug) {
+    actual = slug;
+    var est = E[slug], hm = humedalDe(slug);
+
+    if (hm && hm.id !== id) {         // cruzamos a otro humedal
+      h = hm; id = hm.id;
+      localStorage.setItem('ph_ultimo_humedal', id);
+      document.getElementById('back').href = 'humedal.html?id=' + id;
+      armarMiniaturas();
+    }
+
     document.getElementById('t-titulo').textContent = est.nombre;
     document.getElementById('t-tema').textContent = h.nombre + ' · ' + est.tema;
 
-    /* Hotspots con coherencia espacial: el rumbo real (GPS) menos la
-       orientación del pano (norte). Etiqueta con distancia real. */
-    var spots = [];
-    slugs.forEach(function (s, j) {
-      if (j === i) return;
-      var tgt = meta.estaciones[s], yaw, txt = tgt.nombre;
-      if (est.centro && tgt.centro) {
-        yaw = normYaw(rumbo(est.centro, tgt.centro) - (est.norte || 0));
-        txt += ' · ' + distTxt(distM(est.centro, tgt.centro));
-      } else { yaw = (j - i) * 60; }
-      spots.push({ pitch: -4, yaw: yaw, type: 'scene', text: txt,
-                   clickHandlerFunc: function () { cargar(j); },
-                   cssClass: 'pnlm-hotspot pnlm-sprite pnlm-scene' });
-    });
-
-    // Cruce a otros humedales con tour (desde la estación más cercana)
-    meta.humedales.forEach(function (o) {
-      if (o.id === id || !o.estaciones.length || !est.centro) return;
-      var bi = 0, bd = 1e18;
-      o.estaciones.forEach(function (s, k) {
-        var c = meta.estaciones[s].centro;
-        if (c) { var d = distM(est.centro, c); if (d < bd) { bd = d; bi = k; } }
-      });
-      var c2 = meta.estaciones[o.estaciones[bi]].centro;
-      if (!c2) return;
-      spots.push({
-        pitch: -2, yaw: normYaw(rumbo(est.centro, c2) - (est.norte || 0)),
-        type: 'scene', text: '🚶 Cruzar a ' + o.nombre + ' · ' + distTxt(bd),
-        clickHandlerFunc: function () { cargarHumedal(o.id, bi); },
-        cssClass: 'pnlm-hotspot pnlm-sprite pnlm-scene'
-      });
-    });
-
-    // Config del visor (las fotos parciales, no-360, limitan el giro)
-    var cfg = {
-      type: 'equirectangular', panorama: est.pano,
-      autoLoad: true, showControls: false, compass: false,
-      hotSpots: spots
-    };
-    if (est.vista) {
-      cfg.haov = est.vista.haov; cfg.vaov = est.vista.vaov;
-      cfg.minYaw = -est.vista.haov / 2; cfg.maxYaw = est.vista.haov / 2;
-      cfg.pitch = est.vista.pitchInicial || 0;
-      cfg.minPitch = -est.vista.vaov / 2; cfg.maxPitch = est.vista.vaov / 2;
-      // En vista parcial los hotspots se reparten dentro del encuadre
-      spots.forEach(function (sp, k) {
-        sp.yaw = -est.vista.haov / 3 + k * (est.vista.haov / Math.max(1, spots.length - 1) * 2 / 3);
-        sp.pitch = -est.vista.vaov / 4;
-      });
-    } else {
-      cfg.autoRotate = -2;
-    }
-    if (viewer) viewer.destroy();
-    viewer = pannellum.viewer('panorama', cfg);
-
-    // Acción propia del lugar
     var a = document.getElementById('t-accion');
-    if (est.accion === 'reportar') { a.textContent = '⚠️ ' + est.accion_texto; a.href = 'reportar.html?id=' + id; a.onclick = null; }
-    else if (est.accion === 'descubrir') { a.textContent = '✨ ' + est.accion_texto; a.href = '#';
-      a.onclick = function (e) { e.preventDefault(); var n = phNarrarEstacion(slug, h.especies); phDecir(n.texto, { quien: n.quien }); }; }
-    else { a.textContent = '📷 ' + est.accion_texto; a.href = 'avistar.html?id=' + id; a.onclick = null; }
+    if (est.accion === 'reportar') {
+      a.textContent = '⚠️ ' + est.accion_texto; a.href = 'reportar.html?id=' + id; a.onclick = null;
+    } else if (est.accion === 'descubrir') {
+      a.textContent = '✨ ' + est.accion_texto; a.href = '#';
+      a.onclick = function (e) {
+        e.preventDefault();
+        var n = phNarrarEstacion(slug, h.especies); phDecir(n.texto, { quien: n.quien });
+      };
+    } else {
+      a.textContent = '📷 ' + est.accion_texto; a.href = 'avistar.html?id=' + id; a.onclick = null;
+    }
 
-    // Miniaturas activas
-    document.querySelectorAll('#nav .tour-est').forEach(function (b, k) { b.classList.toggle('act', k === i); });
+    document.querySelectorAll('#nav .tour-est').forEach(function (b) {
+      b.classList.toggle('act', b.dataset.slug === slug);
+    });
 
     // El avatar ELEGIDO narra: 1a persona si su especie esta presente en el
     // humedal, o como guia si no (regla de voz, escalable por `especies`).
     var _nar = phNarrarEstacion(slug, h.especies);
     phDecir(_nar.texto, { quien: _nar.quien });
 
+    precargarVecinas(slug);
+    reprogramarGiro();
+
     // Progresión por completar el tour (insignia, sin puntos canjeables:
     // los puntos solo se ganan con acciones geolocalizadas en terreno)
     var vis = JSON.parse(sessionStorage.getItem('ph_tour_vis') || '[]');
     if (vis.indexOf(slug) < 0) { vis.push(slug); sessionStorage.setItem('ph_tour_vis', JSON.stringify(vis)); }
-    var deEste = vis.filter(function (s) { return slugs.indexOf(s) >= 0; });
-    if (deEste.length === slugs.length && phDarInsignia('tour-' + id)) {
+    var deEste = vis.filter(function (s) { return h.estaciones.indexOf(s) >= 0; });
+    if (deEste.length === h.estaciones.length && phDarInsignia('tour-' + id)) {
       setTimeout(function () {
         phDecir('Conociste todas las estaciones de ' + h.nombre + ': ya conocés el barrio 🏅. Los puntos se ganan en terreno: vení al humedal a avistar, reconocer o reportar.');
       }, 2500);
     }
   }
 
-  // Miniaturas circulares con el panorama de fondo
-  function armarMiniaturas() {
-    var nav = document.getElementById('nav');
-    nav.innerHTML = '';
-    slugs.forEach(function (s, i) {
-      var est = meta.estaciones[s];
-      var b = document.createElement('button');
-      b.className = 'tour-est';
-      b.innerHTML = '<span class="tour-est__foto" style="background-image:url(\'' + est.pano + '\')"></span>' +
-                    '<span class="tour-est__nombre">' + est.nombre + '</span>';
-      b.addEventListener('click', function () { cargar(i); });
-      nav.appendChild(b);
-    });
-  }
   document.getElementById('back').href = 'humedal.html?id=' + id;
   armarMiniaturas();
-  cargar(0);
+
+  viewer = pannellum.viewer('panorama', {
+    default: {
+      firstScene: h.estaciones[0],
+      sceneFadeDuration: 700,
+      autoLoad: true, showControls: false, compass: false,
+      friction: 0.15
+    },
+    scenes: scenes
+  });
+  viewer.on('scenechange', alLlegar);
+  alLlegar(h.estaciones[0]);   // la primera escena no dispara 'scenechange'
 })();
 </script>
 </body>

@@ -116,13 +116,37 @@ norte, real`).
 
 ### Panos 360° y `panos_geo.py`
 Los panos son **capturas reales del dron** (equirectangulares 2:1, ~6000×3000,
-3–5 MB c/u). Su ubicación y orientación **no** se leen del EXIF en runtime: el
-script [`scripts/panos_geo.py`](scripts/panos_geo.py) extrae **GPS → `centro`** y
-**GimbalYawDegree → `norte`** de cada foto y los escribe en `humedales.json`
-(offline; `--write` para aplicar, sin flags es dry-run). `tour.html` usa esos
-valores para orientar el panorama y calcular el rumbo/distancia real de las
-flechas entre estaciones. Al agregar panos nuevos: ponelos en `panos/`, agrégalos
-como estaciones en el JSON y corré el script (o extraé los datos con él).
+3–5 MB c/u). Su ubicación, orientación y altura **no** se leen del EXIF en
+runtime: el script [`scripts/panos_geo.py`](scripts/panos_geo.py) extrae
+**GPS → `centro`**, **GimbalYawDegree → `norte`** y **RelativeAltitude →
+`altitud`** de cada foto y los escribe en `humedales.json` (offline; `--write`
+para aplicar, sin flags es dry-run). Al agregar panos nuevos: ponelos en
+`panos/`, agrégalos como estaciones en el JSON y corré el script.
+
+**Ojo:** 7 de los 11 panos (`si-totoral2`, `si-salida`, `si-cruce` y los cuatro
+`sn-*`) fueron reexportados y perdieron todo el EXIF/XMP. Su `centro`, `norte` y
+`altitud` están cargados a mano; el script los saltea y **no** los pisa.
+
+### Geometría de las flechas del tour
+`tour.html` no coloca las flechas a ojo: las deriva de esos tres campos.
+
+- **Rumbo (`yaw`)** = rumbo GPS real entre estaciones menos el `norte` del pano.
+- **Altura (`pitch`)** = `-atan(altitud / distancia)`. El marcador se apoya en el
+  **suelo bajo la estación destino**: como el pano está `altitud` m sobre un
+  humedal plano, desde un pano alto la flecha cae en picada (si-mirador → si-borde:
+  40 m de alto a 48 m de distancia → −40°) y desde uno bajo queda casi en el
+  horizonte (si-borde → si-mirador → −10°). Antes el pitch estaba fijo en −4° y
+  por eso todas las flechas se veían a la misma altura sin importar desde dónde
+  mirabas.
+- **Tamaño** = baja con la distancia (el área táctil no: sigue siendo de 54 px).
+- **Etiqueta** = solo en las flechas que **cruzan a otro humedal**, con el nombre
+  del humedal + distancia. Dentro de un humedal la flecha va limpia.
+
+Las 11 estaciones son **escenas de un solo visor Pannellum**, así que el salto es
+un fundido (`loadScene`) y no destruir/recrear el visor. Al tocar una flecha
+llegás mirando hacia donde venías caminando; al tocar una miniatura se conserva
+el rumbo real que estabas mirando, para que el mundo no "gire" al cambiar de
+foto.
 
 ## Avatar-guía y **regla de biología honesta**
 
@@ -181,6 +205,9 @@ acciones. Todo el estado del usuario vive en **localStorage** (`ph_perfil`,
 - ⏳ **Supabase sin tablas** y **backends sin desplegar** (código listo; hoy corre
   en modo demo).
 - ⏳ Pin de Río Cruces queda fuera del encuadre inicial del mapa (está al NO).
+- ⏳ **Miniaturas del tour cargan los panos completos** (6000×3000, 3–5 MB) para
+  mostrarlos en círculos de 62 px: entrar a Santa Inés baja ~19 MB. Falta
+  generar thumbnails chicos y apuntarles.
 
 ## Prueba local
 
