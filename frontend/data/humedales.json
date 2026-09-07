@@ -92,6 +92,7 @@
       "pano": "panos/espejo-de-agua.jpg",
       "centro": [-39.8100333, -73.2558783],
       "norte": 143.9,
+      "altitud": 8.1,
       "real": true
     },
     "ribera": {
@@ -102,6 +103,7 @@
       "pano": "panos/ribera.jpg",
       "centro": [-39.8100616, -73.2561322],
       "norte": 56.0,
+      "altitud": 21.1,
       "real": true
     },
     "si-mirador": {
@@ -112,6 +114,7 @@
       "pano": "panos/si-mirador.jpg",
       "centro": [-39.8111451, -73.2557371],
       "norte": -10.4,
+      "altitud": 40.1,
       "real": true
     },
     "si-totoral": {
@@ -122,6 +125,7 @@
       "pano": "panos/si-totoral2.jpg",
       "centro": [-39.8129555, -73.2558199],
       "norte": -16.5,
+      "altitud": 7.3,
       "real": true
     },
     "si-borde": {
@@ -132,6 +136,7 @@
       "pano": "panos/si-borde.jpg",
       "centro": [-39.8107648, -73.2560007],
       "norte": -28.4,
+      "altitud": 8.1,
       "real": true
     },
     "si-salida": {
@@ -142,6 +147,7 @@
       "pano": "panos/si-salida.jpg",
       "centro": [-39.8133437, -73.2547428],
       "norte": 9.1,
+      "altitud": 7.5,
       "real": true
     },
     "si-cruce": {
@@ -152,6 +158,7 @@
       "pano": "panos/si-cruce.jpg",
       "centro": [-39.8125513, -73.2574194],
       "norte": 143.8,
+      "altitud": 31.0,
       "real": true
     },
     "sn-pampa": {
@@ -162,6 +169,7 @@
       "pano": "panos/sn-pampa.JPG",
       "centro": [-39.8010831, -73.2705412],
       "norte": -2.3,
+      "altitud": 136.6,
       "real": true
     },
     "sn-norte": {
@@ -172,6 +180,7 @@
       "pano": "panos/sn-norte.JPG",
       "centro": [-39.8047483, -73.2706627],
       "norte": -176.3,
+      "altitud": 83.9,
       "real": true
     },
     "sn-muelle": {
@@ -182,6 +191,7 @@
       "pano": "panos/sn-muelle.JPG",
       "centro": [-39.8074922, -73.2717304],
       "norte": 169.0,
+      "altitud": 100.4,
       "real": true
     },
     "sn-carcel": {
@@ -192,6 +202,7 @@
       "pano": "panos/sn-carcel.JPG",
       "centro": [-39.8105369, -73.2706374],
       "norte": 162.9,
+      "altitud": 124.3,
       "real": true
     }
   }
