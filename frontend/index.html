@@ -108,7 +108,7 @@
     var icon = L.divIcon({
       className: '', iconSize: h.piloto ? [40, 40] : [34, 34], iconAnchor: h.piloto ? [20, 20] : [17, 17],
       html: '<div class="pin-humedal' + (h.piloto ? ' piloto' : '') + '" id="pin-' + h.id + '">' +
-            (h.piloto ? '🦢' : (i + 1)) + '</div>'
+            (i + 1) + '</div>'
     });
     pins[h.id] = L.marker(h.centro, { icon: icon }).addTo(map)
       .on('click', function () { seleccionar(h); });
@@ -122,7 +122,7 @@
     var foto = h.foto ? ' style="background-image:url(\'' + h.foto + '\')"' : '';
     return '<button class="mini-humedal' + (h.piloto ? ' piloto' : '') + '" data-h="' + h.id + '">' +
       '<div class="sv-foto"' + foto + '>' +
-        '<span class="sv-num">' + (h.piloto ? '🦢' : (i + 1)) + '</span>' +
+        '<span class="sv-num">' + (i + 1) + '</span>' +
         '<span class="sv-fav" aria-label="Favorito"><svg viewBox="0 0 24 24" fill="none" stroke="#5a6b52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 5.6a5.5 5.5 0 0 0-8-.4L12 6l-.8-.8a5.5 5.5 0 0 0-8 8L12 21l8.8-8.8a5.5 5.5 0 0 0 0-6.6z"/></svg></span>' +
         (h.foto ? '' : '<span class="sv-ph">foto</span>') +
       '</div>' +
