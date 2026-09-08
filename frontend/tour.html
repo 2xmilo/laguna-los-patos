@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/suave.css?v=m14">
+<link rel="stylesheet" href="css/suave.css?v=m15">
 </head>
 <body class="tour-body">
 
@@ -37,13 +37,18 @@
 <div class="tour-abajo">
   <div class="tour-tools">
     <button class="tour-tool" id="btn-giro" aria-pressed="true" aria-label="Giro automático">
-      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M20 12a8 8 0 1 1-2.34-5.66" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        <path d="M20 4.5V9h-4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path class="tachado" d="M4.5 19.5 19.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <!-- Dos flechas persiguiéndose: se lee como giro continuo. Con una sola
+           flecha el ícono se leía como "deshacer / volver al inicio". -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3.6 12a8.4 8.4 0 0 1 14.3-6"/>
+        <path d="M18.4 2.6V6.4h-3.8"/>
+        <path d="M20.4 12a8.4 8.4 0 0 1-14.3 6"/>
+        <path d="M5.6 21.4v-3.8h3.8"/>
+        <path class="tachado" d="M4.4 19.6 19.6 4.4"/>
       </svg>
     </button>
-    <a class="tour-tool tour-tool--alerta" id="btn-reporte" href="reportar.html" aria-label="Reportar un problema acá">
+    <a class="tour-tool" id="btn-reporte" href="reportar.html" aria-label="Reportar un problema acá">
       <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
         <path d="M12 7.3v5.6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>

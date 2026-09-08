@@ -346,15 +346,14 @@ body.sv-page { background:#fff; }
    giro automático on/off y reporte. Mismo chip blanco que la brújula. */
 .tour-tools { display: flex; gap: 12px; }
 .tour-tool {
-  width: 46px; height: 46px; padding: 0; flex: none;
-  border: none; border-radius: 50%; background: #fff; cursor: pointer;
-  color: var(--sv-ink, #21301f); text-decoration: none;
+  width: 40px; height: 40px; padding: 0; flex: none;
+  border: none; border-radius: 50%; cursor: pointer; text-decoration: none;
+  background: rgba(0,0,0,.7); color: #fff;
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 3px 10px rgba(0,0,0,.18), 0 1px 2px rgba(0,0,0,.08);
+  box-shadow: 0 3px 10px rgba(0,0,0,.25);
 }
 .tour-tool:active { transform: scale(.94); }
-.tour-tool svg { width: 23px; height: 23px; }
-.tour-tool--alerta { color: var(--dorado, #C98A2D); }
+.tour-tool svg { width: 20px; height: 20px; }
 .tour-tool .tachado { display: none; }        /* la barra solo aparece apagado */
-.tour-tool.is-off { color: var(--sv-inactive, #98a09a); }
+.tour-tool.is-off { color: rgba(255,255,255,.45); }
 .tour-tool.is-off .tachado { display: block; }
