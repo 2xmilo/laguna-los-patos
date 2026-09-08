@@ -1,8 +1,9 @@
 /* ==========================================================================
    HABITANTES DEL HUMEDAL · El visitante es recibido, no opera una herramienta
    Cuatro especies reales de los humedales de Valdivia, cuatro personalidades
-   derivadas de su biología. El usuario elige un compañero que lo acompaña;
-   cada estación del tour la narra su propio anfitrión.
+   derivadas de su biología. No se le pregunta nada al visitante para entrar:
+   cada humedal lo recibe un habitante que de verdad vive ahí (phFijarAnfitrion).
+   Si el visitante fija un compañero en Perfil, ese manda en todos lados.
    Nunca se le miente al niño: simplemente se le cuenta menos.
    ========================================================================== */
 
@@ -22,7 +23,39 @@ function phSetCompanero(a) {
   localStorage.setItem('ph_companero', a);
   phCambiarPersonaje(a);
 }
-function phCompanero() { return PH_COMPANERO || 'ranita'; }  // default honesto: especie real y presente, no el Cisne (ausente)
+
+function phLimpiarCompanero() {   // volver a "que me reciba quien vive acá"
+  PH_COMPANERO = null;
+  localStorage.removeItem('ph_companero');
+  phCambiarPersonaje(phCompanero());
+}
+
+/* -------- El humedal elige a su anfitrión ---------------------------------
+   Ya no se le pregunta nada al visitante para entrar: cada humedal es recibido
+   por un habitante que **de verdad vive ahí** (sale de su lista `especies`, la
+   misma regla de biología honesta). El anfitrión NO se guarda: es del lugar,
+   no del usuario. Si el visitante elige compañero en Perfil, ese manda siempre.
+   La elección es estable por humedal (se deriva del id, no al azar). */
+var PH_ANFITRION = null;
+
+function phAnfitrionDe(humedal) {
+  if (!humedal) return null;
+  var presentes = Object.keys(PH_PERSONAJES).filter(function (k) {
+    return (humedal.especies || []).indexOf(PH_PERSONAJES[k].slug) >= 0;
+  });
+  if (!presentes.length) return null;          // nadie de los cuatro vive acá
+  var semilla = 0, sid = humedal.id || '';
+  for (var i = 0; i < sid.length; i++) semilla += sid.charCodeAt(i);
+  return presentes[semilla % presentes.length];
+}
+function phFijarAnfitrion(humedal) {
+  PH_ANFITRION = phAnfitrionDe(humedal);
+  if (!PH_COMPANERO && PH_ANFITRION) phCambiarPersonaje(PH_ANFITRION);
+}
+
+// Compañero elegido > anfitrión del humedal > ranita (especie real y presente
+// en los humedales con tour; nunca el Cisne, que hoy no está en ninguna lista).
+function phCompanero() { return PH_COMPANERO || PH_ANFITRION || 'ranita'; }
 
 /* -------- Los cuatro habitantes (SVG inline animable por CSS) -------------- */
 var PH_PERSONAJES = {
@@ -294,8 +327,30 @@ function phMontarAvatar() {
   document.body.appendChild(box);
   document.getElementById('ph-avatar-cara').addEventListener('click', function () {
     var globo = document.getElementById('ph-avatar-globo');
+    // Si hay un relato esperando y el globo está cerrado, lo cuenta. Si no,
+    // el toque simplemente abre o cierra lo último que dijo.
+    if (globo.hidden && phPendiente) {
+      phDecir(phPendiente.texto, { quien: phPendiente.quien });
+      return;
+    }
     globo.hidden = !globo.hidden;
   });
+}
+
+/* Deja el relato LISTO PERO CALLADO: el habitante aparece y no dice nada hasta
+   que lo tocás. Se usa en el tour, donde el visitante suele querer mirar el
+   paisaje y no leer. `phDecir` sigue existiendo para lo que sí debe hablar
+   solo (una bienvenida, la respuesta a una acción del usuario). */
+var phPendiente = null;
+
+function phPreparar(texto, opts) {
+  opts = opts || {};
+  phMontarAvatar();
+  if (phGuiaOculta() || !texto) return;
+  phCambiarPersonaje(opts.quien || phCompanero());
+  var globo = document.getElementById('ph-avatar-globo');
+  if (globo) globo.hidden = true;
+  phPendiente = { texto: texto, quien: opts.quien };
 }
 
 function phCambiarPersonaje(quien) {
@@ -312,6 +367,7 @@ function phDecir(texto, opts) {
   phMontarAvatar();
   if (phGuiaOculta()) return;   // guía oculta: no aparece ni habla
   if (!texto) return;
+  phPendiente = { texto: texto, quien: opts.quien };   // se puede volver a pedir
   phCambiarPersonaje(opts.quien || phCompanero());
   var p = PH_PERSONAJES[phQuienActual];
   var globo = document.getElementById('ph-avatar-globo');

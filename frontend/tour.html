@@ -31,7 +31,7 @@
   <svg viewBox="0 0 48 48" fill="none" id="rosa" aria-hidden="true"><circle cx="24" cy="24" r="21" stroke="#d7ded4" stroke-width="1.5"/><circle cx="24" cy="24" r="15" stroke="#eef1ec" stroke-width="1"/><path d="M24 6 27 24 24 21 21 24z" fill="#e5484d"/><path d="M24 42 21 24 24 27 27 24z" fill="#3a5a3f"/><path d="M42 24 24 27 27 24 24 21z" fill="#8a938a"/><path d="M6 24 24 21 21 24 24 27z" fill="#8a938a"/><circle cx="24" cy="24" r="2.4" fill="#21301f"/></svg>
 </button>
 
-<div class="tour-hint" id="hint">Arrastrá para mirar · tocá una flecha para viajar</div>
+<div class="tour-hint" id="hint">Arrastrá para mirar · tocá una flecha para viajar · tocá al guía si querés que te cuente</div>
 
 <!-- Herramientas del visor + estaciones como miniaturas circulares -->
 <div class="tour-abajo">
@@ -61,7 +61,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
 <script src="js/config.js?v=5"></script>
-<script src="js/avatar.js?v=3"></script>
+<script src="js/avatar.js?v=4"></script>
 <script src="js/puntos.js"></script>
 <script>
 (async function () {
@@ -72,6 +72,7 @@
   var h = meta.humedales.find(function (x) { return x.id === id && x.estaciones.length; })
        || meta.humedales.find(function (x) { return x.estaciones.length; });
   id = h.id;
+  phFijarAnfitrion(h);   // te recibe un habitante real de ESTE humedal
   var viewer = null, actual = null;
 
   /* ==================================================================
@@ -351,6 +352,7 @@
 
     if (hm && hm.id !== id) {         // cruzamos a otro humedal
       h = hm; id = hm.id;
+      phFijarAnfitrion(h);
       localStorage.setItem('ph_ultimo_humedal', id);
       document.getElementById('back').href = 'humedal.html?id=' + id;
       armarMiniaturas();
@@ -367,10 +369,11 @@
       b.classList.toggle('act', b.dataset.slug === slug);
     });
 
-    // El avatar ELEGIDO narra: 1a persona si su especie esta presente en el
-    // humedal, o como guia si no (regla de voz, escalable por `especies`).
+    /* El habitante llega CALLADO: deja el relato de la estación listo y solo
+       lo cuenta si el visitante lo toca. En el tour la mayoría quiere mirar
+       el paisaje, no leer; el que quiere la historia la tiene a un toque. */
     var _nar = phNarrarEstacion(slug, h.especies);
-    phDecir(_nar.texto, { quien: _nar.quien });
+    phPreparar(_nar.texto, { quien: _nar.quien });
 
     precargarVecinas(slug);
     reprogramarGiro();

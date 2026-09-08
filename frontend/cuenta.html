@@ -54,8 +54,10 @@
   <!-- Compañero -->
   <div class="ph-card">
     <h2>Tu compañero</h2>
-    <p>El habitante que te acompaña en cada visita.</p>
+    <p>Por defecto te recibe un habitante que vive en el humedal que estés
+       visitando. Si preferís que siempre te acompañe el mismo, elegilo acá.</p>
     <div class="ph-companeros" id="comp-lista"></div>
+    <button class="obs-skip" id="comp-auto">Que me reciba quien viva en cada humedal</button>
   </div>
 
   <!-- Edad -->
@@ -121,7 +123,7 @@
 
 <script src="js/config.js?v=5"></script>
 <script src="js/nav.js?v=4"></script>
-<script src="js/avatar.js?v=3"></script>
+<script src="js/avatar.js?v=4"></script>
 <script src="js/puntos.js"></script>
 <script>
 (function () {
@@ -210,6 +212,13 @@
         phDecir(phHistoria('bienvenida'));
       });
     });
+    var auto = document.getElementById('comp-auto');
+    auto.classList.toggle('hidden', !PH_COMPANERO);   // solo si hay uno fijado
+    auto.onclick = function () {
+      phLimpiarCompanero();
+      pintarComp(); pintarHero();
+      phDecir('Listo: en cada humedal te va a recibir alguien que vive ahí.');
+    };
   }
 
   /* ---- Edad (perfil etario) ---- */

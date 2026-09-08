@@ -13,24 +13,6 @@
 </head>
 <body data-tab="explorar" class="sv-page">
 
-<!-- Gates de onboarding (se muestran una vez) -->
-<div class="ph-wrap" id="gates">
-  <div id="perfil-gate" class="ph-card hidden">
-    <h2>¿Quién visita el humedal?</h2>
-    <p>Sus habitantes te hablan distinto según tu edad. No pedimos nombre ni datos.</p>
-    <div class="ph-perfiles">
-      <button class="ph-perfil-btn" data-p="guardian"><span class="pico">🐣</span><span><strong>Guardián · menor de 13</strong>Historias simples, juego y álbum. Siempre con un adulto.</span></button>
-      <button class="ph-perfil-btn" data-p="explorador"><span class="pico">🔭</span><span><strong>Explorador · 13 a 17</strong>Datos más fuertes y registro juvenil.</span></button>
-      <button class="ph-perfil-btn" data-p="guardabosques"><span class="pico">🌲</span><span><strong>Guardabosques · 18+</strong>Contexto ecológico completo y ciencia ciudadana.</span></button>
-    </div>
-  </div>
-  <div id="comp-gate" class="ph-card hidden">
-    <h2>Elegí a tu compañero</h2>
-    <p>Un habitante del humedal te abre las puertas de su casa y te acompaña en cada visita. Los cuatro existen de verdad en los humedales de Valdivia.</p>
-    <div class="ph-companeros" id="comp-lista"></div>
-  </div>
-</div>
-
 <!-- DETALLE -->
 <div id="hub" class="hidden">
   <div class="det-hero sv-foto" id="det-hero">
@@ -84,13 +66,14 @@
 <script src="js/nav.js?v=4"></script>
 <script src="js/geo.js"></script>
 <script src="js/biodiversidad.js"></script>
-<script src="js/avatar.js?v=3"></script>
+<script src="js/avatar.js?v=4"></script>
 <script src="js/puntos.js"></script>
 <script>
 (async function () {
   var id = new URLSearchParams(location.search).get('id') || 'laguna-los-patos';
   var meta = await (await fetch('data/humedales.json')).json();
   var h = meta.humedales.find(function (x) { return x.id === id; }) || meta.humedales[0];
+  phFijarAnfitrion(h);   // te recibe un habitante real de ESTE humedal
   localStorage.setItem('ph_ultimo_humedal', h.id);
 
   document.getElementById('h-titulo').textContent = h.nombre;
@@ -174,37 +157,15 @@
     }
   }
 
-  // Gate en dos pasos: edad → compañero
-  function abrirHub() {
-    var gw = document.getElementById('gates'); if (gw) gw.style.display = 'none';
-    document.getElementById('perfil-gate').classList.add('hidden');
-    document.getElementById('comp-gate').classList.add('hidden');
-    document.getElementById('hub').classList.remove('hidden');
-    ajustarPorPerfil();
-    phDecir(phHistoria('bienvenida'));
-  }
-  function pasoCompanero() {
-    document.getElementById('perfil-gate').classList.add('hidden');
-    if (PH_COMPANERO) { abrirHub(); return; }
-    var lista = document.getElementById('comp-lista');
-    lista.innerHTML = Object.keys(PH_PERSONAJES).map(function (k) {
-      var p = PH_PERSONAJES[k];
-      return '<button class="ph-comp-btn" data-a="' + k + '">' +
-             '<span class="comp-svg">' + p.svg + '</span>' +
-             '<strong>' + p.nombre + '</strong><small>' + p.lema + '</small></button>';
-    }).join('');
-    lista.querySelectorAll('.ph-comp-btn').forEach(function (b) {
-      b.addEventListener('click', function () { phSetCompanero(b.dataset.a); abrirHub(); });
-    });
-    document.getElementById('comp-gate').classList.remove('hidden');
-  }
-  if (PH_PERFIL) { pasoCompanero(); }
-  else {
-    document.getElementById('perfil-gate').classList.remove('hidden');
-    document.querySelectorAll('.ph-perfil-btn').forEach(function (b) {
-      b.addEventListener('click', function () { phSetPerfil(b.dataset.p); pasoCompanero(); });
-    });
-  }
+  /* Se entra DERECHO al humedal: ya no hay gate de edad ni de compañero. Al
+     visitante que solo quiere el tour no se le pregunta nada. Lo recibe un
+     habitante que de verdad vive en este humedal (phFijarAnfitrion), y tanto
+     el compañero como la edad se cambian cuando quiera desde Perfil. */
+  document.getElementById('hub').classList.remove('hidden');
+  ajustarPorPerfil();
+  // El anfitrión aparece pero NO habla: su globo tapaba el botón del tour, que
+  // es justo lo que la mayoría viene a tocar. La bienvenida está a un toque.
+  phPreparar(phHistoria('bienvenida'));
 })();
 </script>
 <footer class="ph-foot">Plataforma Digital de Humedales Urbanos · Valdivia · 2026</footer>
