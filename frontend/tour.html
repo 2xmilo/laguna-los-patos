@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/suave.css?v=m13">
+<link rel="stylesheet" href="css/suave.css?v=m14">
 </head>
 <body class="tour-body">
 
@@ -33,9 +33,24 @@
 
 <div class="tour-hint" id="hint">Arrastrá para mirar · tocá una flecha para viajar</div>
 
-<!-- Estaciones como miniaturas circulares -->
+<!-- Herramientas del visor + estaciones como miniaturas circulares -->
 <div class="tour-abajo">
-  <a id="t-accion" class="tour-accion" href="#">Acción de esta estación</a>
+  <div class="tour-tools">
+    <button class="tour-tool" id="btn-giro" aria-pressed="true" aria-label="Giro automático">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M20 12a8 8 0 1 1-2.34-5.66" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M20 4.5V9h-4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path class="tachado" d="M4.5 19.5 19.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <a class="tour-tool tour-tool--alerta" id="btn-reporte" href="reportar.html" aria-label="Reportar un problema acá">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
+        <path d="M12 7.3v5.6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+        <circle cx="12" cy="16.6" r="1.25" fill="currentColor"/>
+      </svg>
+    </a>
+  </div>
   <div class="tour-estaciones" id="nav"></div>
 </div>
 
@@ -275,14 +290,31 @@
       .forEach(function (x) { var im = new Image(); im.src = E[x.s].pano; });
   }
 
-  /* Giro automático solo cuando nadie toca nada: ahora el rumbo importa, así
-     que no puede estar girando mientras mirás. */
-  var tRot;
+  /* Giro automático: solo cuando nadie toca nada (el rumbo importa, no puede
+     estar girando mientras mirás) y solo si el visitante lo dejó activado. */
+  var tRot, giroAuto = localStorage.getItem('ph_tour_giro') !== '0';
+  var btnGiro = document.getElementById('btn-giro');
   function reprogramarGiro() {
     clearTimeout(tRot);
     if (viewer) viewer.stopAutoRotate();
+    if (!giroAuto) return;
     tRot = setTimeout(function () { if (viewer) viewer.startAutoRotate(-1.4); }, 14000);
   }
+  function pintarGiro() {
+    btnGiro.classList.toggle('is-off', !giroAuto);
+    btnGiro.setAttribute('aria-pressed', giroAuto ? 'true' : 'false');
+    btnGiro.title = giroAuto ? 'Giro automático activado' : 'Giro automático desactivado';
+  }
+  btnGiro.addEventListener('click', function () {
+    giroAuto = !giroAuto;
+    localStorage.setItem('ph_tour_giro', giroAuto ? '1' : '0');
+    pintarGiro();
+    clearTimeout(tRot);
+    if (!viewer) return;
+    if (giroAuto) viewer.startAutoRotate(-1.4);   // feedback inmediato
+    else viewer.stopAutoRotate();
+  });
+  pintarGiro();
   ['pointerdown', 'wheel', 'touchstart', 'keydown'].forEach(function (ev) {
     document.getElementById('panorama').addEventListener(ev, reprogramarGiro, { passive: true });
   });
@@ -322,18 +354,9 @@
     document.getElementById('t-titulo').textContent = est.nombre;
     document.getElementById('t-tema').textContent = h.nombre + ' · ' + est.tema;
 
-    var a = document.getElementById('t-accion');
-    if (est.accion === 'reportar') {
-      a.textContent = '⚠️ ' + est.accion_texto; a.href = 'reportar.html?id=' + id; a.onclick = null;
-    } else if (est.accion === 'descubrir') {
-      a.textContent = '✨ ' + est.accion_texto; a.href = '#';
-      a.onclick = function (e) {
-        e.preventDefault();
-        var n = phNarrarEstacion(slug, h.especies); phDecir(n.texto, { quien: n.quien });
-      };
-    } else {
-      a.textContent = '📷 ' + est.accion_texto; a.href = 'avistar.html?id=' + id; a.onclick = null;
-    }
+    // El botón de reporte apunta siempre al humedal en el que estás parado.
+    // (Los campos `accion`/`accion_texto` del JSON los sigue usando docente.html.)
+    document.getElementById('btn-reporte').href = 'reportar.html?id=' + id;
 
     document.querySelectorAll('#nav .tour-est').forEach(function (b) {
       b.classList.toggle('act', b.dataset.slug === slug);

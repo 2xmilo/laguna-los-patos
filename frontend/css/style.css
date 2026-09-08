@@ -307,14 +307,6 @@ h1, h2, h3 { font-family: 'Fraunces', Georgia, serif; letter-spacing: -.01em; }
   background: linear-gradient(180deg, rgba(10,44,40,0) 0%, rgba(10,44,40,.75) 60%);
   display: flex; flex-direction: column; align-items: center; gap: 10px;
 }
-.tour-accion {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: var(--dorado); color: #fff; text-decoration: none;
-  font-size: 13.5px; font-weight: 600; padding: 10px 20px; border-radius: 999px;
-  box-shadow: 0 4px 14px rgba(0,0,0,.35);
-}
-.tour-accion:active { transform: scale(.97); }
-
 .tour-estaciones {
   display: flex; gap: 14px; overflow-x: auto; max-width: 100%;
   padding: 4px 8px; scrollbar-width: none;

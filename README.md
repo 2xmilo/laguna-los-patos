@@ -111,8 +111,10 @@ norte, real`).
 - **8 humedales.** Con tour 360° hoy: **Laguna de los Patos** (piloto),
   **Santa Inés** y **Santuario de la Naturaleza Río Cruces**. Los demás tienen
   `estaciones: []` (aparecen en mapa/lista pero sin tour aún).
-- **`accion`** de una estación: `avistar` → `avistar.html`; `reportar` →
-  `reportar.html`; `descubrir` → narración del avatar.
+- **`accion` / `accion_texto`** de una estación: hoy los usa **solo
+  `docente.html`** (para armar el reto de cada parada). `tour.html` ya no los
+  lee: el botón de acción por estación se reemplazó por dos herramientas fijas
+  (giro automático on/off y reporte).
 
 ### Panos 360° y `panos_geo.py`
 Los panos son **capturas reales del dron** (equirectangulares 2:1, ~6000×3000,
@@ -157,6 +159,11 @@ foto.
 La **brújula** (arriba a la derecha) es la misma rosa de los vientos del mapa
 (`index.html`): se gira `-(yaw + norte)` en cada frame para que la punta roja
 quede en el norte verdadero, y al tocarla el visor se reorienta al norte.
+
+Abajo, sobre las miniaturas, hay dos **herramientas** fijas (`.tour-tool`):
+giro automático **on/off** (se recuerda en `localStorage.ph_tour_giro`; apagado
+el visor nunca gira solo) y **reporte**, que lleva a `reportar.html` del humedal
+en el que estás parado.
 
 ### Miniaturas · `panos_thumbs.py`
 La barra inferior usaba el pano completo (3–5 MB) para cada círculo de 62 px:

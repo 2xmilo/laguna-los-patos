@@ -341,3 +341,20 @@ body.sv-page { background:#fff; }
 }
 .tour-brujula:active { transform: scale(.94); }
 .tour-brujula svg { width: 30px; height: 30px; }
+
+/* Herramientas del tour (donde antes estaba el botón de acción por estación):
+   giro automático on/off y reporte. Mismo chip blanco que la brújula. */
+.tour-tools { display: flex; gap: 12px; }
+.tour-tool {
+  width: 46px; height: 46px; padding: 0; flex: none;
+  border: none; border-radius: 50%; background: #fff; cursor: pointer;
+  color: var(--sv-ink, #21301f); text-decoration: none;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 3px 10px rgba(0,0,0,.18), 0 1px 2px rgba(0,0,0,.08);
+}
+.tour-tool:active { transform: scale(.94); }
+.tour-tool svg { width: 23px; height: 23px; }
+.tour-tool--alerta { color: var(--dorado, #C98A2D); }
+.tour-tool .tachado { display: none; }        /* la barra solo aparece apagado */
+.tour-tool.is-off { color: var(--sv-inactive, #98a09a); }
+.tour-tool.is-off .tachado { display: block; }
