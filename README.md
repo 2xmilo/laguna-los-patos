@@ -225,6 +225,10 @@ acciones. Todo el estado del usuario vive en **localStorage** (`ph_perfil`,
 - ⏳ Pin de Río Cruces queda fuera del encuadre inicial del mapa (está al NO).
 - ✅ Miniaturas del tour servidas desde `panos/thumbs/` (160 px, 59 KB en total
   contra 38,7 MB de panos).
+- ⏳ **Hotspots de infografía** en el tour (marcadores que explican un elemento
+  del paisaje en vez de llevarte a otra estación). El código es trivial; lo caro
+  es que el `yaw`/`pitch` de cada elemento **hay que sacarlo a mano** pano por
+  pano, más el contenido. Detalle en [`CLAUDE.md`](CLAUDE.md).
 
 ## Prueba local
 

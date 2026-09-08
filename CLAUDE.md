@@ -33,3 +33,26 @@ Frontend en `frontend/` → Vercel (rama `main`). Repo `2xmilo/laguna-los-patos`
 - **Flujo:** el usuario revisa en el **celular** por Vercel → **commit + push
   después de cada tanda**. Mensajes de commit en español.
 - Atribución de commits: `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>`.
+
+## Pendiente: hotspots de infografía en el tour
+
+Marcadores que **no llevan a otra estación**: abren info sobre algo que estás
+viendo (el totoral, el borde urbano, el canal), anclados a ese elemento dentro
+de la foto. Hoy eso existe pero **sin anclar**: es el botón único de abajo, que
+narra el lugar entero.
+
+- **Lo técnico es trivial:** mismo sistema de marcadores de `tour.html`
+  (`pitch` + `yaw` + `createTooltipFunc`), con un `clickHandlerFunc` que abre
+  una ficha en vez de llamar a `viajar()`. Convendría un tercer ícono, de otra
+  familia que el disco elíptico (estación) y el anillo dorado (cruce).
+- **Lo caro es el `yaw`/`pitch`:** esos ángulos **no salen de ningún metadato**.
+  El GPS y la altitud ubican la *cámara*, no los elementos del paisaje. Hay que
+  encontrar a mano, pano por pano, a qué ángulo está cada cosa que se quiera
+  explicar, y guardarlos en `humedales.json` (p. ej. un array `infos[]` por
+  estación con `{ yaw, pitch, titulo, texto }`).
+- **Lo otro caro es el contenido:** hay que escribir qué se explica en cada
+  punto, respetando la regla de biología honesta.
+- **Cómo empezar:** una sola estación (Mirador del totoral) con 2 o 3 puntos,
+  ver si aporta, y recién ahí escalar a las 11. Para sacar los ángulos sirve
+  abrir el pano con `hotSpotDebug: true` en la config de Pannellum: imprime en
+  consola el yaw/pitch de donde hacés click.
