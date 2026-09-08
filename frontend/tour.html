@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/suave.css?v=m12">
+<link rel="stylesheet" href="css/suave.css?v=m13">
 </head>
 <body class="tour-body">
 
@@ -129,10 +129,14 @@
   /* Dentro de un humedal la flecha va limpia. La que CRUZA a otro humedal
      lleva etiqueta con el nombre del humedal, para que se lea como un salto
      distinto y no como una estación más. */
+  /* El cruce no es un punto en el suelo sino un destino lejano, así que se lo
+     levanta un poco sobre la línea del terreno para despegarlo del horizonte. */
+  var ALZA_CRUCE = 5;
+
   function hotspot(desde, hacia, d, nombreHumedal) {
     var a = E[desde], b = E[hacia];
     return {
-      pitch: pitchSuelo(a.altitud, d),
+      pitch: pitchSuelo(a.altitud, d) + (nombreHumedal ? ALZA_CRUCE : 0),
       yaw: normYaw(rumbo(a.centro, b.centro) - (a.norte || 0)),
       cssClass: 'ph-hs' + (nombreHumedal ? ' ph-hs--cruce' : ''),
       createTooltipFunc: marcador,

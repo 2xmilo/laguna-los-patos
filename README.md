@@ -143,8 +143,10 @@ para aplicar, sin flags es dry-run). Al agregar panos nuevos: ponelos en
   elíptico* blanco con chevron, que se lee apoyado en el pasto; el cruce a otro
   humedal es un *anillo doble dorado*, de otra familia visual a propósito.
 - **Etiqueta** = solo en los marcadores que **cruzan a otro humedal**, con el
-  nombre del humedal + distancia, en blanco sobre negro al 70% y sin marco.
-  Dentro de un humedal el marcador va limpio.
+  nombre del humedal + distancia: **encima** del marcador, en cuerpo 10 px,
+  blanco sobre negro al 70% y sin marco. Dentro de un humedal el marcador va
+  limpio. El marcador de cruce además se levanta `ALZA_CRUCE` (5°) sobre el
+  suelo calculado, porque no es un punto del terreno sino un destino lejano.
 
 Las 11 estaciones son **escenas de un solo visor Pannellum**, así que el salto es
 un fundido (`loadScene`) y no destruir/recrear el visor. Al tocar una flecha
