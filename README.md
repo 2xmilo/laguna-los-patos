@@ -178,7 +178,23 @@ ahorro de datos o está en 2G.
 ## Avatar-guía y **regla de biología honesta**
 
 Cuatro personajes reales (Cisne de cuello negro, Monito del monte, Ranita de
-Darwin, Garza grande) en `js/avatar.js`. El usuario elige un **compañero**.
+Darwin, Garza grande) en `js/avatar.js`.
+
+**No hay onboarding.** Antes, entrar a un humedal exigía dos pantallas completas
+(edad y compañero) antes de ver nada: el que solo quería el tour tenía que
+responder una narrativa para llegar a él. Hoy se entra derecho y **el humedal
+elige a su anfitrión**: `phFijarAnfitrion(humedal)` toma un personaje que figure
+en las `especies` de ese humedal, así que te recibe alguien que de verdad vive
+ahí (Santa Inés → Garza Grande). El anfitrión **no se guarda**: es del lugar, no
+del usuario, y es estable por humedal porque se deriva del `id`. Si el visitante
+fija un **compañero** en Perfil, ese gana siempre; desde ahí también puede volver
+al modo automático (`phLimpiarCompanero`).
+
+**El guía no habla solo.** En el hub y en cada estación del tour el habitante
+*aparece* pero llega callado (`phPreparar` en vez de `phDecir`): cuenta el lugar
+solo si lo tocás. `phDecir` queda para lo que sí debe hablar sin permiso — la
+respuesta a una acción del usuario, una insignia ganada. Su globo además tapaba
+el botón "Ver tour 360°", que es justo lo que la mayoría viene a tocar.
 
 - **Regla de voz (escalable):** el avatar habla en **1ª persona solo si su
   especie está en la lista `especies` de ese humedal**; si no, narra como *guía*.

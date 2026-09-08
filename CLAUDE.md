@@ -19,7 +19,13 @@ Frontend en `frontend/` → Vercel (rama `main`). Repo `2xmilo/laguna-los-patos`
 - **Diseño:** `css/suave.css` (tema "Suave", Nunito) se carga después de
   `style.css` y lo sobreescribe.
 - **Biología honesta:** el avatar habla en 1ª persona solo si su especie está en
-  `especies` del humedal; nunca nombrar especies que no están en el sitio.
+  `especies` del humedal; nunca nombrar especies que no están en el sitio. El
+  anfitrión de cada humedal **sale de esa misma lista** (`phFijarAnfitrion`), así
+  que cargar bien `especies` es lo que decide quién te recibe.
+- **Sin onboarding:** no volver a poner pantallas de edad/compañero antes del
+  contenido; se entra derecho al humedal. El guía **llega callado**
+  (`phPreparar`) y solo habla si lo tocan. `phDecir` es para responder a una
+  acción del usuario, no para recibirlo.
 - **Panos 360°:** ubicación, orientación y altura se hornean en `humedales.json`
   vía `scripts/panos_geo.py` (GPS→`centro`, GimbalYaw→`norte`,
   RelativeAltitude→`altitud`). No se lee EXIF en runtime. **`altitud` es
