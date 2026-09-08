@@ -138,9 +138,13 @@ para aplicar, sin flags es dry-run). Al agregar panos nuevos: ponelos en
   horizonte (si-borde → si-mirador → −10°). Antes el pitch estaba fijo en −4° y
   por eso todas las flechas se veían a la misma altura sin importar desde dónde
   mirabas.
-- **Tamaño** = baja con la distancia (el área táctil no: sigue siendo de 54 px).
-- **Etiqueta** = solo en las flechas que **cruzan a otro humedal**, con el nombre
-  del humedal + distancia. Dentro de un humedal la flecha va limpia.
+- **Tamaño** = baja con la distancia (el área táctil no: sigue siendo de 64 px).
+- **Iconografía** (SVG en `tour.html`, **sin emojis**): la estación es un *disco
+  elíptico* blanco con chevron, que se lee apoyado en el pasto; el cruce a otro
+  humedal es un *anillo doble dorado*, de otra familia visual a propósito.
+- **Etiqueta** = solo en los marcadores que **cruzan a otro humedal**, con el
+  nombre del humedal + distancia, en blanco sobre negro al 70% y sin marco.
+  Dentro de un humedal el marcador va limpio.
 
 Las 11 estaciones son **escenas de un solo visor Pannellum**, así que el salto es
 un fundido (`loadScene`) y no destruir/recrear el visor. Al tocar una flecha

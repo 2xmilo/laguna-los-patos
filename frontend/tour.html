@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/suave.css?v=m10">
+<link rel="stylesheet" href="css/suave.css?v=m11">
 </head>
 <body class="tour-body">
 
@@ -91,16 +91,32 @@
   /* ==================================================================
      Marcadores
      ================================================================== */
+  /* Dos íconos, sin emojis. La ESTACIÓN es un disco elíptico que se lee
+     apoyado en el pasto (va con el pitch calculado por altitud) y el CRUCE a
+     otro humedal es un anillo doble dorado, de otra familia visual. */
+  var ICONO = {
+    estacion:
+      '<svg class="ph-hs__svg" viewBox="0 0 96 96" aria-hidden="true">' +
+        '<ellipse cx="48" cy="50" rx="32" ry="13.5" fill="rgba(255,255,255,.92)"/>' +
+        '<ellipse cx="48" cy="50" rx="32" ry="13.5" fill="none" stroke="rgba(10,44,40,.32)" stroke-width="1.6"/>' +
+        '<path d="M36 55 L48 44 L60 55" fill="none" stroke="#0A2C28" stroke-width="4.6" ' +
+              'stroke-linecap="round" stroke-linejoin="round"/>' +
+      '</svg>',
+    cruce:
+      '<svg class="ph-hs__svg" viewBox="0 0 96 96" aria-hidden="true">' +
+        '<circle cx="48" cy="48" r="24" fill="none" stroke="#C98A2D" stroke-width="2.6" opacity=".75"/>' +
+        '<circle cx="48" cy="48" r="15" fill="rgba(201,138,45,.3)" stroke="#C98A2D" stroke-width="3"/>' +
+        '<circle cx="48" cy="48" r="5" fill="#fff"/>' +
+      '</svg>'
+  };
+
   function marcador(div, a) {
     div.setAttribute('role', 'button');
     div.setAttribute('tabindex', '0');
     div.setAttribute('aria-label', a.aria);
     div.title = a.aria;
     div.style.setProperty('--esc', a.esc);
-    div.innerHTML =
-      '<span class="ph-hs__disco">' +
-        (a.cruce ? '<span class="ph-hs__pie">🚶</span>' : '<span class="ph-hs__flecha"></span>') +
-      '</span>' +
+    div.innerHTML = (a.cruce ? ICONO.cruce : ICONO.estacion) +
       (a.etiqueta ? '<span class="ph-hs__txt">' + a.etiqueta + '</span>' : '');
   }
 
