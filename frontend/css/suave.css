@@ -327,3 +327,16 @@ body.sv-page { background:#fff; }
   border: none;
   padding: 4px 11px; border-radius: 12px;
 }
+
+/* Brújula del tour: misma rosa de los vientos que el mapa (index.html), mismo
+   chip blanco. La punta roja apunta al norte real; al tocarla te reorienta. */
+.tour-brujula {
+  position: fixed; z-index: 40;
+  top: calc(70px + env(safe-area-inset-top, 0px)); right: 14px;
+  width: 52px; height: 52px; padding: 0;
+  border: none; border-radius: 50%; background: #fff; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 3px 10px rgba(0,0,0,.18), 0 1px 2px rgba(0,0,0,.08);
+}
+.tour-brujula:active { transform: scale(.94); }
+.tour-brujula svg { width: 30px; height: 30px; }

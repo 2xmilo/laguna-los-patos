@@ -27,6 +27,9 @@ Frontend en `frontend/` → Vercel (rama `main`). Repo `2xmilo/laguna-los-patos`
   en el suelo del destino); sin ese dato vuelven a quedar todas a la misma
   altura. 7 de los 11 panos perdieron el XMP al reexportarse: su `altitud` está
   cargada a mano y el script no la pisa.
+- **Miniaturas del tour:** viven en `panos/thumbs/` y las genera
+  `scripts/panos_thumbs.py --write`. Al agregar un pano nuevo, corré ese script
+  o la barra vuelve a bajar el pano completo (3-5 MB) por cada círculo.
 - **Flujo:** el usuario revisa en el **celular** por Vercel → **commit + push
   después de cada tanda**. Mensajes de commit en español.
 - Atribución de commits: `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>`.

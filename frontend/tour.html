@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/suave.css?v=m11">
+<link rel="stylesheet" href="css/suave.css?v=m12">
 </head>
 <body class="tour-body">
 
@@ -24,6 +24,12 @@
   <p id="t-tema">Recorrido inmersivo</p>
 </div>
 <button class="tour-btn tour-full" id="btn-full" aria-label="Pantalla completa">⛶</button>
+
+<!-- Brújula: la misma rosa de los vientos del mapa (index.html). La punta roja
+     apunta al norte real; tocarla te reorienta al norte. -->
+<button class="tour-brujula" id="brujula" aria-label="Brújula: tocá para mirar al norte">
+  <svg viewBox="0 0 48 48" fill="none" id="rosa" aria-hidden="true"><circle cx="24" cy="24" r="21" stroke="#d7ded4" stroke-width="1.5"/><circle cx="24" cy="24" r="15" stroke="#eef1ec" stroke-width="1"/><path d="M24 6 27 24 24 21 21 24z" fill="#e5484d"/><path d="M24 42 21 24 24 27 27 24z" fill="#3a5a3f"/><path d="M42 24 24 27 27 24 24 21z" fill="#8a938a"/><path d="M6 24 24 21 21 24 24 27z" fill="#8a938a"/><circle cx="24" cy="24" r="2.4" fill="#21301f"/></svg>
+</button>
 
 <div class="tour-hint" id="hint">Arrastrá para mirar · tocá una flecha para viajar</div>
 
@@ -215,6 +221,14 @@
   });
   setTimeout(function () { document.getElementById('hint').classList.add('off'); }, 5000);
 
+  /* Miniatura liviana: `scripts/panos_thumbs.py` deja en panos/thumbs/ el
+     cuadrado central de cada pano a 160 px (el mismo encuadre que ya mostraba
+     el círculo). Son 59 KB en total contra los 38 MB de los panos completos.
+     Si falta alguna, se cae al pano original: pesa, pero no se rompe. */
+  function thumb(pano) {
+    return 'panos/thumbs/' + pano.split('/').pop().replace(/\.[^.]+$/, '') + '.jpg';
+  }
+
   function armarMiniaturas() {
     var nav = document.getElementById('nav');
     nav.innerHTML = '';
@@ -225,7 +239,11 @@
       b.dataset.slug = s;
       var foto = document.createElement('span');
       foto.className = 'tour-est__foto';
-      foto.style.backgroundImage = 'url("' + est.pano + '")';
+      var mini = thumb(est.pano);
+      foto.style.backgroundImage = 'url("' + mini + '")';
+      var probe = new Image();
+      probe.onerror = function () { foto.style.backgroundImage = 'url("' + est.pano + '")'; };
+      probe.src = mini;
       var txt = document.createElement('span');
       txt.className = 'tour-est__nombre';
       txt.textContent = est.nombre;
@@ -241,6 +259,10 @@
   function precargarVecinas(slug) {
     var est = E[slug], hm = humedalDe(slug);
     if (!est.centro || !hm) return;
+    // Cada pano pesa 3-5 MB: si el visitante pidió ahorro de datos o está con
+    // mala señal (muy probable parado en el humedal), no precargamos nada.
+    var con = navigator.connection || {};
+    if (con.saveData || /(^|-)2g$/.test(con.effectiveType || '')) return;
     hm.estaciones
       .filter(function (s) { return s !== slug && E[s].centro; })
       .map(function (s) { return { s: s, d: distM(est.centro, E[s].centro) }; })
@@ -259,6 +281,27 @@
   }
   ['pointerdown', 'wheel', 'touchstart', 'keydown'].forEach(function (ev) {
     document.getElementById('panorama').addEventListener(ev, reprogramarGiro, { passive: true });
+  });
+
+  /* Brújula. El rumbo real hacia donde mirás es `yaw + norte` (el mismo criterio
+     con el que se calculan las flechas), así que la rosa se gira lo contrario
+     para que la punta roja quede siempre en el norte verdadero. */
+  var rosa = document.getElementById('rosa'), rosaAnt = null;
+  (function girarRosa() {
+    if (viewer && actual) {
+      var g = -(viewer.getYaw() + (E[actual].norte || 0));
+      g = ((g % 360) + 360) % 360;
+      if (rosaAnt === null || Math.abs(g - rosaAnt) > 0.2) {
+        rosa.style.transform = 'rotate(' + g.toFixed(1) + 'deg)';
+        rosaAnt = g;
+      }
+    }
+    requestAnimationFrame(girarRosa);
+  })();
+  document.getElementById('brujula').addEventListener('click', function () {
+    if (!viewer || !actual) return;
+    viewer.setYaw(normYaw(-(E[actual].norte || 0)), 900);   // mirar al norte
+    reprogramarGiro();
   });
 
   function alLlegar(slug) {

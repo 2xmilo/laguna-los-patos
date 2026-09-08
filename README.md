@@ -152,6 +152,20 @@ llegás mirando hacia donde venías caminando; al tocar una miniatura se conserv
 el rumbo real que estabas mirando, para que el mundo no "gire" al cambiar de
 foto.
 
+La **brújula** (arriba a la derecha) es la misma rosa de los vientos del mapa
+(`index.html`): se gira `-(yaw + norte)` en cada frame para que la punta roja
+quede en el norte verdadero, y al tocarla el visor se reorienta al norte.
+
+### Miniaturas · `panos_thumbs.py`
+La barra inferior usaba el pano completo (3–5 MB) para cada círculo de 62 px:
+entrar a Santa Inés bajaba ~19 MB antes de mostrar nada.
+[`scripts/panos_thumbs.py`](scripts/panos_thumbs.py) recorta el cuadrado central
+de cada pano —el mismo encuadre que el círculo ya mostraba— a 160 px en
+`frontend/panos/thumbs/` (**38,7 MB → 59 KB**, misma apariencia). Si falta una
+miniatura, `tour.html` cae al pano original: pesa, pero no se rompe. Además solo
+se precargan las 2 estaciones más cercanas, y ninguna si el visitante pidió
+ahorro de datos o está en 2G.
+
 ## Avatar-guía y **regla de biología honesta**
 
 Cuatro personajes reales (Cisne de cuello negro, Monito del monte, Ranita de
@@ -209,9 +223,8 @@ acciones. Todo el estado del usuario vive en **localStorage** (`ph_perfil`,
 - ⏳ **Supabase sin tablas** y **backends sin desplegar** (código listo; hoy corre
   en modo demo).
 - ⏳ Pin de Río Cruces queda fuera del encuadre inicial del mapa (está al NO).
-- ⏳ **Miniaturas del tour cargan los panos completos** (6000×3000, 3–5 MB) para
-  mostrarlos en círculos de 62 px: entrar a Santa Inés baja ~19 MB. Falta
-  generar thumbnails chicos y apuntarles.
+- ✅ Miniaturas del tour servidas desde `panos/thumbs/` (160 px, 59 KB en total
+  contra 38,7 MB de panos).
 
 ## Prueba local
 
