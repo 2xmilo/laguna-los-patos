@@ -32,7 +32,11 @@
   var meta = await (await fetch('data/humedales.json')).json();
   document.getElementById('exp-sub').textContent = meta.humedales.length + ' humedales para visitar';
   var lista = document.getElementById('lista');
-  lista.innerHTML = meta.humedales.map(function (h, i) {
+  // Humedales con tour 360° primero (orden estable dentro de cada grupo)
+  var ordenados = meta.humedales.slice().sort(function (a, b) {
+    return (b.estaciones && b.estaciones.length ? 1 : 0) - (a.estaciones && a.estaciones.length ? 1 : 0);
+  });
+  lista.innerHTML = ordenados.map(function (h, i) {
     var chips = (h.tags || []).map(function (t) { return '<span class="sv-chip">' + t + '</span>'; }).join('');
     var foto = h.foto ? ' style="background-image:url(\'' + h.foto + '\')"' : '';
     return '<button class="exp-card' + (h.piloto ? ' piloto' : '') + '" data-h="' + h.id + '">' +
