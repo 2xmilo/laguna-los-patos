@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/suave.css?v=m16">
+<link rel="stylesheet" href="css/suave.css?v=m17">
 </head>
 <body data-tab="mapa">
 
@@ -107,7 +107,7 @@
   var pins = {};
   ordenados.forEach(function (h, i) {
     var icon = L.divIcon({
-      className: '', iconSize: h.piloto ? [40, 40] : [34, 34], iconAnchor: h.piloto ? [20, 20] : [17, 17],
+      className: '', iconSize: [34, 34], iconAnchor: [17, 17],
       html: '<div class="pin-humedal' + (h.piloto ? ' piloto' : '') + (tieneTour(h) ? ' tour' : '') + '" id="pin-' + h.id + '">' +
             (i + 1) + '</div>'
     });
