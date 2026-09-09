@@ -91,8 +91,8 @@
   L.geoJSON(geo, {
     style: function (f) {
       var h = byId[f.properties.id] || {};
-      var c = tieneTour(h) ? '#C98A2D' : '#2C7A6E';
-      return { color: c, weight: 1.5, fillColor: c, fillOpacity: .18 };
+      return { color: h.piloto ? '#C98A2D' : '#2C7A6E', weight: 1.5,
+               fillColor: h.piloto ? '#C98A2D' : '#2C7A6E', fillOpacity: .18 };
     },
     onEachFeature: function (f, layer) {
       layer.on('click', function (e) { L.DomEvent.stopPropagation(e); seleccionar(byId[f.properties.id]); });
