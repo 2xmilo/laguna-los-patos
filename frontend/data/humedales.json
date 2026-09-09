@@ -44,7 +44,7 @@
     },
     {
       "id": "buda",
-      "nombre": "Humedal El Buda",
+      "nombre": "Humedal Plaza Los Helechos",
       "centro": [-39.80828, -73.26274],
       "descripcion": "Humedal de la red de Isla Teja.",
       "piloto": false,
@@ -63,7 +63,7 @@
     },
     {
       "id": "humedal-rotonda",
-      "nombre": "Humedal La Rotonda",
+      "nombre": "Humedal Los Pidenes",
       "centro": [-39.80956, -73.25765],
       "descripcion": "Humedal urbano junto a la rotonda de Isla Teja, vecino inmediato de la Laguna de los Patos.",
       "piloto": false,
