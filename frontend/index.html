@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/suave.css?v=m15">
+<link rel="stylesheet" href="css/suave.css?v=m16">
 </head>
 <body data-tab="mapa">
 
@@ -66,13 +66,12 @@
   var map = L.map('mapa', { zoomControl: false, attributionControl: false }).setView(MAPA_CENTRO, MAPA_ZOOM);
   L.control.attribution({ position: 'topleft', prefix: false }).addAttribution('© OpenStreetMap').addTo(map);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
-  // La contención desktop cambia el ancho del contenedor: re-medir el mapa.
-  setTimeout(function () { map.invalidateSize(); map.setView(MAPA_CENTRO, MAPA_ZOOM); }, 150);
-  window.addEventListener('resize', function () { map.invalidateSize(); });
 
   var meta = await (await fetch('data/humedales.json')).json();
   var geo = await (await fetch('data/humedales.geojson')).json();
   var byId = {}; meta.humedales.forEach(function (h) { byId[h.id] = h; });
+  // ¿El humedal ya tiene tour 360°? Define su color naranja y el orden/encuadre.
+  function tieneTour(h) { return !!(h && h.estaciones && h.estaciones.length); }
 
   var miPos = null;
   navigator.geolocation && navigator.geolocation.getCurrentPosition(function (p) {
@@ -92,8 +91,8 @@
   L.geoJSON(geo, {
     style: function (f) {
       var h = byId[f.properties.id] || {};
-      return { color: h.piloto ? '#C98A2D' : '#2C7A6E', weight: 1.5,
-               fillColor: h.piloto ? '#C98A2D' : '#2C7A6E', fillOpacity: .18 };
+      var c = tieneTour(h) ? '#C98A2D' : '#2C7A6E';
+      return { color: c, weight: 1.5, fillColor: c, fillOpacity: .18 };
     },
     onEachFeature: function (f, layer) {
       layer.on('click', function (e) { L.DomEvent.stopPropagation(e); seleccionar(byId[f.properties.id]); });
@@ -102,14 +101,14 @@
 
   // Humedales con tour 360° primero (orden estable); mismo orden para pins y cards
   var ordenados = meta.humedales.slice().sort(function (a, b) {
-    return (b.estaciones && b.estaciones.length ? 1 : 0) - (a.estaciones && a.estaciones.length ? 1 : 0);
+    return (tieneTour(b) ? 1 : 0) - (tieneTour(a) ? 1 : 0);
   });
 
   var pins = {};
   ordenados.forEach(function (h, i) {
     var icon = L.divIcon({
       className: '', iconSize: h.piloto ? [40, 40] : [34, 34], iconAnchor: h.piloto ? [20, 20] : [17, 17],
-      html: '<div class="pin-humedal' + (h.piloto ? ' piloto' : '') + '" id="pin-' + h.id + '">' +
+      html: '<div class="pin-humedal' + (h.piloto ? ' piloto' : '') + (tieneTour(h) ? ' tour' : '') + '" id="pin-' + h.id + '">' +
             (i + 1) + '</div>'
     });
     pins[h.id] = L.marker(h.centro, { icon: icon }).addTo(map)
@@ -217,11 +216,20 @@
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); mostrarAyuda(); }
   });
 
-  // Ajustar el mapa a la red al inicio
-  try {
-    var b = L.latLngBounds(meta.humedales.map(function (h) { return h.centro; }));
-    map.fitBounds(b.pad(0.25));
-  } catch (e) {}
+  // Encuadre inicial: mostrar TODA la red, restando la altura de la tarjeta
+  // inferior para que los humedales no queden "arriba". Reencuadra al redimensionar.
+  function encuadrar() {
+    try {
+      map.invalidateSize();
+      var b = L.latLngBounds(meta.humedales.map(function (h) { return h.centro; }));
+      var sheet = document.getElementById('sheet');
+      var sh = sheet ? sheet.getBoundingClientRect().height : 0;
+      map.fitBounds(b, { paddingTopLeft: [24, 78], paddingBottomRight: [24, sh + 18] });
+    } catch (e) {}
+  }
+  encuadrar();
+  setTimeout(encuadrar, 250);   // recalcular tras asentarse el layout (contención desktop)
+  window.addEventListener('resize', encuadrar);
 })();
 </script>
 </body>

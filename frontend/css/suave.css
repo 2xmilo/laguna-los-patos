@@ -39,6 +39,7 @@ body[data-tab] { font-family: var(--sv-font); }
 /* ---- Pins ---- */
 .pin-humedal { background:var(--sv-green); border:2px solid #fff; box-shadow:0 3px 8px rgba(0,0,0,.25); }
 .pin-humedal.piloto { background:#C98A2D; }
+.pin-humedal.tour { background:#C98A2D; }  /* humedales con visor 360° disponible */
 
 /* ---- Sheet ---- */
 .mapa-sheet { border-radius:26px 26px 0 0; box-shadow:0 -6px 24px rgba(31,61,36,.10); background:#fff; }
