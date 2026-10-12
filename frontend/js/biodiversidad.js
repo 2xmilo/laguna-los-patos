@@ -8,6 +8,9 @@
    ========================================================================== */
 (function () {
   var INAT_OBS = 'https://api.inaturalist.org/v1/observations';
+  var POR_PAGINA = 200;      // máximo que permite la API
+  var MAX_PAGINAS = 5;       // hasta 1.000 observaciones por humedal
+  var FOTOS_POR_ESPECIE = 12;
   var cache = {};
 
   function bboxDe(feature) {
@@ -25,46 +28,69 @@
     return { swlat: minLat, swlng: minLng, nelat: maxLat, nelng: maxLng };
   }
 
-  function urlConsulta(bb, taxon) {
+  function urlConsulta(bb, taxon, pagina) {
     var p = [
       'nelat=' + bb.nelat, 'nelng=' + bb.nelng,
       'swlat=' + bb.swlat, 'swlng=' + bb.swlng,
       'quality_grade=research', 'photos=true',
-      'per_page=200', 'order_by=created_at', 'locale=es'
+      'per_page=' + POR_PAGINA, 'page=' + pagina, 'order_by=created_at', 'locale=es'
     ];
     if (taxon) p.push('iconic_taxa=' + taxon.split(',').map(encodeURIComponent).join(','));
     return INAT_OBS + '?' + p.join('&');
   }
 
-  // Agrupa por especie SOLO las observaciones dentro del polígono real.
+  // Agrupa por especie SOLO las observaciones dentro del polígono real. Junta
+  // además las fotos de esas observaciones: son fotos tomadas EN este humedal,
+  // y el mini-juego las alterna para no mostrar siempre la misma.
   function agrupar(observaciones, feature) {
     var porTaxon = {};
     observaciones.forEach(function (o) {
       var t = o.taxon, gj = o.geojson;
       if (!t || !t.id || !gj || !gj.coordinates) return;
       if (!phEnHumedal(gj.coordinates[0], gj.coordinates[1], feature)) return;
-      if (!porTaxon[t.id]) porTaxon[t.id] = { taxon: t, count: 0 };
-      porTaxon[t.id].count++;
+      if (!porTaxon[t.id]) porTaxon[t.id] = { taxon: t, count: 0, fotos: [] };
+      var r = porTaxon[t.id];
+      r.count++;
+      var f = o.photos && o.photos[0] && o.photos[0].url;
+      if (f && r.fotos.length < FOTOS_POR_ESPECIE) r.fotos.push(f.replace('/square.', '/medium.'));
     });
     return Object.keys(porTaxon)
       .map(function (k) { return porTaxon[k]; })
-      .filter(function (r) { return r.taxon.default_photo; })
+      .filter(function (r) { return r.taxon.default_photo || r.fotos.length; })
       .sort(function (a, b) { return b.count - a.count; });
   }
 
-  // Promise<[{taxon, count}]> — especies reales del humedal (opcional: iconic_taxa).
+  // Promise<[{taxon, count, fotos}]> — especies reales del humedal (opcional:
+  // iconic_taxa). La API entrega 200 observaciones por página: se pide la
+  // primera para saber cuántas hay y el resto en paralelo, hasta MAX_PAGINAS.
+  // Si falla una página extra se sigue con lo que llegó; si falla la primera,
+  // la promesa se rechaza y cada pantalla muestra su aviso.
   window.phEspeciesDe = function (humedalId, taxon) {
     var key = humedalId + '|' + (taxon || '');
     if (cache[key]) return Promise.resolve(cache[key]);
     return phFeatureDe(humedalId).then(function (feature) {
       if (!feature) return [];
-      return fetch(urlConsulta(bboxDe(feature), taxon))
-        .then(function (r) { return r.json(); })
-        .then(function (data) {
-          var res = agrupar(data.results || [], feature);
+      var bb = bboxDe(feature);
+      function pagina(n) {
+        return fetch(urlConsulta(bb, taxon, n)).then(function (r) {
+          if (!r.ok) throw new Error('iNaturalist ' + r.status);
+          return r.json();
+        });
+      }
+      return pagina(1).then(function (primera) {
+        var paginas = Math.min(MAX_PAGINAS, Math.ceil((primera.total_results || 0) / POR_PAGINA));
+        var resto = [];
+        for (var n = 2; n <= paginas; n++) {
+          resto.push(pagina(n).catch(function () { return { results: [] }; }));
+        }
+        return Promise.all(resto).then(function (otras) {
+          var obs = primera.results || [];
+          otras.forEach(function (d) { obs = obs.concat(d.results || []); });
+          var res = agrupar(obs, feature);
           cache[key] = res;
           return res;
         });
+      });
     });
   };
 

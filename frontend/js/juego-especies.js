@@ -24,13 +24,6 @@ function phMontarJuego(opts) {
   var dentroFn = opts.dentroFn || function () { return false; };
   if (!foto || !opciones) return;
 
-  /* Fallback honesto si falla la red: solo especies que sí están (nunca cisne/monito). */
-  var FALLBACK = [
-    { id: 'f-pato', foto: '🦆', nombre: 'Pato jergón', grupo: 'Aves' },
-    { id: 'f-tagua', foto: '🐦‍⬛', nombre: 'Tagua', grupo: 'Aves' },
-    { id: 'f-piden', foto: '🐦', nombre: 'Pidén', grupo: 'Aves' },
-    { id: 'f-garza', foto: '🕊️', nombre: 'Garza grande', grupo: 'Aves' }
-  ];
   // Reino a partir del grupo iónico de iNaturalist (para no mezclar plantas con
   // animales cuando no alcanzan distractores del mismo grupo fino).
   function reino(g) {
@@ -84,8 +77,10 @@ function phMontarJuego(opts) {
     if (!ESPECIES.length) return;
     if (!pendientes.length) pendientes = barajar(ESPECIES);
     actual = pendientes.shift();
-    mostrarFoto(foto, actual.foto);
-    lastBig = esUrl(actual.foto) ? (actual.fotoBig || actual.foto) : null;
+    // Cada vez una foto distinta de la especie, tomada en este humedal.
+    var f = actual.fotos[Math.floor(Math.random() * actual.fotos.length)];
+    mostrarFoto(foto, f);
+    lastBig = f.replace('/medium.', '/large.');
     // Distractores coherentes: primero del mismo grupo (ave con ave, planta con
     // planta…); si no hay 2, del mismo reino; y recién al final, cualquiera.
     var otros = ESPECIES.filter(function (e) { return e.id !== actual.id; });
@@ -119,7 +114,7 @@ function phMontarJuego(opts) {
       setTimeout(ronda, 1400);
     } else {
       b.classList.add('mal');
-      if (typeof phDecir === 'function') phDecir('Mmm, no… mirá bien y probá de nuevo. La paciencia es la mejor lupa.');
+      if (typeof phDecir === 'function') phDecir('Mmm, no… mira bien y prueba de nuevo. La paciencia es la mejor lupa.');
     }
   }
 
@@ -131,19 +126,40 @@ function phMontarJuego(opts) {
   opciones.parentNode.insertBefore(skip, opciones.nextSibling);
   skip.addEventListener('click', function () { if (typeof phDecir === 'function') phDecir('Va otra especie del humedal.'); ronda(); });
 
-  opciones.innerHTML = '<p style="text-align:center;color:var(--tinta-suave);font-size:13px;">Buscando las especies del humedal…</p>';
-  phEspeciesDe(humedalId).then(function (lista) {
-    var reales = (lista || [])
-      .map(function (r) { return { id: 't' + r.taxon.id, foto: phFotoTaxon(r.taxon, 'medium'), fotoBig: phFotoTaxon(r.taxon, 'large'), nombre: phNombreTaxon(r.taxon), grupo: r.taxon.iconic_taxon_name || 'Otros' }; })
-      .filter(function (e) { return e.foto; })
-      .slice(0, 10);
-    // Solo preguntamos especies cuyo REINO tenga al menos 3 miembros, para poder
-    // armar siempre 3 opciones del mismo reino (nunca planta vs animal). Las de
-    // reinos con 1-2 miembros (p.ej. un hongo suelto) quedan fuera del quiz.
-    var porReino = {};
-    reales.forEach(function (e) { var k = reino(e.grupo); porReino[k] = (porReino[k] || 0) + 1; });
-    var jugables = reales.filter(function (e) { return porReino[reino(e.grupo)] >= 3; });
-    ESPECIES = jugables.length >= 3 ? jugables : (reales.length >= 3 ? reales : FALLBACK);
-    pintarAlbum(); pintarRacha(); ronda();
-  }).catch(function () { ESPECIES = FALLBACK; ronda(); });
+  // Sin plan B inventado: si no hay especies reales, se dice tal cual.
+  function aviso(texto, conReintento) {
+    mostrarFoto(foto, '🔎');
+    skip.style.display = 'none';
+    opciones.innerHTML = '<p style="text-align:center;color:var(--tinta-suave);font-size:13px;">' + texto + '</p>' +
+      (conReintento ? '<button class="obs-op" type="button" id="j-reintentar">Reintentar</button>' : '');
+    var b = document.getElementById('j-reintentar');
+    if (b) b.addEventListener('click', cargar);
+  }
+
+  function cargar() {
+    skip.style.display = 'none';
+    opciones.innerHTML = '<p style="text-align:center;color:var(--tinta-suave);font-size:13px;">Buscando las especies del humedal…</p>';
+    phEspeciesDe(humedalId).then(function (lista) {
+      // Todas las especies del humedal, no solo las más registradas: así cada
+      // partida pregunta especies distintas, en orden aleatorio.
+      var reales = (lista || []).map(function (r) {
+        var principal = phFotoTaxon(r.taxon, 'medium');
+        var fotos = r.fotos && r.fotos.length ? r.fotos : (principal ? [principal] : []);
+        return { id: 't' + r.taxon.id, foto: principal || fotos[0], fotos: fotos,
+                 nombre: phNombreTaxon(r.taxon), grupo: r.taxon.iconic_taxon_name || 'Otros' };
+      }).filter(function (e) { return e.fotos.length; });
+      // Solo preguntamos especies cuyo REINO tenga al menos 3 miembros, para poder
+      // armar siempre 3 opciones del mismo reino (nunca planta vs animal). Las de
+      // reinos con 1-2 miembros (p.ej. un hongo suelto) quedan fuera del quiz.
+      var porReino = {};
+      reales.forEach(function (e) { var k = reino(e.grupo); porReino[k] = (porReino[k] || 0) + 1; });
+      var jugables = reales.filter(function (e) { return porReino[reino(e.grupo)] >= 3; });
+      ESPECIES = jugables.length >= 3 ? jugables : (reales.length >= 3 ? reales : []);
+      if (!ESPECIES.length) { aviso('Todavía no hay suficientes especies registradas en este humedal para jugar.', false); return; }
+      pendientes = [];
+      skip.style.display = '';
+      pintarAlbum(); pintarRacha(); ronda();
+    }).catch(function () { aviso('No se pudieron cargar las especies. Revisa tu conexión.', true); });
+  }
+  cargar();
 }
