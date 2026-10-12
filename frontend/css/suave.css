@@ -125,6 +125,11 @@ body.sv-page { background:#fff; }
 
 .ph-avatar__cw { position:relative; display:inline-block; }
 
+/* Los habitantes son medallones con su propio paisaje: sin el fondo verde
+   oscuro ni el relleno que dejaba un anillo; solo un borde blanco fino. */
+.ph-avatar__cara, .ph-comp-btn .comp-svg, .perfil-hero .comp {
+  padding:0; background:none; border:1.5px solid #fff; overflow:hidden; }
+
 /* Botón fijo arriba a la derecha para ocultar / mostrar al guía */
 .ph-guia-toggle { position:fixed; top:calc(12px + env(safe-area-inset-top,0px)); right:12px; z-index:1200;
   display:inline-flex; align-items:center; gap:7px; padding:8px 13px 8px 11px; border:none; cursor:pointer;
