@@ -20,7 +20,7 @@
       "piloto": false,
       "monitoreo_nivel": false,
       "estaciones": ["si-mirador", "si-borde", "si-totoral", "si-salida", "si-cruce"],
-      "especies": ["ranita-darwin", "garza-chica", "garza-grande", "siete-colores", "piden", "queltehue"],
+      "especies": ["ranita-darwin", "garza-chica", "garza-grande", "siete-colores", "piden", "queltehue", "costilla-de-vaca"],
       "tags": ["360°", "Flora", "Avifauna"],
       "foto": "img/portadas/santa-ines.jpg"
     },
@@ -141,7 +141,7 @@
     },
     "si-salida": {
       "nombre": "La salida",
-      "tema": "El extremo oriente del humedal Santa Inés, hacia el barrio.",
+      "tema": "La salida de la cuenca de Isla Teja hacia el río Valdivia.",
       "accion": "avistar",
       "accion_texto": "Identificar aves y flora del borde",
       "pano": "panos/si-salida.jpg",
@@ -152,7 +152,7 @@
     },
     "si-cruce": {
       "nombre": "El cruce",
-      "tema": "Donde el humedal cruza un camino: la conexión —y la presión— con la ciudad.",
+      "tema": "La conexión con el humedal La Cancha, con la iglesia de la Teja de fondo.",
       "accion": "reportar",
       "accion_texto": "Reportar daños en el cruce",
       "pano": "panos/si-cruce.jpg",

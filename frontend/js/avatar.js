@@ -235,6 +235,16 @@ var PH_LUGARES = {
     guardian: 'Aquí el humedal toca la calle, y ese canalito se lleva su agua: es la parte más frágil. Si ves algo que lo dañe, avísale a tu adulto.',
     explorador: 'El borde: la calle, los autos y el canal de drenaje que aprietan al humedal. Antes era más ancho. Es la primera línea de pérdida — si ves algo que lo dañe, acá tu reporte importa más que en ningún lado.',
     guardabosques: 'Interfaz humedal-ciudad: drenaje, relleno histórico y presión inmobiliaria. Los bordes son la primera línea de pérdida de superficie; reportar aquí tiene el máximo valor.'
+  },
+  'si-salida': {
+    guardian: 'Aquí el humedal encuentra su salida: cuando se llena de agua, el exceso se escurre por acá hacia el río Valdivia. Es como el desagüe natural de todo Isla Teja.',
+    explorador: 'Esta es la salida de la cuenca de Isla Teja hacia el río Valdivia. Cuando el humedal se satura, descarga por aquí: el agua drena hacia el río y así se regula el nivel de toda la red.',
+    guardabosques: 'Punto de descarga de la cuenca de Isla Teja al río Valdivia. Al alcanzar la saturación, el humedal evacúa su excedente por aquí hacia el río: es la conexión hídrica entre la red de humedales y el sistema fluvial.'
+  },
+  'si-cruce': {
+    guardian: 'Desde aquí se ve cómo el humedal Santa Inés se conecta con el humedal La Cancha, y asoma la iglesia de la Teja. Casi todo es vegetación de pantano, sin laguna abierta. Mira el borde junto a las casas: ahí crece la costilla de vaca, un helecho que aparece cuando el suelo se seca.',
+    explorador: 'El cruce: desde aquí se ve la conexión entre el humedal Santa Inés y el humedal La Cancha, con la iglesia de la Teja de fondo. Santa Inés está poco intervenido y es mayormente palustre —vegetación de pantano, sin espejo de agua. Las casas del borde lo presionan: junto a ellas aparece la costilla de vaca (Blechnum chilense), un helecho que indica suelo más firme, señal de que ahí se perdió el agua.',
+    guardabosques: 'El cruce muestra la conexión hidrológica entre el humedal La Cancha y Santa Inés, con la iglesia de la Teja como referencia. Santa Inés está poco intervenido y es predominantemente palustre, sin espejo de agua. La presión viene de las casas del borde: allí aparecen especies indicadoras de suelo firme como Blechnum chilense (costilla de vaca), un helecho que señala la pérdida de lámina de agua y la consolidación del sustrato.'
   }
 };
 
