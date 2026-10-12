@@ -63,7 +63,7 @@
 <script src="js/nav.js?v=4"></script>
 <script src="js/geo.js"></script>
 <script src="js/biodiversidad.js"></script>
-<script src="js/avatar.js?v=4"></script>
+<script src="js/avatar.js?v=5"></script>
 <script src="js/puntos.js"></script>
 <script src="js/juego-especies.js?v=3"></script>
 <script>
@@ -95,7 +95,7 @@
     navigator.geolocation.getCurrentPosition(function (p) {
       pos = { lat: p.coords.latitude, lon: p.coords.longitude };
       dentro = phEnHumedal(pos.lon, pos.lat, feature);
-      if (dentro) { geoBox.className = 'ph-geo ph-geo--ok'; geoBox.textContent = '✓ Estás dentro del humedal. Podés registrar.'; enviar.disabled = false; }
+      if (dentro) { geoBox.className = 'ph-geo ph-geo--ok'; geoBox.textContent = '✓ Estás dentro del humedal. Puedes registrar.'; enviar.disabled = false; }
       else { geoBox.className = 'ph-geo ph-geo--no'; geoBox.textContent = '✗ Estás fuera del polígono del humedal. El avistamiento debe hacerse en terreno.'; }
     }, function () { geoBox.className = 'ph-geo ph-geo--no'; geoBox.textContent = 'No pudimos obtener tu ubicación. Activá el GPS.'; });
   }

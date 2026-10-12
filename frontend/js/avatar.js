@@ -157,17 +157,17 @@ var PH_HISTORIAS = {
     },
     monito: {
       guardian: '¡Hola! Soy el Monito del Monte. Soy pequeñito pero muy, muy viejito. Ven, te muestro mi casa… despacito, que de día tengo sueño.',
-      explorador: 'Soy el Monito del Monte, el mamífero más antiguo de Sudamérica. Este humedal guarda historias de antes de los Andes. Vení, te las cuento.',
+      explorador: 'Soy el Monito del Monte, el mamífero más antiguo de Sudamérica. Este humedal guarda historias de antes de los Andes. Ven, te las cuento.',
       guardabosques: 'Dromiciops gliroides te da la bienvenida. Mi linaje sobrevivió a la separación de Gondwana: este humedal es el capítulo más reciente de una historia larguísima. Recorrámoslo.'
     },
     ranita: {
       guardian: '¡Hola! Soy la Ranita de Darwin. Casi nadie me ve porque parezco una hojita. Si caminas despacito, te muestro los secretos chiquititos del humedal.',
-      explorador: 'Soy la Ranita de Darwin. Mi especialidad es pasar desapercibida y ver lo que nadie mira. Vení: el humedal se entiende mejor en pequeño.',
+      explorador: 'Soy la Ranita de Darwin. Mi especialidad es pasar desapercibida y ver lo que nadie mira. Ven: el humedal se entiende mejor en pequeño.',
       guardabosques: 'Rhinoderma darwinii, endémica del bosque valdiviano y En Peligro. Te acompaño a mirar el humedal a mi escala: lo diminuto sostiene todo el ecosistema.'
     },
     garza: {
       guardian: 'Hola, soy la Garza. Yo me quedo muy muy quieta para verlo todo. Ven conmigo: juguemos a mirar sin apurarnos.',
-      explorador: 'Soy la Garza Grande. Mi técnica es simple: quietud y paciencia. Lo que vale la pena ver aparece cuando dejás de apurarte. Te acompaño.',
+      explorador: 'Soy la Garza Grande. Mi técnica es simple: quietud y paciencia. Lo que vale la pena ver aparece cuando dejas de apurarte. Te acompaño.',
       guardabosques: 'Ardea alba te recibe. Cazo por espera: la observación inmóvil es mi método, y también sirve para conocer un humedal. Vamos.'
     }
   },
@@ -212,12 +212,12 @@ var PH_INTRO = {
 // del daño en CONDICIONAL (no afirman que haya basura).
 var PH_LUGARES = {
   'espejo-de-agua': {
-    guardian: 'Esta es el agua abierta de la laguna. Ahí flotan las flores de loto, y nadan los patos y las taguas, unos pajaritos negros de pico blanco. ¿Cuántos podés contar?',
+    guardian: 'Esta es el agua abierta de la laguna. Ahí flotan las flores de loto, y nadan los patos y las taguas, unos pajaritos negros de pico blanco. ¿Cuántos puedes contar?',
     explorador: 'El espejo de agua abierta de la laguna, con flores de loto flotando en la superficie. Acá mandan los patos —que llegaron con la gente y ya no se fueron— y las taguas, que se disputan cada rincón a los gritos.',
     guardabosques: 'Espejo de agua: la lámina abierta de la laguna, cubierta de flor de loto que flota sobre la superficie. La fauna visible aquí son patos introducidos y taguas. Es el corazón de la laguna, y la observación ciudadana es hoy su principal vigilancia.'
   },
   'ribera': {
-    guardian: 'Esta es la orilla, donde el agua toca la tierra: la parte más delicada del humedal. Si ves algo raro que lo pueda dañar, avisale a tu adulto.',
+    guardian: 'Esta es la orilla, donde el agua toca la tierra: la parte más delicada del humedal. Si ves algo raro que lo pueda dañar, avísale a tu adulto.',
     explorador: 'La ribera es la frontera entre el agua y la tierra, y la zona más expuesta a la ciudad. Si ves algo que dañe el humedal —basura, un relleno, un borde alterado—, acá tu reporte es el que más pesa.',
     guardabosques: 'Ribera: interfaz acuático-terrestre y zona de mayor presión urbana. Es donde primero aparecen los signos de deterioro; por eso los reportes georreferenciados desde aquí son los más valiosos para el panel municipal.'
   },
@@ -227,12 +227,12 @@ var PH_LUGARES = {
     guardabosques: 'Santa Inés desde la altura: un humedal urbano inserto en plena matriz de la ciudad. La urbanización fragmenta el hábitat, pero también acerca observadores: cada vecino que mira es vigilancia potencial.'
   },
   'si-totoral': {
-    guardian: 'Este mar de juncos dorados parece dormido en invierno… ¡pero está lleno de vida escondida! Mirá despacito y la vas a descubrir.',
+    guardian: 'Este mar de juncos dorados parece dormido en invierno… ¡pero está lleno de vida escondida! Mira despacito y la vas a descubrir.',
     explorador: 'El corazón del totoral. En invierno se ve dorado y quieto, pero entre los junquillos esperan nidos, anfibios e insectos a que llegue la primavera. Acá lo pequeño manda.',
     guardabosques: 'Junquillal denso: refugio y sitio de nidificación. La senescencia invernal es parte del ciclo — la biomasa seca protege el rebrote y a la fauna. Donde el ojo ve «campo seco», el humedal sigue trabajando.'
   },
   'si-borde': {
-    guardian: 'Aquí el humedal toca la calle, y ese canalito se lleva su agua: es la parte más frágil. Si ves algo que lo dañe, avisale a tu adulto.',
+    guardian: 'Aquí el humedal toca la calle, y ese canalito se lleva su agua: es la parte más frágil. Si ves algo que lo dañe, avísale a tu adulto.',
     explorador: 'El borde: la calle, los autos y el canal de drenaje que aprietan al humedal. Antes era más ancho. Es la primera línea de pérdida — si ves algo que lo dañe, acá tu reporte importa más que en ningún lado.',
     guardabosques: 'Interfaz humedal-ciudad: drenaje, relleno histórico y presión inmobiliaria. Los bordes son la primera línea de pérdida de superficie; reportar aquí tiene el máximo valor.'
   }

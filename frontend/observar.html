@@ -39,7 +39,7 @@
 <script src="js/nav.js?v=4"></script>
 <script src="js/geo.js"></script>
 <script src="js/biodiversidad.js"></script>
-<script src="js/avatar.js?v=4"></script>
+<script src="js/avatar.js?v=5"></script>
 <script src="js/puntos.js"></script>
 <script src="js/juego-especies.js?v=3"></script>
 <script>
@@ -57,10 +57,10 @@
       geoBox.className = dentro ? 'ph-geo ph-geo--ok' : 'ph-geo ph-geo--wait';
       geoBox.textContent = dentro
         ? '✓ Estás en el humedal: reconocer suma puntos.'
-        : 'Estás lejos del humedal: podés jugar igual, pero los puntos se ganan en terreno.';
+        : 'Estás lejos del humedal: puedes jugar igual, pero los puntos se ganan en terreno.';
     }, function () {
       geoBox.className = 'ph-geo ph-geo--wait';
-      geoBox.textContent = 'Sin GPS: podés jugar igual, pero los puntos se ganan en terreno.';
+      geoBox.textContent = 'Sin GPS: puedes jugar igual, pero los puntos se ganan en terreno.';
     });
   } catch (e) {}
 
