@@ -8,7 +8,7 @@
       "piloto": true,
       "monitoreo_nivel": true,
       "estaciones": ["espejo-de-agua", "ribera"],
-      "especies": ["pato-introducido", "tagua", "piden", "siete-colores", "queltehue", "garza-chica", "garza-grande", "ranita-darwin"],
+      "especies": ["pato-americano", "pato-jergon", "tagua-comun", "piden", "siete-colores", "queltehue", "garza-chica", "garza-grande", "ranita-darwin"],
       "tags": ["360°", "Dron", "Biodiversidad"],
       "foto": "img/portadas/laguna-los-patos.jpg"
     },
@@ -97,7 +97,7 @@
     },
     "ribera": {
       "nombre": "Ribera",
-      "tema": "La laguna vista desde lo alto: la ciudad que la rodea y la aprieta.",
+      "tema": "La orilla de la laguna, donde el agua toca la tierra.",
       "accion": "reportar",
       "accion_texto": "Reportar daños o basura",
       "pano": "panos/ribera.jpg",

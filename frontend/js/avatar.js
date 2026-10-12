@@ -212,14 +212,14 @@ var PH_INTRO = {
 // del daño en CONDICIONAL (no afirman que haya basura).
 var PH_LUGARES = {
   'espejo-de-agua': {
-    guardian: 'Esta es el agua abierta de la laguna. Ahí flotan las flores de loto, y nadan los patos y las taguas, unos pajaritos negros de pico blanco. ¿Cuántos puedes contar?',
-    explorador: 'El espejo de agua abierta de la laguna, con flores de loto flotando en la superficie. Acá mandan los patos —que llegaron con la gente y ya no se fueron— y las taguas, que se disputan cada rincón a los gritos.',
-    guardabosques: 'Espejo de agua: la lámina abierta de la laguna, cubierta de flor de loto que flota sobre la superficie. La fauna visible aquí son patos introducidos y taguas. Es el corazón de la laguna, y la observación ciudadana es hoy su principal vigilancia.'
+    guardian: 'Esta es el agua abierta de la laguna. Ahí flotan las flores de loto, y nadan los patos —el pato americano y el pato jergón— y la tagua común, un ave negra de pico amarillo. ¿Cuántos puedes contar?',
+    explorador: 'El espejo de agua abierta de la laguna, con flores de loto flotando en la superficie. Acá se ven el pato americano, el pato jergón y la tagua común —esta última, negra y de pico amarillo, se disputa cada rincón a los gritos.',
+    guardabosques: 'Espejo de agua: la lámina abierta de la laguna, cubierta de flor de loto que flota sobre la superficie. La fauna visible aquí son el pato americano, el pato jergón y la tagua común. Es el corazón de la laguna, y la observación ciudadana es hoy su principal vigilancia.'
   },
   'ribera': {
-    guardian: 'Esta es la orilla, donde el agua toca la tierra: la parte más delicada del humedal. Si ves algo raro que lo pueda dañar, avísale a tu adulto.',
-    explorador: 'La ribera es la frontera entre el agua y la tierra, y la zona más expuesta a la ciudad. Si ves algo que dañe el humedal —basura, un relleno, un borde alterado—, acá tu reporte es el que más pesa.',
-    guardabosques: 'Ribera: interfaz acuático-terrestre y zona de mayor presión urbana. Es donde primero aparecen los signos de deterioro; por eso los reportes georreferenciados desde aquí son los más valiosos para el panel municipal.'
+    guardian: 'Esta es la orilla, donde el agua toca la tierra: una parte delicada del humedal. Si ves algo raro que lo pueda dañar, avísale a tu adulto.',
+    explorador: 'La ribera es la frontera entre el agua y la tierra. Toda la laguna está metida en la ciudad, y en la orilla es donde más se nota ese contacto. Si ves algo que la dañe —basura, un relleno, un borde alterado—, tu reporte ayuda.',
+    guardabosques: 'Ribera: la interfaz entre el agua y la tierra. Como toda la laguna está inserta en la ciudad, la orilla es donde ese contacto se hace visible; los reportes georreferenciados desde aquí aportan al seguimiento del humedal.'
   },
   'si-mirador': {
     guardian: 'Desde aquí arriba se ve todo el humedal, con la ciudad alrededor. ¿Ves cuántas casas lo rodean? También es un vecino del barrio.',
