@@ -32,7 +32,8 @@
 .bio-count { font-size: 12px; color: var(--tinta-suave, #6b7a75); margin-top: 2px; }
 
 /* Modal de ficha técnica */
-.bio-modal { position: fixed; inset: 0; z-index: 60; display: flex; align-items: flex-end; justify-content: center; }
+/* Sobre la barra de pestañas (800), el guía (900) y su botón (1200) */
+.bio-modal { position: fixed; inset: 0; z-index: 1300; display: flex; align-items: flex-end; justify-content: center; }
 .bio-modal[hidden] { display: none; }
 .bio-modal__bg { position: absolute; inset: 0; background: rgba(10,44,40,.55); }
 .bio-modal__panel {

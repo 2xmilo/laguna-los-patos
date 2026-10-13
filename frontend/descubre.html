@@ -9,12 +9,19 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/suave.css?v=m18">
+<link rel="stylesheet" href="css/biodiversidad.css?v=2">
+<link rel="stylesheet" href="css/suave.css?v=m19">
 </head>
 <body data-tab="descubre" class="sv-page">
 
 <div class="exp-head">
-  <div><h1>Descubre</h1><p class="sub" id="dsc-sub">Biodiversidad del humedal</p></div>
+  <div>
+    <h1>Descubre</h1>
+    <label class="dsc-hum">
+      <select id="dsc-hum" aria-label="Elegir humedal"></select>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+    </label>
+  </div>
   <span class="exp-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#3a5a3f" stroke-width="1.9" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg></span>
 </div>
 
@@ -40,7 +47,7 @@
 <div class="dsc-guias">
   <div class="dsc-guia is-off" aria-disabled="true"><span class="ic">🎒</span><span class="tx"><strong>Salida grupal</strong><small>Próximamente</small></span><span class="ch">›</span></div>
   <a class="dsc-guia" id="g-juego" href="#"><span class="ic">🔍</span><span class="tx"><strong>Reconocer especies</strong><small>Mini-juego de identificación</small></span><span class="ch">›</span></a>
-  <a class="dsc-guia" id="g-tour" href="#"><span class="ic">🌐</span><span class="tx"><strong>Tour 360°</strong><small>Recorré el humedal inmersivo</small></span><span class="ch">›</span></a>
+  <a class="dsc-guia" id="g-tour" href="#"><span class="ic">🌐</span><span class="tx"><strong>Tour 360°</strong><small>Recorre el humedal inmersivo</small></span><span class="ch">›</span></a>
 </div>
 
 <script src="js/config.js?v=6"></script>
@@ -49,53 +56,89 @@
 <script src="js/biodiversidad.js?v=3"></script>
 <script src="js/avatar.js?v=8"></script>
 <script src="js/puntos.js"></script>
+<script src="js/ficha-especie.js?v=1"></script>
 <script>
 (async function () {
-  var id = localStorage.getItem('ph_ultimo_humedal') || 'laguna-los-patos';
   var meta = await (await fetch('data/humedales.json?v=' + PH_DATOS_V)).json();
-  var h = meta.humedales.find(function (x) { return x.id === id; }) || meta.humedales[0];
-  document.getElementById('dsc-sub').textContent = 'Biodiversidad · ' + h.nombre;
-
-  // Estudios guiados
-  document.getElementById('g-juego').href = 'observar.html?id=' + h.id;
-  var gt = document.getElementById('g-tour');
-  if (h.estaciones && h.estaciones.length) { gt.href = 'tour.html?id=' + h.id; }
-  else { gt.style.opacity = .5; gt.addEventListener('click', function (e) { e.preventDefault(); }); }
-
+  var sel = document.getElementById('dsc-hum');
   var grid = document.getElementById('grid');
-  function render(taxon) {
-    grid.innerHTML = '<p class="dsc-load">Cargando especies…</p>';
-    phEspeciesDe(h.id, taxon).then(function (lista) {
-      if (!lista || !lista.length) { grid.innerHTML = '<p class="dsc-load">Sin especies registradas para este grupo.</p>'; return; }
-      grid.innerHTML = lista.map(function (r) {
-        var foto = phFotoTaxon(r.taxon, 'medium');
-        if (!foto) return '';
-        return '<a class="dsc-esp" href="https://www.inaturalist.org/taxa/' + r.taxon.id + '" target="_blank" rel="noopener">' +
-          '<div class="foto" style="background-image:url(\'' + foto + '\')"></div>' +
-          '<div class="nom">' + phNombreTaxon(r.taxon) + '</div>' +
-          '<div class="lat">' + (r.taxon.name || '') + '</div></a>';
-      }).join('');
-    }).catch(function () { grid.innerHTML = '<p class="dsc-load">No se pudo cargar la biodiversidad.</p>'; });
+  var gt = document.getElementById('g-tour');
+  var h = null, taxonActual = '', turno = 0, lista = [];
+
+  // Humedal inicial: el de la URL (?id=), si no el último visitado
+  var pedido = new URLSearchParams(location.search).get('id') || localStorage.getItem('ph_ultimo_humedal');
+  sel.innerHTML = meta.humedales.map(function (x) {
+    return '<option value="' + x.id + '">' + x.nombre + '</option>';
+  }).join('');
+
+  function elegir(id) {
+    h = meta.humedales.find(function (x) { return x.id === id; }) || meta.humedales[0];
+    sel.value = h.id;
+    localStorage.setItem('ph_ultimo_humedal', h.id);
+    history.replaceState(null, '', 'descubre.html?id=' + h.id);
+
+    // Estudios guiados
+    document.getElementById('g-juego').href = 'observar.html?id=' + h.id;
+    var conTour = !!(h.estaciones && h.estaciones.length);
+    gt.href = conTour ? 'tour.html?id=' + h.id : '#';
+    gt.classList.toggle('is-off', !conTour);
+    gt.querySelector('small').textContent = conTour ? 'Recorre el humedal inmersivo' : 'Este humedal aún no tiene tour';
+
+    progreso();
+    render(taxonActual);
   }
 
-  // Progreso: especies del álbum vs total observadas en el humedal
-  phEspeciesDe(h.id, '').then(function (lista) {
-    var total = (lista || []).length;
-    var album = JSON.parse(localStorage.getItem('ph_album') || '[]').length;
-    document.getElementById('ring-n').textContent = album;
-    document.getElementById('ring-d').textContent = '/' + total;
-    var pct = total ? Math.min(100, Math.round(100 * album / total)) : 0;
-    document.getElementById('ring').style.background = 'conic-gradient(#2e6b3e 0 ' + pct + '%, #e2e7dd ' + pct + '% 100%)';
+  sel.addEventListener('change', function () { elegir(sel.value); });
+
+  // Cada carga lleva un turno: si el visitante cambia de humedal o de grupo
+  // antes de que llegue la respuesta, la respuesta vieja se descarta.
+  function render(taxon) {
+    var t = ++turno;
+    grid.innerHTML = '<p class="dsc-load">Cargando especies…</p>';
+    phEspeciesDe(h.id, taxon).then(function (res) {
+      if (t !== turno) return;
+      lista = (res || []).filter(function (r) { return phFotoTaxon(r.taxon, 'medium'); });
+      if (!lista.length) { grid.innerHTML = '<p class="dsc-load">Sin especies registradas para este grupo.</p>'; return; }
+      grid.innerHTML = lista.map(function (r, i) {
+        return '<button type="button" class="dsc-esp" data-i="' + i + '">' +
+          '<div class="foto" style="background-image:url(\'' + phFotoTaxon(r.taxon, 'medium') + '\')"></div>' +
+          '<div class="nom">' + phNombreTaxon(r.taxon) + '</div>' +
+          '<div class="lat">' + (r.taxon.name || '') + '</div></button>';
+      }).join('');
+    }).catch(function () {
+      if (t === turno) grid.innerHTML = '<p class="dsc-load">No se pudo cargar la biodiversidad. Revisa tu conexión.</p>';
+    });
+  }
+  // Tocar una especie abre su ficha aquí mismo (antes sacaba a iNaturalist)
+  grid.addEventListener('click', function (e) {
+    var b = e.target.closest('.dsc-esp');
+    if (b && lista[+b.dataset.i]) phAbrirFicha(lista[+b.dataset.i]);
   });
+
+  // Progreso: especies del álbum vs total observadas en el humedal
+  function progreso() {
+    var hid = h.id;
+    phEspeciesDe(hid, '').then(function (todas) {
+      if (hid !== h.id) return;
+      var total = (todas || []).length;
+      var album = JSON.parse(localStorage.getItem('ph_album') || '[]').length;
+      document.getElementById('ring-n').textContent = album;
+      document.getElementById('ring-d').textContent = '/' + total;
+      var pct = total ? Math.min(100, Math.round(100 * album / total)) : 0;
+      document.getElementById('ring').style.background = 'conic-gradient(#2e6b3e 0 ' + pct + '%, #e2e7dd ' + pct + '% 100%)';
+    }).catch(function () {});
+  }
 
   document.querySelectorAll('#dsc-tabs .dsc-tab').forEach(function (b) {
     b.addEventListener('click', function () {
       document.querySelectorAll('#dsc-tabs .dsc-tab').forEach(function (x) { x.classList.remove('act'); });
       b.classList.add('act');
-      render(b.dataset.tx);
+      taxonActual = b.dataset.tx;
+      render(taxonActual);
     });
   });
-  render('');
+
+  elegir(pedido);
 })();
 </script>
 </body>

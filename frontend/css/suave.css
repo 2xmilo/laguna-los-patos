@@ -191,7 +191,14 @@ body.sv-page { background:#fff; }
 .dsc-tab.act { color:#fff; background:var(--sv-green); font-weight:800; }
 .dsc-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; padding:2px 18px 4px; }
 .dsc-load { grid-column:1/-1; color:var(--sv-muted); font-size:13px; }
-.dsc-esp { text-decoration:none; display:block; }
+.dsc-esp { text-decoration:none; display:block; width:100%; padding:0; border:none; background:none; text-align:left; font:inherit; cursor:pointer; }
+.dsc-esp:active .foto { transform:scale(.97); }
+/* Selector de humedal en el encabezado de Descubre */
+.dsc-hum { position:relative; display:inline-flex; align-items:center; margin-top:6px; max-width:100%; color:var(--sv-green); }
+.dsc-hum select { -webkit-appearance:none; appearance:none; max-width:70vw; font-family:var(--sv-font); font-weight:800; font-size:13px;
+  color:var(--sv-green); background:#eef4ea; border:none; border-radius:20px; padding:7px 32px 7px 14px; cursor:pointer;
+  text-overflow:ellipsis; white-space:nowrap; overflow:hidden; }
+.dsc-hum svg { position:absolute; right:11px; width:15px; height:15px; pointer-events:none; }
 .dsc-esp .foto { height:92px; border-radius:14px; background-size:cover; background-position:center; background-color:#dfe7e3; }
 .dsc-esp .nom { font-weight:800; font-size:12.5px; color:var(--sv-ink); margin-top:6px; line-height:1.2; }
 .dsc-esp .lat { font-weight:600; font-style:italic; font-size:10px; color:var(--sv-muted); margin-top:1px; line-height:1.2; }
