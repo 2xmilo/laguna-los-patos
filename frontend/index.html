@@ -119,17 +119,16 @@
   document.getElementById('s-titulo').textContent = meta.humedales.length + ' humedales para visitar 🌿';
   var carrusel = document.getElementById('carrusel');
   carrusel.innerHTML = ordenados.map(function (h, i) {
-    var chips = (h.tags || []).map(function (t) { return '<span class="sv-chip">' + t + '</span>'; }).join('');
-    var foto = h.foto ? ' style="background-image:url(\'' + h.foto + '\')"' : '';
+    var chips = (h.tags || []).slice(0, 2).map(function (t) { return '<span class="sv-chip">' + t + '</span>'; }).join('');
+    var foto = h.foto ? ' style="background-image:url(\'' + h.foto + '\')' + (h.foco ? ';background-position:' + h.foco : '') + '"' : '';
     return '<button class="mini-humedal' + (h.piloto ? ' piloto' : '') + '" data-h="' + h.id + '">' +
       '<div class="sv-foto"' + foto + '>' +
         '<span class="sv-num">' + (i + 1) + '</span>' +
-        '<span class="sv-fav" aria-label="Favorito"><svg viewBox="0 0 24 24" fill="none" stroke="#5a6b52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 5.6a5.5 5.5 0 0 0-8-.4L12 6l-.8-.8a5.5 5.5 0 0 0-8 8L12 21l8.8-8.8a5.5 5.5 0 0 0 0-6.6z"/></svg></span>' +
         (h.foto ? '' : '<span class="sv-ph">foto</span>') +
       '</div>' +
       '<div class="sv-body">' +
         '<div class="sv-nom">' + h.nombre + '</div>' +
-        '<div class="sv-sub">' + (h.piloto ? 'Humedal piloto · tour 360°' : 'Red Isla Teja') + '</div>' +
+        '<div class="sv-sub">Red Humedales Isla Teja</div>' +
         '<div class="sv-chips">' + chips +
           '<span class="sv-cta"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>' +
         '</div>' +
@@ -138,9 +137,6 @@
   }).join('');
   carrusel.querySelectorAll('.mini-humedal').forEach(function (c) {
     c.addEventListener('click', function () { seleccionar(byId[c.dataset.h]); });
-  });
-  carrusel.querySelectorAll('.sv-fav').forEach(function (f) {
-    f.addEventListener('click', function (e) { e.stopPropagation(); f.classList.toggle('on'); });
   });
 
   /* ---- Selección: pin + zoom + detalle en el sheet ---- */

@@ -80,7 +80,8 @@
       "estaciones": ["sn-pampa", "sn-norte", "sn-muelle", "sn-carcel"],
       "especies": [],
       "tags": ["Santuario", "Ramsar", "360°"],
-      "foto": "img/portadas/snrc.JPG"
+      "foto": "img/portadas/snrc.JPG",
+      "foco": "center 35%"
     }
   ],
   "estaciones": {
