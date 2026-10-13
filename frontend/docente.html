@@ -89,12 +89,12 @@
   </div>
 </div>
 
-<script src="js/config.js?v=5"></script>
+<script src="js/config.js?v=6"></script>
 <script src="js/nav.js?v=4"></script>
 <script src="js/avatar.js?v=8"></script>
 <script>
 (async function () {
-  var meta = await (await fetch('data/humedales.json')).json();
+  var meta = await (await fetch('data/humedales.json?v=' + PH_DATOS_V)).json();
   var h = meta.humedales.find(function (x) { return x.id === 'laguna-los-patos'; });
   var RETO_TXT = { avistar: '🔍 Observar', reportar: '🛡️ Cuidar', descubrir: '✨ Descubrir' };
   var EQUIPOS = ['Equipo Ranita 🐸', 'Equipo Cisne 🦢', 'Equipo Garza 🕊️', 'Equipo Monito 🐭'];

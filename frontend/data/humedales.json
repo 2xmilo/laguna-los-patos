@@ -43,7 +43,7 @@
       "estaciones": []
     },
     {
-      "id": "buda",
+      "id": "plaza-los-helechos",
       "nombre": "Humedal Plaza Los Helechos",
       "centro": [-39.80828, -73.26274],
       "descripcion": "Humedal de la red de Isla Teja.",
@@ -52,20 +52,82 @@
       "estaciones": []
     },
     {
-      "id": "hualve",
-      "nombre": "Hualve",
-      "centro": [-39.80309, -73.26121],
-      "descripcion": "Hualve o bosque pantanoso: la forma más antigua de humedal valdiviano, dominado por temu y pitra.",
-      "piloto": false,
-      "monitoreo_nivel": false,
-      "estaciones": [],
-      "especies": ["monito-del-monte"]
-    },
-    {
-      "id": "humedal-rotonda",
+      "id": "los-pidenes",
       "nombre": "Humedal Los Pidenes",
       "centro": [-39.80956, -73.25765],
       "descripcion": "Humedal urbano junto a la rotonda de Isla Teja, vecino inmediato de la Laguna de los Patos.",
+      "piloto": false,
+      "monitoreo_nivel": false,
+      "estaciones": []
+    },
+    {
+      "id": "los-arayanes",
+      "nombre": "Humedal Los Arayanes",
+      "centro": [-39.8176, -73.25644],
+      "descripcion": "Humedal de la red de Isla Teja, de 0,6 ha.",
+      "piloto": false,
+      "monitoreo_nivel": false,
+      "estaciones": []
+    },
+    {
+      "id": "conaf",
+      "nombre": "Humedal CONAF",
+      "centro": [-39.81531, -73.25313],
+      "descripcion": "Humedal de la red de Isla Teja, de 2,6 ha.",
+      "piloto": false,
+      "monitoreo_nivel": false,
+      "estaciones": []
+    },
+    {
+      "id": "facea",
+      "nombre": "Humedal FACEA",
+      "centro": [-39.80872, -73.25081],
+      "descripcion": "Humedal de la red de Isla Teja, de 1 ha.",
+      "piloto": false,
+      "monitoreo_nivel": false,
+      "estaciones": []
+    },
+    {
+      "id": "campus-isla-teja",
+      "nombre": "Humedal Campus Isla Teja",
+      "centro": [-39.80872, -73.25264],
+      "descripcion": "Humedal de la red de Isla Teja, de 1,5 ha.",
+      "piloto": false,
+      "monitoreo_nivel": false,
+      "estaciones": []
+    },
+    {
+      "id": "laguna-los-lotos",
+      "nombre": "Laguna de los Lotos",
+      "centro": [-39.80331, -73.25759],
+      "descripcion": "Humedal de la red de Isla Teja, de 2,2 ha.",
+      "piloto": false,
+      "monitoreo_nivel": false,
+      "estaciones": []
+    },
+    {
+      "id": "parque-botanico",
+      "nombre": "Humedal Parque Botánico",
+      "centro": [-39.80278, -73.24944],
+      "descripcion": "Humedal de la red de Isla Teja, de 2,9 ha.",
+      "piloto": false,
+      "monitoreo_nivel": false,
+      "estaciones": []
+    },
+    {
+      "id": "muelle-saval",
+      "nombre": "Humedal Muelle Saval",
+      "centro": [-39.80048, -73.25892],
+      "descripcion": "Humedal de la red de Isla Teja, de 0,6 ha.",
+      "piloto": false,
+      "monitoreo_nivel": false,
+      "estaciones": []
+    },
+    {
+      "id": "arboretum",
+      "nombre": "Humedal Arboretum",
+      "centro": [-39.79626, -73.2584],
+      "descripcion": "Humedal de la red de Isla Teja, de 1,5 ha.",
       "piloto": false,
       "monitoreo_nivel": false,
       "estaciones": []

@@ -59,7 +59,7 @@
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="js/config.js?v=5"></script>
+<script src="js/config.js?v=6"></script>
 <script src="js/nav.js?v=4"></script>
 <script>
 (async function () {
@@ -67,8 +67,8 @@
   L.control.attribution({ position: 'topleft', prefix: false }).addAttribution('© OpenStreetMap').addTo(map);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
 
-  var meta = await (await fetch('data/humedales.json')).json();
-  var geo = await (await fetch('data/humedales.geojson')).json();
+  var meta = await (await fetch('data/humedales.json?v=' + PH_DATOS_V)).json();
+  var geo = await (await fetch('data/humedales.geojson?v=' + PH_DATOS_V)).json();
   var byId = {}; meta.humedales.forEach(function (h) { byId[h.id] = h; });
   // ¿El humedal ya tiene tour 360°? Define su color naranja y el orden/encuadre.
   function tieneTour(h) { return !!(h && h.estaciones && h.estaciones.length); }

@@ -20,7 +20,7 @@ páginas que se rellenan según el humedal que se pida por URL (`?id=…`).
 geojson. No se toca HTML.
 
 Estado real de las imágenes: **solo Laguna de los Patos y Santa Inés tienen
-fotos**. Los demás (La Cancha, Los Pelúes, El Buda, Hualve, La Rotonda) están sin
+fotos** (más Río Cruces). Los otros 12 humedales oficiales están sin
 estaciones (sin tour todavía).
 
 ---

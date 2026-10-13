@@ -60,14 +60,14 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
-<script src="js/config.js?v=5"></script>
+<script src="js/config.js?v=6"></script>
 <script src="js/avatar.js?v=8"></script>
 <script src="js/puntos.js"></script>
 <script>
 (async function () {
   var id = new URLSearchParams(location.search).get('id') || 'laguna-los-patos';
 
-  var meta = await (await fetch('data/humedales.json')).json();
+  var meta = await (await fetch('data/humedales.json?v=' + PH_DATOS_V)).json();
   var E = meta.estaciones;
   var h = meta.humedales.find(function (x) { return x.id === id && x.estaciones.length; })
        || meta.humedales.find(function (x) { return x.estaciones.length; });

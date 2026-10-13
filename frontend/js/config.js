@@ -17,6 +17,11 @@ var PH_SUPA_ANON_KEY = 'sb_publishable_Ktgx7rFsqDjXvxiDie0XYQ_LxOgYFY8';
 // ANIDADA dentro de este mismo deploy (misma URL). Ruta interna relativa.
 var MONITOREO_LAGUNA_URL = 'herramientas/laguna-los-patos/monitoreo-nivel/';
 
+// Versión de data/humedales.json y data/humedales.geojson. El celular guarda
+// esos archivos en caché: SUBIR este número cada vez que se editen (y con él
+// config.js?v= en todas las páginas), o seguirá mostrando los humedales viejos.
+var PH_DATOS_V = 2;
+
 // Centro del mapa: intersección Los Pelúes con Los Lingues (Isla Teja, Valdivia)
 var MAPA_CENTRO = [-39.814061, -73.259746];
 var MAPA_ZOOM = 15;

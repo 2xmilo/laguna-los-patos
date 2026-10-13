@@ -27,6 +27,6 @@ function phEnHumedal(lon, lat, feature) {
   return false;
 }
 async function phFeatureDe(id) {
-  var geo = await (await fetch('data/humedales.geojson')).json();
+  var geo = await (await fetch('data/humedales.geojson?v=' + PH_DATOS_V)).json();
   return geo.features.find(function (f) { return f.properties.id === id; });
 }

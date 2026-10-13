@@ -62,16 +62,16 @@
   </div>
 </div>
 
-<script src="js/config.js?v=5"></script>
+<script src="js/config.js?v=6"></script>
 <script src="js/nav.js?v=4"></script>
-<script src="js/geo.js"></script>
+<script src="js/geo.js?v=2"></script>
 <script src="js/biodiversidad.js?v=2"></script>
 <script src="js/avatar.js?v=8"></script>
 <script src="js/puntos.js"></script>
 <script>
 (async function () {
   var id = new URLSearchParams(location.search).get('id') || 'laguna-los-patos';
-  var meta = await (await fetch('data/humedales.json')).json();
+  var meta = await (await fetch('data/humedales.json?v=' + PH_DATOS_V)).json();
   var h = meta.humedales.find(function (x) { return x.id === id; }) || meta.humedales[0];
   phFijarAnfitrion(h);   // te recibe un habitante real de ESTE humedal
   localStorage.setItem('ph_ultimo_humedal', h.id);

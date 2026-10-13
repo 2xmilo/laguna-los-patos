@@ -29,6 +29,8 @@ Nombre visible del sitio: *Humedales de Valdivia · Red de Isla Teja*.
   `juego-especies.js?v=N`). **Cada vez que edites uno de esos archivos, subí su
   número `?v=` en todas las páginas que lo referencian**, o el celular servirá la
   versión vieja en caché. (Los `.html` no necesitan versión; se piden frescos.)
+  Los datos (`humedales.json`, `humedales.geojson`) se piden con
+  `?v=PH_DATOS_V` (en `config.js`): subilo cada vez que los edites.
 - **Verificación:** hay un dev-server + navegador integrados; conviene abrir
   `index.html` y revisar en formato móvil antes de commitear.
 
@@ -108,9 +110,16 @@ descripcion, piloto, monitoreo_nivel, estaciones[], especies[], tags[], foto`) y
 `estaciones{}` (cada una con `nombre, tema, accion, accion_texto, pano, centro,
 norte, real`).
 
-- **8 humedales.** Con tour 360° hoy: **Laguna de los Patos** (piloto),
-  **Santa Inés** y **Santuario de la Naturaleza Río Cruces**. Los demás tienen
-  `estaciones: []` (aparecen en mapa/lista pero sin tour aún).
+- **15 humedales oficiales** (Red Isla Teja). Con tour 360° hoy: **Laguna de
+  los Patos** (piloto), **Santa Inés** y **Santuario de la Naturaleza Río
+  Cruces**. Los demás tienen `estaciones: []` (aparecen en mapa/lista pero sin
+  tour aún). Los 8 sumados en octubre 2026 (Los Arayanes, CONAF, FACEA, Campus
+  Isla Teja, Laguna de los Lotos, Parque Botánico, Muelle Saval, Arboretum)
+  tienen ficha básica: sin `especies` manuales hasta verificarlas.
+- **Polígonos:** `humedales.geojson` se genera desde el GeoPackage oficial
+  `../Red Isla Teja Oficial.gpkg` (EPSG:4326, no se edita a mano). Cada
+  polígono lleva `id`, `nombre`, `ha` y `fuente`; el `id` debe coincidir con
+  `humedales.json`.
 - **`accion` / `accion_texto`** de una estación: hoy los usa **solo
   `docente.html`** (para armar el reto de cada parada). `tour.html` ya no los
   lee: el botón de acción por estación se reemplazó por dos herramientas fijas
@@ -240,7 +249,13 @@ acciones. Todo el estado del usuario vive en **localStorage** (`ph_perfil`,
 - ✅ Arquitectura RedHumedal + rediseño Suave (5 pestañas) en toda la app.
 - ✅ Panos 360° reales (Laguna, Santa Inés, Río Cruces) mapeados por GPS.
 - ✅ Biodiversidad iNaturalist + mini-juego + álbum.
-- ✅ 8 humedales (incluye Santuario Río Cruces).
+- ✅ 15 humedales con polígono oficial (incluye Santuario Río Cruces).
+- ⏳ **Biodiversidad del Santuario incompleta:** su rectángulo tiene ~2.800
+  observaciones y `biodiversidad.js` toma las 1.000 más recientes. Solución:
+  consultar por cuadros que toquen el polígono.
+- ⏳ **Lista manual `especies` sin verificar:** ranita de Darwin, garzas, tagua
+  y queltehue no tienen registros en iNaturalist dentro de los polígonos de
+  Laguna y Santa Inés. Confirmar en terreno o con CEHUM.
 - ⏳ **Portadas** reales solo para Laguna, Santa Inés y Río Cruces; faltan los
   otros 5.
 - ⏳ **`especies` de Río Cruces vacío** (definir especies insignia reales).
