@@ -24,6 +24,14 @@ Frontend en `frontend/` → Vercel (rama `main`). Repo `2xmilo/laguna-los-patos`
   `scripts/humedales_gpkg.py`. El `id` de cada
   polígono debe ser idéntico al de `humedales.json`. El Hualve se sacó por no
   ser oficial.
+- **Biodiversidad = iNaturalist, consultado por cuadros.** La API solo acepta
+  rectángulos: `biodiversidad.js` divide en 4 los que traen >200 obs. y consulta
+  solo los cuadros que tocan el polígono (el Santuario: ~16 consultas). No
+  volver a un rectángulo único con tope de páginas: perdía especies. GBIF se
+  evaluó y se descartó (casi todo eBird, sin fotos). **Pendiente a futuro:**
+  crear un "lugar" de iNaturalist por humedal (KML desde QGIS, con cuenta del
+  usuario) y consultar por `place_id` + `species_counts`: una sola consulta,
+  polígono exacto. Detalle en el README.
 - **Diseño:** `css/suave.css` (tema "Suave", Nunito) se carga después de
   `style.css` y lo sobreescribe.
 - **Biología honesta:** el avatar habla en 1ª persona solo si su especie está en

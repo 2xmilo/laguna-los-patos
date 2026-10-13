@@ -218,6 +218,21 @@ el botón "Ver tour 360°", que es justo lo que la mayoría viene a tocar.
 - `biodiversidad.js` trae especies **reales** observadas dentro del polígono del
   humedal desde la **API pública de iNaturalist** (sin token). Requiere que el
   humedal tenga polígono en `humedales.geojson`.
+- **Consulta por cuadros:** iNaturalist solo acepta rectángulos, y el del
+  Santuario abarca media Isla Teja (~2.800 obs., solo ~57 dentro del polígono).
+  Por eso, si un rectángulo trae más de 200 obs., se divide en 4 y se consultan
+  solo los cuadros que tocan el polígono (hasta 4 niveles). Un humedal chico es
+  1 consulta; el Santuario, ~16 (unos 7 s la primera vez). Después se filtra
+  punto por punto contra el polígono real.
+- **Se evaluó GBIF (oct. 2026) y se descartó:** acepta el polígono exacto y
+  tiene muchos más registros, pero casi todos vienen de eBird, **sin fotos**.
+  Filtrando "solo con foto" queda prácticamente lo mismo que iNaturalist.
+  Sirvió para validar la lista manual `especies` (ver pendientes).
+- **Mejora futura:** crear un "lugar" (place) en iNaturalist por humedal,
+  subiendo el polígono como KML desde una cuenta. Con eso, una sola consulta
+  (`place_id` + `/observations/species_counts`) da todas las especies con el
+  polígono exacto, sin cuadros. Hay que probar si iNaturalist acepta el tamaño
+  del Santuario para un usuario común.
 - `juego-especies.js` es el mini-juego de reconocimiento: los **distractores son
   del mismo reino** que la especie correcta (nunca planta vs animal); solo se
   preguntan especies de reinos con ≥3 miembros. Álbum coleccionable para
@@ -250,12 +265,13 @@ acciones. Todo el estado del usuario vive en **localStorage** (`ph_perfil`,
 - ✅ Panos 360° reales (Laguna, Santa Inés, Río Cruces) mapeados por GPS.
 - ✅ Biodiversidad iNaturalist + mini-juego + álbum.
 - ✅ 15 humedales con polígono oficial (incluye Santuario Río Cruces).
-- ⏳ **Biodiversidad del Santuario incompleta:** su rectángulo tiene ~2.800
-  observaciones y `biodiversidad.js` toma las 1.000 más recientes. Solución:
-  consultar por cuadros que toquen el polígono.
-- ⏳ **Lista manual `especies` sin verificar:** ranita de Darwin, garzas, tagua
-  y queltehue no tienen registros en iNaturalist dentro de los polígonos de
-  Laguna y Santa Inés. Confirmar en terreno o con CEHUM.
+- ✅ Biodiversidad del Santuario completa con la consulta por cuadros (37
+  especies, antes 14).
+- ⏳ **Lista manual `especies` a corregir:** cruzada con GBIF/eBird, en Laguna y
+  Santa Inés **sí** hay registros de garza grande, queltehue, pidén y siete
+  colores (la anfitriona Garza de Santa Inés es honesta). **No** hay ningún
+  registro de **ranita de Darwin** ni de **tagua común** (*Fulica armillata*)
+  en ninguna fuente: revisar o sacar. Confirmar en terreno o con CEHUM.
 - ⏳ **Portadas** reales solo para Laguna, Santa Inés y Río Cruces; faltan los
   otros 5.
 - ⏳ **`especies` de Río Cruces vacío** (definir especies insignia reales).
