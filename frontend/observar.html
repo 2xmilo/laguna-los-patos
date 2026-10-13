@@ -15,7 +15,7 @@
 <body data-tab="descubre">
 <header class="ph-header">
   <a class="back" id="back" href="#">‹</a>
-  <div><h1>¿Quién vive aquí?</h1><p class="sub">Reto Observar · Reconocé y coleccioná</p></div>
+  <div><h1>¿Quién vive aquí?</h1><p class="sub" id="sub">Reconoce y colecciona</p></div>
 </header>
 
 <div class="ph-wrap">
@@ -30,7 +30,7 @@
   <!-- Álbum -->
   <div class="ph-card">
     <h2>Tu álbum del humedal</h2>
-    <p>Cada especie que reconocés se pega en tu álbum, con su foto real.</p>
+    <p>Cada especie que reconoces se pega en tu álbum, con su foto real. El álbum es uno solo para toda la red de humedales.</p>
     <div class="alb-grid" id="album"></div>
   </div>
 </div>
@@ -38,14 +38,20 @@
 <script src="js/config.js?v=6"></script>
 <script src="js/nav.js?v=4"></script>
 <script src="js/geo.js?v=2"></script>
-<script src="js/biodiversidad.js?v=3"></script>
+<script src="js/biodiversidad.js?v=4"></script>
 <script src="js/avatar.js?v=8"></script>
 <script src="js/puntos.js"></script>
-<script src="js/juego-especies.js?v=4"></script>
+<script src="js/juego-especies.js?v=5"></script>
 <script>
 (async function () {
   var id = new URLSearchParams(location.search).get('id') || 'laguna-los-patos';
-  document.getElementById('back').href = 'humedal.html?id=' + id;
+  // Se llega desde Descubre (Reconocer especies) o desde el humedal: volver a donde venías
+  var desdeDescubre = /descubre\.html/.test(document.referrer);
+  document.getElementById('back').href = (desdeDescubre ? 'descubre.html?id=' : 'humedal.html?id=') + id;
+  fetch('data/humedales.json?v=' + PH_DATOS_V).then(function (r) { return r.json(); }).then(function (meta) {
+    var h = meta.humedales.find(function (x) { return x.id === id; });
+    if (h) document.getElementById('sub').textContent = h.nombre + ' · reconoce y colecciona';
+  }).catch(function () {});
 
   /* Geolocalización: el álbum se llena en cualquier parte,
      pero los puntos solo se ganan dentro del polígono */
@@ -74,6 +80,6 @@
   });
 })();
 </script>
-<footer class="ph-foot">Reto Observar para Guardianes: se reconoce, no se sube nada. Siempre con un adulto.</footer>
+<footer class="ph-foot">Fotos reales de la comunidad de iNaturalist. Aquí no se sube nada: los puntos se ganan reconociendo en terreno.</footer>
 </body>
 </html>

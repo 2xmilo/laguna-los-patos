@@ -42,10 +42,10 @@ RedHumedal/
 │  ├─ index.html                   # MAPA de la red (Leaflet + OSM) — pestaña Mapa
 │  ├─ explorar.html                # lista de humedales → humedal.html — pestaña Explorar
 │  ├─ humedal.html                 # hub/detalle de CUALQUIER humedal (?id=…)
-│  ├─ descubre.html                # biodiversidad (iNaturalist) + estudios guiados — pestaña Descubre
+│  ├─ descubre.html                # biodiversidad por humedal: selector, filtros, fichas (iNaturalist) — pestaña Descubre
 │  ├─ tour.html                    # tour 360° (Pannellum)
-│  ├─ avistar.html                 # avistamiento (perfiles 13+) + mini-juego
-│  ├─ observar.html                # reconocer especies (Guardianes) + álbum
+│  ├─ avistar.html                 # registrar avistamiento con foto en terreno (13+)
+│  ├─ observar.html                # juego "¿Quién vive aquí?" + álbum (todas las edades)
 │  ├─ reportar.html                # denuncia anónima
 │  ├─ cupones.html                 # nivel, insignias, canje — pestaña Logros
 │  ├─ cuenta.html                  # perfil, compañero, modos de uso — pestaña Perfil
@@ -235,8 +235,10 @@ el botón "Ver tour 360°", que es justo lo que la mayoría viene a tocar.
   del Santuario para un usuario común.
 - `juego-especies.js` es el mini-juego de reconocimiento: los **distractores son
   del mismo reino** que la especie correcta (nunca planta vs animal); solo se
-  preguntan especies de reinos con ≥3 miembros. Álbum coleccionable para
-  Guardianes.
+  preguntan especies de reinos con ≥3 miembros. Vive en `observar.html`, para
+  todas las edades, con álbum coleccionable (uno para toda la red). La galería
+  y las fichas (`js/ficha-especie.js`) viven en Descubre; Avistar quedó solo
+  para registrar con foto.
 
 ## Puntos, niveles y modos
 

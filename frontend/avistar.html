@@ -6,7 +6,6 @@
 <meta name="theme-color" content="#0E3B36">
 <title>Avistar · Humedales de Valdivia</title>
 <link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/biodiversidad.css?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -20,12 +19,12 @@
 
 <div class="ph-wrap">
   <div class="ph-card">
-    <p>Sacá una foto de una especie del humedal. La <strong>IA de iNaturalist</strong> la identifica y tu ubicación confirma que estás en terreno.</p>
+    <p>Saca una foto de una especie del humedal. La <strong>IA de iNaturalist</strong> la identifica y tu ubicación confirma que estás en terreno.</p>
     <form id="form" class="ph-form">
       <label>Foto de la especie</label>
       <label class="ph-foto-zona" id="foto-zona">
         <span class="ico">📷</span>
-        <span id="foto-texto">Tocá para sacar la foto</span>
+        <span id="foto-texto">Toca para sacar la foto</span>
         <small>Se abre la cámara de tu celular</small>
         <input type="file" id="foto" accept="image/*" capture="environment" required>
       </label>
@@ -35,36 +34,29 @@
     <div id="msg"></div>
   </div>
 
-  <div class="ph-card" id="juego-card">
-    <h2>Mini-juego: ¿reconocés las especies?</h2>
-    <p>Practicá identificando las especies reales de este humedal. No subís nada.</p>
-    <div class="obs-foto" id="j-foto">🔎</div>
-    <div class="obs-opciones" id="j-opciones"></div>
-    <p id="j-racha" style="text-align:center;color:var(--tinta-suave);font-size:13px;margin-top:8px;"></p>
-  </div>
-
-  <div class="ph-card" id="bio-card">
-    <h2>Biodiversidad registrada aquí</h2>
-    <p>Especies observadas en este humedal por la comunidad de iNaturalist. Tocá una para ver su ficha.</p>
-    <div id="bio-status" class="ph-geo ph-geo--wait">Cargando especies…</div>
-    <div class="bio-grid" id="bio-grid"></div>
+  <!-- La galería, las fichas y el juego viven en Descubre (antes estaban
+       duplicados aquí): esta página queda solo para registrar en terreno. -->
+  <div class="ph-card">
+    <h2>Conoce las especies de este humedal</h2>
+    <p>La galería con la ficha de cada especie y el juego para aprender a reconocerlas están en Descubre.</p>
+    <a class="ph-btn ph-btn--ghost" id="ir-descubre" href="descubre.html">Ver las especies del humedal</a>
+    <a class="ph-btn ph-btn--ghost" id="ir-juego" href="observar.html">Jugar a reconocer especies</a>
   </div>
 </div>
 
 <script src="js/config.js?v=6"></script>
 <script src="js/nav.js?v=4"></script>
 <script src="js/geo.js?v=2"></script>
-<script src="js/biodiversidad.js?v=3"></script>
 <script src="js/avatar.js?v=8"></script>
 <script src="js/puntos.js"></script>
-<script src="js/juego-especies.js?v=4"></script>
-<script src="js/ficha-especie.js?v=1"></script>
 <script>
 (async function () {
   var id = new URLSearchParams(location.search).get('id') || 'laguna-los-patos';
   // Los Guardianes (menores de 13) no suben fotos: su reto Observar es reconocer
   if (PH_PERFIL === 'guardian') { location.replace('observar.html?id=' + id); return; }
   document.getElementById('back').href = 'humedal.html?id=' + id;
+  document.getElementById('ir-descubre').href = 'descubre.html?id=' + id;
+  document.getElementById('ir-juego').href = 'observar.html?id=' + id;
   var feature = await phFeatureDe(id);
   var pos = null, dentro = false;
   var geoBox = document.getElementById('geo'), enviar = document.getElementById('enviar');
@@ -78,7 +70,7 @@
     var img = document.createElement('img');
     img.src = URL.createObjectURL(f);
     zona.querySelector('.ico').textContent = '✓';
-    document.getElementById('foto-texto').textContent = 'Foto lista — tocá para cambiarla';
+    document.getElementById('foto-texto').textContent = 'Foto lista — toca para cambiarla';
     var prev = zona.querySelector('img'); if (prev) prev.remove();
     zona.appendChild(img);
   });
@@ -90,7 +82,7 @@
       dentro = phEnHumedal(pos.lon, pos.lat, feature);
       if (dentro) { geoBox.className = 'ph-geo ph-geo--ok'; geoBox.textContent = '✓ Estás dentro del humedal. Puedes registrar.'; enviar.disabled = false; }
       else { geoBox.className = 'ph-geo ph-geo--no'; geoBox.textContent = '✗ Estás fuera del polígono del humedal. El avistamiento debe hacerse en terreno.'; }
-    }, function () { geoBox.className = 'ph-geo ph-geo--no'; geoBox.textContent = 'No pudimos obtener tu ubicación. Activá el GPS.'; });
+    }, function () { geoBox.className = 'ph-geo ph-geo--no'; geoBox.textContent = 'No pudimos obtener tu ubicación. Activa el GPS.'; });
   }
   pedirGeo();
 
@@ -122,7 +114,7 @@
           '<br>🎟️ +' + g2 + ' puntos · <a href="cupones.html?id=' + id + '">ver cupones</a>';
         phDecir(phHistoria('avistamiento'));
       } else {
-        msg.className = 'ph-msg ph-msg--err'; msg.textContent = 'No pudimos procesar el avistamiento. Intentá de nuevo.';
+        msg.className = 'ph-msg ph-msg--err'; msg.textContent = 'No pudimos procesar el avistamiento. Intenta de nuevo.';
         enviar.disabled = false;
       }
     }
@@ -130,30 +122,6 @@
 })();
 </script>
 
-<script>
-(function () {
-  var id = new URLSearchParams(location.search).get('id') || 'laguna-los-patos';
-  var grid = document.getElementById('bio-grid');
-  var status = document.getElementById('bio-status');
-  function esc(s){ var d=document.createElement('div'); d.textContent=(s==null?'':String(s)); return d.innerHTML; }
-  grid.addEventListener('click', function(e){ var c=e.target.closest('.bio-card'); if(!c||!grid._data) return; var r=grid._data[+c.dataset.i]; if(r) phAbrirFicha(r); });
-
-  phEspeciesDe(id).then(function(res){
-    grid._data=res;
-    if(!res.length){ status.textContent='Todavía no hay especies registradas en este humedal.'; return; }
-    status.style.display='none';
-    grid.innerHTML=res.map(function(r,i){ var foto=phFotoTaxon(r.taxon,'medium'); if(!foto) return ''; return '<button class="bio-card" data-i="'+i+'"><div class="bio-foto" style="background-image:url(\''+foto+'\')"></div><div class="bio-info"><span class="bio-nombre">'+esc(phNombreTaxon(r.taxon))+'</span><span class="bio-sci">'+esc(r.taxon.name||'')+'</span><span class="bio-count">'+r.count+' obs.</span></div></button>'; }).join('');
-  }).catch(function(){ status.className='ph-geo bio-status--err'; status.textContent='No se pudo cargar la biodiversidad. Intentá más tarde.'; });
-})();
-</script>
-
-<script>
-(function () {
-  var id = new URLSearchParams(location.search).get('id') || 'laguna-los-patos';
-  if (typeof PH_PERFIL !== 'undefined' && PH_PERFIL === 'guardian') return;
-  phMontarJuego({ humedalId: id, foto: 'j-foto', opciones: 'j-opciones', racha: 'j-racha', conPuntos: false });
-})();
-</script>
 <footer class="ph-foot">Los puntos se ganan solo con acciones geolocalizadas dentro del polígono del humedal.</footer>
 </body>
 </html>

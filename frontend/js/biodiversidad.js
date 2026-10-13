@@ -2,8 +2,8 @@
    BIODIVERSIDAD POR HUMEDAL · iNaturalist (API pública, sin token)
    Dado un id de humedal, trae las especies REALES observadas dentro de su
    polígono (data/humedales.geojson). Fuente única reutilizada por:
-     · la galería de biodiversidad (avistar.html, perfiles 2 y 3)
-     · el mini-juego "Reconocer" (observar.html, Guardianes)
+     · la galería y las fichas de Descubre (descubre.html)
+     · el mini-juego "Reconocer" (observar.html)
    Requiere geo.js cargado antes (phFeatureDe, phEnHumedal).
    ========================================================================== */
 (function () {

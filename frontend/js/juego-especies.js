@@ -1,8 +1,9 @@
 /* ==========================================================================
    MINI-JUEGO DE RECONOCIMIENTO DE ESPECIES · iNaturalist (reutilizable)
    Muestra una foto real de una especie del humedal y hay que elegir su nombre.
-   · Guardián (observar.html): con álbum coleccionable + puntos en terreno.
-   · Perfiles 2 y 3 (avistar.html): sin álbum, solo práctica (con racha).
+   · observar.html (para todas las edades, se llega desde Descubre o desde el
+     humedal): con álbum coleccionable + puntos solo en terreno.
+   · El modo sin álbum (racha) queda disponible para otros usos.
    Requiere biodiversidad.js (phEspeciesDe, phFotoTaxon, phNombreTaxon) y
    avatar.js (phDecir). Si conPuntos, también puntos.js (phSumarPuntos).
 
