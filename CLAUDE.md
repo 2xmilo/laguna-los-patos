@@ -54,7 +54,8 @@ Frontend en `frontend/` → Vercel (rama `main`). Repo `2xmilo/laguna-los-patos`
   o la barra vuelve a bajar el pano completo (3-5 MB) por cada círculo.
 - **Flujo:** el usuario revisa en el **celular** por Vercel → **commit + push
   después de cada tanda**. Mensajes de commit en español.
-- Atribución de commits: `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>`.
+- Atribución de commits: firma el modelo que hizo el trabajo
+  (`Co-Authored-By: Claude <modelo> <noreply@anthropic.com>`), sin fijar uno.
 
 ## Pendiente: hotspots de infografía en el tour
 
