@@ -124,7 +124,8 @@ de la laguna la enlaza con `MONITOREO_LAGUNA_URL` (en `frontend/js/config.js`).
 ## Deploy (recordatorio)
 
 - **Vercel** sirve `frontend/` como raíz. Cada `push` a `main` en
-  `github.com/2xmilo/laguna-los-patos` redeploya `laguna-los-patos.vercel.app`.
+  `github.com/2xmilo/laguna-los-patos` redeploya `red-humedales-valdivia.vercel.app`
+  (la URL para compartir; `laguna-los-patos.vercel.app` sigue activa).
 - Backends (`backend/`, `backend-laguna-nivel/`) van a Render por separado (aún
   sin desplegar; la web corre en modo demo).
 - Supabase `noqcvqatxzpqbtwdnmgk`: esquemas en `supabase/` (aún sin aplicar).

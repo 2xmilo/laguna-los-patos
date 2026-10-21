@@ -14,6 +14,10 @@ Nombre visible del sitio: *Humedales de Valdivia · Red de Isla Teja*.
 
 - **Repo / deploy:** `github.com/2xmilo/laguna-los-patos` → Vercel (rama `main`,
   *Root Directory* = `frontend/`). Cada `push` a `main` redeploya.
+- **URL para compartir:** **`red-humedales-valdivia.vercel.app`**. La original
+  `laguna-los-patos.vercel.app` sigue activa (mismo proyecto Vercel
+  `laguna-los-patos`): no sacarla, porque puede haber QR y links impresos
+  que apunten a ella.
 - **Flujo de trabajo:** el usuario revisa en su **celular** vía la URL de Vercel,
   así que se **commitea + pushea después de cada tanda** de cambios.
 
