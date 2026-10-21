@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/suave.css?v=m22">
+<link rel="stylesheet" href="css/suave.css?v=m23">
 </head>
 <body class="tour-body">
 
@@ -47,9 +47,9 @@
 
 <div class="tour-hint" id="hint">Arrastra para mirar · toca una flecha para viajar · toca al guía si quieres que te cuente</div>
 
-<!-- Herramientas del visor + estaciones como miniaturas circulares -->
-<div class="tour-abajo">
-  <div class="tour-tools">
+<!-- Herramientas del visor: columna a la derecha, bajo la brújula, todas del
+     mismo tamaño. El habitante (avatar.js) se suma al final de la columna. -->
+<div class="tour-tools" id="tour-tools">
     <button class="tour-tool" id="btn-giro" aria-pressed="true" aria-label="Giro automático">
       <!-- Dos flechas persiguiéndose: se lee como giro continuo. Con una sola
            flecha el ícono se leía como "deshacer / volver al inicio". -->
@@ -84,7 +84,10 @@
         <circle cx="12" cy="16.6" r="1.25" fill="currentColor"/>
       </svg>
     </a>
-  </div>
+</div>
+
+<!-- Estaciones como miniaturas circulares -->
+<div class="tour-abajo">
   <div class="tour-estaciones" id="nav"></div>
 </div>
 
@@ -547,6 +550,11 @@
   });
   viewer.on('scenechange', alLlegar);
   alLlegar(h.estaciones[0]);   // la primera escena no dispara 'scenechange'
+
+  // El habitante va al pie de la columna de herramientas (avatar.js lo monta
+  // suelto en el body; ya existe porque alLlegar llamó a phPreparar).
+  var avatarEl = document.getElementById('ph-avatar');
+  if (avatarEl) document.getElementById('tour-tools').appendChild(avatarEl);
 
   /* ==================================================================
      Giroscopio y VR
