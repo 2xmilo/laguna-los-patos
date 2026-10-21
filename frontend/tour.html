@@ -94,7 +94,7 @@
 <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="js/config.js?v=6"></script>
-<script src="js/avatar.js?v=8"></script>
+<script src="js/avatar.js?v=9"></script>
 <script src="js/puntos.js"></script>
 <script src="js/tour-vr.js?v=1"></script>
 <script>
@@ -518,7 +518,7 @@
     /* El habitante llega CALLADO: deja el relato de la estación listo y solo
        lo cuenta si el visitante lo toca. En el tour la mayoría quiere mirar
        el paisaje, no leer; el que quiere la historia la tiene a un toque. */
-    var _nar = phNarrarEstacion(slug, h.especies);
+    var _nar = phNarrarEstacion(slug);
     phPreparar(_nar.texto, { quien: _nar.quien });
 
     precargarVecinas(slug);

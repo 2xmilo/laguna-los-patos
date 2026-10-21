@@ -267,21 +267,11 @@ var PH_HISTORIAS = {
    avatares.
    ============================================================================ */
 
-// Capa de personalidad reutilizable: intro corta del avatar, segun este presente
-// o no. Cisne y Monito no estan en estos humedales -> solo voz de guia.
-var PH_INTRO = {
-  cisne:  { guia: 'Te acompaño como guía por este humedal.' },
-  monito: { guia: 'Soy el Monito del Monte. Yo habito los bosques pantanosos —los hualves—, no este humedal, pero te lo muestro con gusto.' },
-  ranita: { presente: 'Soy la Ranita de Darwin. Mi rincón es el totoral, pero desde acá se ve todo.',
-            guia: 'Soy la Ranita de Darwin, y te acompaño a mirar de cerca.' },
-  garza:  { presente: 'Soy la Garza, de las que cazan quietas en estos bordes.',
-            guia: 'Soy la Garza, y te acompaño a observar con paciencia.' }
-};
-
 // Contenido del LUGAR (hechos + especies reales del sitio), por perfil etario.
-// El avatar lo entrega con su intro (PH_INTRO). Neutro de anfitrión: no dice
-// "Soy la Garza…" ni nombra especies ausentes. Las estaciones de reportar hablan
-// del daño en CONDICIONAL (no afirman que haya basura).
+// El avatar lo entrega tal cual, sin presentarse: la presentación se hace una
+// sola vez, al entrar al humedal (bienvenida en humedal.html). Neutro de
+// anfitrión: no dice "Soy la Garza…" ni nombra especies ausentes. Las
+// estaciones de reportar hablan del daño en CONDICIONAL (no afirman que haya basura).
 var PH_LUGARES = {
   'espejo-de-agua': {
     guardian: 'Esta es el agua abierta de la laguna. Ahí flotan las flores de loto, y nadan los patos —el pato americano y el pato jergón— y la tagua común, un ave negra de pico amarillo. ¿Cuántos puedes contar?',
@@ -320,22 +310,11 @@ var PH_LUGARES = {
   }
 };
 
-// ¿El avatar elegido esta presente en este humedal? (lista `especies` del JSON)
-function phAvatarPresente(especies) {
-  var s = (PH_PERSONAJES[phCompanero()] || {}).slug;
-  return !!s && (especies || []).indexOf(s) >= 0;
-}
-
-// Narracion de una estacion: el avatar ELEGIDO narra el contenido de lugar
-// (PH_LUGARES), en 1a persona si su especie esta presente, o como guia si no.
-// Devuelve { texto, quien }.
-function phNarrarEstacion(slug, especies) {
+// Narracion de una estacion: el avatar ELEGIDO entrega directo el contenido de
+// lugar (PH_LUGARES), sin volver a presentarse. Devuelve { texto, quien }.
+function phNarrarEstacion(slug) {
   var perfil = PH_PERFIL || 'guardabosques';
-  var comp = phCompanero();
-  var voz = PH_INTRO[comp] || {};
-  var intro = phAvatarPresente(especies) ? (voz.presente || voz.guia) : voz.guia;
-  var lugar = (PH_LUGARES[slug] || {})[perfil] || '';
-  return { texto: (intro || '') + (intro && lugar ? ' ' : '') + lugar, quien: comp };
+  return { texto: (PH_LUGARES[slug] || {})[perfil] || '', quien: phCompanero() };
 }
 
 function phHistoria(grupo, clave) {

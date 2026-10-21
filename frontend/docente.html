@@ -91,7 +91,7 @@
 
 <script src="js/config.js?v=6"></script>
 <script src="js/nav.js?v=4"></script>
-<script src="js/avatar.js?v=8"></script>
+<script src="js/avatar.js?v=9"></script>
 <script>
 (async function () {
   var meta = await (await fetch('data/humedales.json?v=' + PH_DATOS_V)).json();
@@ -173,7 +173,7 @@
   }
   document.getElementById('btn-historia').addEventListener('click', function () {
     var s = salida(), slug = s.estaciones[s.actual];
-    var n = phNarrarEstacion(slug, h.especies); phDecir(n.texto, { quien: n.quien });
+    var n = phNarrarEstacion(slug); phDecir(n.texto, { quien: n.quien });
   });
   document.getElementById('btn-hallazgo').addEventListener('click', function () {
     if (equipoSel === null) { phDecir('Primero tocá el equipo que encontró algo.'); return; }
