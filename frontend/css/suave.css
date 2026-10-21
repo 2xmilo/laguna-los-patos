@@ -460,3 +460,39 @@ body.sv-page { background:#fff; }
 
 /* El aviso inicial baja para no chocar con el minimapa */
 .tour-hint { top: calc(168px + env(safe-area-inset-top, 0px)); max-width: calc(100vw - 28px); white-space: normal; text-align: center; }
+
+/* ---- Giroscopio y VR del tour --------------------------------------------- */
+.tour-tool[hidden] { display: none; }
+.tour-tool.is-on { background: var(--dorado); color: #fff; }
+
+/* Visor VR (js/tour-vr.js): pantalla dividida, una mira en el centro de cada
+   ojo. La mira se llena (aro dorado) mientras sostienes la vista en una flecha. */
+.vr { position: fixed; inset: 0; z-index: 5000; background: #000; touch-action: none;
+      font-family: var(--sv-font); user-select: none; -webkit-user-select: none; }
+.vr canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.vr-sep { position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; margin-left: -1px; background: #000; pointer-events: none; }
+.vr-ojo { position: absolute; top: 0; bottom: 0; width: 50%; pointer-events: none;
+          display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.vr-ojo--izq { left: 0; } .vr-ojo--der { left: 50%; }
+.vr-mira { width: 34px; height: 34px; overflow: visible; }
+.vr-mira__punto { fill: #fff; stroke: rgba(0,0,0,.45); stroke-width: 1; }
+.vr-mira__aro { fill: none; stroke: #C98A2D; stroke-width: 3.5; stroke-linecap: round;
+                stroke-dasharray: 100; stroke-dashoffset: 100; transform: rotate(-90deg); transform-origin: 20px 20px; }
+.vr.apuntando .vr-mira__punto { fill: #C98A2D; }
+/* Lugar reservado bajo la mira: así la mira no salta cuando aparece el texto. */
+.vr-etq { min-height: 1.4em; margin-top: 8px; padding: 0 8px; max-width: 80%; text-align: center;
+          font-size: 13px; font-weight: 700; color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,.8); }
+.vr-salir { position: absolute; top: calc(10px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%);
+            z-index: 2; border: none; border-radius: 999px; padding: 8px 16px; cursor: pointer;
+            background: rgba(0,0,0,.6); color: #fff; font: 700 13px var(--sv-font); }
+.vr-cargando { position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); pointer-events: none;
+               color: #fff; font-size: 12px; font-weight: 700; opacity: 0; transition: opacity .2s; }
+.vr.cargando .vr-cargando { opacity: .85; }
+.vr-girar { display: none; }
+@media (orientation: portrait) {
+  .vr-girar { position: absolute; inset: 0; z-index: 1; display: flex; flex-direction: column;
+              align-items: center; justify-content: center; gap: 14px; padding: 32px; text-align: center;
+              background: rgba(10,44,40,.92); color: #fff; pointer-events: none; }
+  .vr-girar svg { width: 64px; height: 64px; }
+  .vr-girar p { margin: 0; font-size: 16px; font-weight: 700; max-width: 260px; }
+}

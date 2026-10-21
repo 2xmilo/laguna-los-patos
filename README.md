@@ -51,7 +51,7 @@ RedHumedal/
 │  ├─ cuenta.html                  # perfil, compañero, modos de uso — pestaña Perfil
 │  ├─ docente.html · panel.html
 │  ├─ css/   (style.css = base;  suave.css = tema "Suave" que lo sobreescribe)
-│  ├─ js/    (config, nav, avatar, puntos, biodiversidad, juego-especies, geo)
+│  ├─ js/    (config, nav, avatar, puntos, biodiversidad, juego-especies, geo, tour-vr)
 │  ├─ data/  (humedales.json, humedales.geojson)
 │  ├─ panos/ (panorámicas 360° equirectangulares del dron)
 │  ├─ img/portadas/ (fotos de portada por humedal)
@@ -169,10 +169,28 @@ La **brújula** (arriba a la derecha) es la misma rosa de los vientos del mapa
 (`index.html`): se gira `-(yaw + norte)` en cada frame para que la punta roja
 quede en el norte verdadero, y al tocarla el visor se reorienta al norte.
 
-Abajo, sobre las miniaturas, hay dos **herramientas** fijas (`.tour-tool`):
-giro automático **on/off** (se recuerda en `localStorage.ph_tour_giro`; apagado
-el visor nunca gira solo) y **reporte**, que lleva a `reportar.html` del humedal
-en el que estás parado.
+El **minimapa** (arriba a la izquierda) es una lente circular sobre satélite
+de Esri, con el polígono oficial, las estaciones y un cono dorado que sale de
+la estación actual: apunta al mismo rumbo `yaw + norte` y abre tanto como el
+`hfov` del visor. Al tocarlo crece a tarjeta con el humedal entero; ahí cada
+estación (y las de otros humedales, en anillo dorado) se toca para saltar.
+
+Abajo, sobre las miniaturas, están las **herramientas** fijas (`.tour-tool`):
+- **Giro automático on/off** (se recuerda en `localStorage.ph_tour_giro`;
+  apagado el visor nunca gira solo).
+- **Giroscopio**: mirar moviendo el celular. Lo maneja Pannellum
+  (`startOrientation`, pide el permiso de iOS), que solo lo ofrece en móvil y
+  con **https**: en `localhost` el botón no aparece; se prueba en Vercel.
+- **VR (Cardboard)**: pantalla dividida para un visor de cartón
+  ([`js/tour-vr.js`](frontend/js/tour-vr.js), Three.js cargado solo al
+  entrar). Mismo pano en los dos ojos (los panos son de una cámara: inmersivo
+  pero sin profundidad) y sin corrección de distorsión de lentes. Se viaja
+  **mirando** una flecha ~1,6 s o tocando la pantalla (el botón del visor). El
+  viaje lo hace Pannellum con el mismo `clickHandlerFunc` de la flecha, y al
+  salir el tour queda en esa estación mirando hacia donde mirabas. Solo en
+  pantallas táctiles; sin giroscopio se arrastra (sirve para probar en PC
+  mostrando el botón desde la consola).
+- **Reporte**, que lleva a `reportar.html` del humedal en el que estás parado.
 
 ### Miniaturas · `panos_thumbs.py`
 La barra inferior usaba el pano completo (3–5 MB) para cada círculo de 62 px:

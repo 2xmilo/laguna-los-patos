@@ -15,7 +15,8 @@ Frontend en `frontend/` → Vercel (rama `main`). Repo `2xmilo/laguna-los-patos`
   bundlers ni `package.json`.
 - **Anti-caché:** al editar un CSS/JS compartido, **subí su `?v=` en todas las
   páginas** que lo referencian (`suave.css?v=mN`, `config.js?v=N`, `avatar.js?v=N`,
-  `nav.js?v=4`, `juego-especies.js?v=N`, `biodiversidad.js?v=N`, `geo.js?v=N`).
+  `nav.js?v=4`, `juego-especies.js?v=N`, `biodiversidad.js?v=N`, `geo.js?v=N`,
+  `tour-vr.js?v=N`).
   Si no, el celular sirve la versión vieja. **Datos:** al editar
   `humedales.json` o `humedales.geojson`, subí `PH_DATOS_V` en `config.js` (y
   con él `config.js?v=`).

@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/suave.css?v=m21">
+<link rel="stylesheet" href="css/suave.css?v=m22">
 </head>
 <body class="tour-body">
 
@@ -62,6 +62,21 @@
         <path class="tachado" d="M4.4 19.6 19.6 4.4"/>
       </svg>
     </button>
+    <!-- Giroscopio y VR solo aparecen en celular (ver más abajo). -->
+    <button class="tour-tool" id="btn-gyro" aria-pressed="false" aria-label="Mirar moviendo el celular" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="8.5" y="4" width="7" height="16" rx="1.8"/>
+        <path d="M4.6 8.2a8 8 0 0 0 0 7.6M19.4 8.2a8 8 0 0 1 0 7.6"/>
+      </svg>
+    </button>
+    <button class="tour-tool" id="btn-vr" aria-label="Ver con gafas de realidad virtual" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 9c0-1.1.9-2 2-2h14a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-3.6l-1.9-2.6h-3l-1.9 2.6H5a2 2 0 0 1-2-2z"/>
+        <circle cx="8" cy="11.6" r="1.5"/><circle cx="16" cy="11.6" r="1.5"/>
+      </svg>
+    </button>
     <a class="tour-tool" id="btn-reporte" href="reportar.html" aria-label="Reportar un problema acá">
       <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
@@ -78,6 +93,7 @@
 <script src="js/config.js?v=6"></script>
 <script src="js/avatar.js?v=8"></script>
 <script src="js/puntos.js"></script>
+<script src="js/tour-vr.js?v=1"></script>
 <script>
 (async function () {
   var id = new URLSearchParams(location.search).get('id') || 'laguna-los-patos';
@@ -322,7 +338,10 @@
     clearTimeout(tRot);
     if (viewer) viewer.stopAutoRotate();
     if (!giroAuto) return;
-    tRot = setTimeout(function () { if (viewer) viewer.startAutoRotate(-1.4); }, 14000);
+    // Con el giroscopio el que gira es el visitante: el visor no gira solo.
+    tRot = setTimeout(function () {
+      if (viewer && !viewer.isOrientationActive()) viewer.startAutoRotate(-1.4);
+    }, 14000);
   }
   function pintarGiro() {
     btnGiro.classList.toggle('is-off', !giroAuto);
@@ -528,6 +547,41 @@
   });
   viewer.on('scenechange', alLlegar);
   alLlegar(h.estaciones[0]);   // la primera escena no dispara 'scenechange'
+
+  /* ==================================================================
+     Giroscopio y VR
+     ================================================================== */
+  /* Giroscopio: lo maneja Pannellum, que además pide el permiso de iOS. Solo
+     lo ofrece en celular y con https (en localhost el botón no aparece).
+     Arrastrar el pano lo apaga, así que el botón se sincroniza solo. */
+  var btnGyro = document.getElementById('btn-gyro');
+  if (viewer.isOrientationSupported()) btnGyro.hidden = false;
+  function pintarGyro() {
+    var on = viewer.isOrientationActive();
+    btnGyro.classList.toggle('is-on', on);
+    btnGyro.setAttribute('aria-pressed', on ? 'true' : 'false');
+  }
+  btnGyro.addEventListener('click', function () {
+    if (viewer.isOrientationActive()) { viewer.stopOrientation(); reprogramarGiro(); }
+    else { clearTimeout(tRot); viewer.stopAutoRotate(); viewer.startOrientation(); }
+    setTimeout(pintarGyro, 400);   // en iOS se activa recién tras aceptar el permiso
+  });
+  document.getElementById('panorama').addEventListener('pointerup', function () { setTimeout(pintarGyro, 50); });
+
+  /* VR para visor tipo Cardboard: pantalla dividida y se viaja mirando una
+     flecha (js/tour-vr.js). Solo en pantallas táctiles. */
+  var btnVr = document.getElementById('btn-vr');
+  if (matchMedia('(pointer: coarse)').matches) btnVr.hidden = false;
+  btnVr.addEventListener('click', function () {
+    clearTimeout(tRot); viewer.stopAutoRotate();
+    if (viewer.isOrientationActive()) { viewer.stopOrientation(); pintarGyro(); }
+    phVR.abrir({
+      viewer: viewer,
+      escenas: scenes,
+      actual: function () { return actual; },
+      alSalir: reprogramarGiro
+    });
+  });
 })();
 </script>
 </body>
