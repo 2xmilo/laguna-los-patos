@@ -419,14 +419,14 @@ body.sv-page { background:#fff; }
 
 /* ---- Minimapa del tour --------------------------------------------------
    Cerrado es una lente: un círculo de satélite entonado al verde del sitio,
-   con viñeta y un aro blanco + filete dorado (el dorado es el del cruce y la
-   estación activa). Abierto crece a tarjeta y se puede arrastrar. */
+   con viñeta y un borde fino del mismo verde oscuro del tour. Abierto crece a
+   tarjeta y se puede arrastrar. */
 .tour-mini {
   position: fixed; z-index: 45;
   top: calc(70px + env(safe-area-inset-top, 0px)); left: 14px;
   width: 84px; height: 84px; border-radius: 50%; overflow: hidden;
-  background: #0A2C28; border: 3px solid #fff;
-  box-shadow: 0 0 0 1.5px rgba(201,138,45,.85), 0 6px 18px rgba(0,0,0,.35);
+  background: #0A2C28; border: 2px solid #0A2C28;   /* el verde de fondo del tour */
+  box-shadow: 0 6px 18px rgba(0,0,0,.35);
   transition: width .35s cubic-bezier(.2,.8,.2,1), height .35s cubic-bezier(.2,.8,.2,1),
               border-radius .35s ease;
 }
