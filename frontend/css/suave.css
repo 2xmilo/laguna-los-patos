@@ -18,10 +18,14 @@ body[data-tab] { font-family: var(--sv-font); }
   border-radius:22px; padding:10px 12px; gap:12px; border:none; background:#fff;
   box-shadow:0 6px 20px rgba(31,61,36,.10), 0 1px 3px rgba(0,0,0,.06);
 }
+/* El logo es el medallón del cisne (SVG de avatar.js): borde blanco fino como
+   los habitantes, y un anillo verde suave para que no se pierda sobre el blanco. */
 .mapa-pill .logo {
-  width:44px; height:44px; font-size:24px; border-radius:50%;
-  background:#eef4ea; color:initial; border:2px solid var(--sv-green);
+  width:44px; height:44px; padding:0; border-radius:50%; overflow:hidden;
+  background:#CFE2E4; border:2px solid #fff;
+  box-shadow:0 0 0 1.5px rgba(46,107,62,.55), 0 2px 6px rgba(31,61,36,.16);
 }
+.mapa-pill .logo svg { width:100%; height:100%; display:block; }
 .mapa-pill strong { font-family:var(--sv-font); font-weight:800; font-size:18px; color:var(--sv-ink); letter-spacing:-.2px; }
 .mapa-pill small { color:var(--sv-muted); }
 .mapa-pill .campana { margin-left:auto; position:relative; width:40px; height:40px; flex:none; border-radius:50%; background:#f4f6f1; display:flex; align-items:center; justify-content:center; cursor:pointer; }
@@ -386,3 +390,73 @@ body.sv-page { background:#fff; }
 .tour-tool .tachado { display: none; }        /* la barra solo aparece apagado */
 .tour-tool.is-off { color: rgba(255,255,255,.45); }
 .tour-tool.is-off .tachado { display: block; }
+
+/* ---- Minimapa del tour --------------------------------------------------
+   Cerrado es una lente: un círculo de satélite entonado al verde del sitio,
+   con viñeta y un aro blanco + filete dorado (el dorado es el del cruce y la
+   estación activa). Abierto crece a tarjeta y se puede arrastrar. */
+.tour-mini {
+  position: fixed; z-index: 45;
+  top: calc(70px + env(safe-area-inset-top, 0px)); left: 14px;
+  width: 84px; height: 84px; border-radius: 50%; overflow: hidden;
+  background: #0A2C28; border: 3px solid #fff;
+  box-shadow: 0 0 0 1.5px rgba(201,138,45,.85), 0 6px 18px rgba(0,0,0,.35);
+  transition: width .35s cubic-bezier(.2,.8,.2,1), height .35s cubic-bezier(.2,.8,.2,1),
+              border-radius .35s ease;
+}
+.tour-mini.abierto {
+  width: min(330px, calc(100vw - 28px)); height: 270px; border-radius: 22px;
+}
+.tour-mini__mapa { position: absolute; inset: 0; background: #0A2C28; }
+/* Solo las teselas se entonan: polígono, puntos y cono quedan nítidos. */
+.tour-mini .leaflet-tile-pane { filter: saturate(.7) contrast(1.08) brightness(.92) sepia(.12) hue-rotate(-8deg); }
+/* Viñeta interior: hunde el borde y deja el centro (donde estás) iluminado. */
+.tour-mini::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 500;
+  border-radius: inherit;
+  background: radial-gradient(circle at 50% 50%, rgba(10,44,40,0) 55%, rgba(10,44,40,.55) 100%);
+}
+.tour-mini.abierto::after {
+  background: linear-gradient(180deg, rgba(10,44,40,.65) 0%, rgba(10,44,40,0) 28%,
+                                      rgba(10,44,40,0) 85%, rgba(10,44,40,.45) 100%);
+}
+.tour-mini__toque {
+  position: absolute; inset: 0; z-index: 600; border: none; padding: 0;
+  background: none; cursor: pointer; border-radius: 50%;
+}
+.tour-mini.abierto .tour-mini__toque { display: none; }
+.tour-mini__cab, .tour-mini__cerrar, .tour-mini__attr {
+  position: absolute; z-index: 700; opacity: 0; pointer-events: none;
+  transition: opacity .2s ease;
+}
+.tour-mini.abierto .tour-mini__cab, .tour-mini.abierto .tour-mini__cerrar,
+.tour-mini.abierto .tour-mini__attr { opacity: 1; pointer-events: auto; transition-delay: .2s; }
+.tour-mini__cab { top: 11px; left: 14px; right: 52px; color: #fff; font-family: var(--sv-font); line-height: 1.2; }
+.tour-mini__cab strong { display: block; font-weight: 800; font-size: 14.5px; text-shadow: 0 1px 4px rgba(0,0,0,.4); }
+.tour-mini__cab span { font-size: 11px; font-weight: 600; opacity: .85; }
+.tour-mini__cerrar {
+  top: 9px; right: 9px; width: 32px; height: 32px; border-radius: 50%; border: none; padding: 0;
+  background: rgba(255,255,255,.92); color: #0A2C28; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.tour-mini__cerrar svg { width: 15px; height: 15px; }
+.tour-mini__attr { bottom: 5px; right: 9px; font-size: 9px; color: rgba(255,255,255,.75); pointer-events: none !important; }
+
+/* Estaciones en el minimapa */
+.mini-est {
+  display: block; width: 12px; height: 12px; margin: 7px; border-radius: 50%;
+  background: #fff; border: 2px solid #0A2C28; box-shadow: 0 1px 4px rgba(0,0,0,.45);
+}
+.mini-est--cruce { background: rgba(201,138,45,.35); border: 2.5px solid #C98A2D; }
+.tour-mini:not(.abierto) .mini-est { width: 8px; height: 8px; margin: 9px; border-width: 1.5px; }
+/* Dónde estás: punto dorado y el cono de lo que estás mirando */
+.mini-yo { position: relative; width: 80px; height: 80px; pointer-events: none; }
+.mini-yo svg { position: absolute; inset: 0; width: 80px; height: 80px; transform-origin: 40px 40px; }
+.mini-yo__punto {
+  position: absolute; left: 33px; top: 33px; width: 14px; height: 14px; border-radius: 50%;
+  background: #C98A2D; border: 2.5px solid #fff; box-sizing: border-box;
+  box-shadow: 0 0 0 4px rgba(201,138,45,.3), 0 1px 4px rgba(0,0,0,.4);
+}
+
+/* El aviso inicial baja para no chocar con el minimapa */
+.tour-hint { top: calc(168px + env(safe-area-inset-top, 0px)); max-width: calc(100vw - 28px); white-space: normal; text-align: center; }
